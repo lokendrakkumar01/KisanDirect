@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Phone, Lock, Sprout, Store, UserCheck, ShieldAlert, Users, CheckCircle } from 'lucide-react';
+import { User, Mail, Phone, Lock, Sprout, Store, UserCheck, ShieldAlert, Users, Truck } from 'lucide-react';
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { Button } from '../../components/ui/Button';
 import { useAuth, getRoleDashboardPath } from '../../contexts/AuthContext';
@@ -23,7 +23,8 @@ export const RegisterPage = () => {
         farmer: { label: 'Farmer 🌾', desc: 'Direct sell produce to buyers and FPOs' },
         fpo: { label: 'FPO Admin 🏭', desc: 'Aggregate produce from farmer members' },
         consumer: { label: 'Consumer 🛒', desc: 'Buy farm-fresh produce directly from local farmers' },
-        bulk_buyer: { label: 'Bulk Buyer 🏢', desc: 'Post bulk requirements for restaurants, hotels & supermarkets' }
+        bulk_buyer: { label: 'Bulk Buyer 🏢', desc: 'Post bulk requirements for restaurants, hotels & supermarkets' },
+        logistics: { label: 'Logistics Partner 🚛', desc: 'Provide vehicle transport, route optimization & delivery services' }
     };
 
     const handleChange = (e) => {
@@ -67,7 +68,7 @@ export const RegisterPage = () => {
     return (
         <PublicLayout>
             <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-3xl mx-auto">
+                <div className="max-w-4xl mx-auto">
                     <div className="text-center mb-8">
                         <h2 className="text-3xl font-extrabold text-gray-900">Create your AgroConnect Account</h2>
                         <p className="text-gray-500 mt-2">Join India's smartest direct agricultural marketplace</p>
@@ -90,64 +91,75 @@ export const RegisterPage = () => {
 
                             {error && (
                                 <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6 flex items-center">
-                                    <ShieldAlert className="w-5 h-5 mr-2"/> {error}
+                                    <ShieldAlert className="w-5 h-5 mr-2 flex-shrink-0"/> {error}
                                 </div>
                             )}
 
                             <form onSubmit={handleSubmit}>
-                                {/* Role Selection Grid */}
+                                {/* Role Selection Grid - 5 Roles */}
                                 <div className="mb-8">
-                                    <label className="block text-sm font-bold text-gray-700 mb-4">Choose Your Account Role:</label>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <label className="block text-sm font-bold text-gray-700 mb-3">Choose Your Account Role:</label>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                                         <button 
                                             type="button" 
                                             onClick={() => setRole('farmer')} 
-                                            className={`flex flex-col items-center p-4 border-2 rounded-xl transition-all ${
+                                            className={`flex flex-col items-center p-3.5 border-2 rounded-xl transition-all ${
                                                 role === 'farmer' ? 'border-green-600 bg-green-50 text-green-700 font-bold shadow-sm' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                                             }`}
                                         >
-                                            <Sprout className={`w-8 h-8 mb-2 ${role === 'farmer' ? 'text-green-600' : 'text-gray-400'}`}/>
-                                            <span className="font-semibold text-sm">Farmer</span>
+                                            <Sprout className={`w-7 h-7 mb-1.5 ${role === 'farmer' ? 'text-green-600' : 'text-gray-400'}`}/>
+                                            <span className="font-semibold text-xs text-center">Farmer</span>
                                         </button>
                                         
                                         <button 
                                             type="button" 
                                             onClick={() => setRole('fpo')} 
-                                            className={`flex flex-col items-center p-4 border-2 rounded-xl transition-all ${
+                                            className={`flex flex-col items-center p-3.5 border-2 rounded-xl transition-all ${
                                                 role === 'fpo' ? 'border-blue-600 bg-blue-50 text-blue-700 font-bold shadow-sm' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                                             }`}
                                         >
-                                            <Users className={`w-8 h-8 mb-2 ${role === 'fpo' ? 'text-blue-600' : 'text-gray-400'}`}/>
-                                            <span className="font-semibold text-sm">FPO</span>
+                                            <Users className={`w-7 h-7 mb-1.5 ${role === 'fpo' ? 'text-blue-600' : 'text-gray-400'}`}/>
+                                            <span className="font-semibold text-xs text-center">FPO</span>
                                         </button>
 
                                         <button 
                                             type="button" 
                                             onClick={() => setRole('consumer')} 
-                                            className={`flex flex-col items-center p-4 border-2 rounded-xl transition-all ${
+                                            className={`flex flex-col items-center p-3.5 border-2 rounded-xl transition-all ${
                                                 role === 'consumer' ? 'border-amber-500 bg-amber-50 text-amber-700 font-bold shadow-sm' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                                             }`}
                                         >
-                                            <UserCheck className={`w-8 h-8 mb-2 ${role === 'consumer' ? 'text-amber-500' : 'text-gray-400'}`}/>
-                                            <span className="font-semibold text-sm">Consumer</span>
+                                            <UserCheck className={`w-7 h-7 mb-1.5 ${role === 'consumer' ? 'text-amber-500' : 'text-gray-400'}`}/>
+                                            <span className="font-semibold text-xs text-center">Consumer</span>
                                         </button>
 
                                         <button 
                                             type="button" 
                                             onClick={() => setRole('bulk_buyer')} 
-                                            className={`flex flex-col items-center p-4 border-2 rounded-xl transition-all ${
+                                            className={`flex flex-col items-center p-3.5 border-2 rounded-xl transition-all ${
                                                 role === 'bulk_buyer' ? 'border-purple-600 bg-purple-50 text-purple-700 font-bold shadow-sm' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                                             }`}
                                         >
-                                            <Store className={`w-8 h-8 mb-2 ${role === 'bulk_buyer' ? 'text-purple-600' : 'text-gray-400'}`}/>
-                                            <span className="font-semibold text-sm text-center">Bulk Buyer</span>
+                                            <Store className={`w-7 h-7 mb-1.5 ${role === 'bulk_buyer' ? 'text-purple-600' : 'text-gray-400'}`}/>
+                                            <span className="font-semibold text-xs text-center">Bulk Buyer</span>
+                                        </button>
+
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setRole('logistics')} 
+                                            className={`flex flex-col items-center p-3.5 border-2 rounded-xl transition-all ${
+                                                role === 'logistics' ? 'border-indigo-600 bg-indigo-50 text-indigo-700 font-bold shadow-sm' : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                                            }`}
+                                        >
+                                            <Truck className={`w-7 h-7 mb-1.5 ${role === 'logistics' ? 'text-indigo-600' : 'text-gray-400'}`}/>
+                                            <span className="font-semibold text-xs text-center">Logistics</span>
                                         </button>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Full Name / Business Name *</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Full Name / Transport Business Name *</label>
                                         <div className="relative">
                                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                                 <User className="h-5 w-5 text-gray-400"/>
@@ -158,8 +170,8 @@ export const RegisterPage = () => {
                                                 required 
                                                 value={formData.name} 
                                                 onChange={handleChange} 
-                                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
-                                                placeholder="e.g. Ramesh Patil"
+                                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 text-sm" 
+                                                placeholder={role === 'logistics' ? 'e.g. Speedy Logistics Transport' : 'e.g. Ramesh Patil'}
                                             />
                                         </div>
                                     </div>
@@ -176,7 +188,7 @@ export const RegisterPage = () => {
                                                 required 
                                                 value={formData.email} 
                                                 onChange={handleChange} 
-                                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
+                                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 text-sm" 
                                                 placeholder="you@example.com"
                                             />
                                         </div>
@@ -193,7 +205,7 @@ export const RegisterPage = () => {
                                                 name="phone" 
                                                 value={formData.phone} 
                                                 onChange={handleChange} 
-                                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
+                                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 text-sm" 
                                                 placeholder="+91 9876543210"
                                             />
                                         </div>
@@ -214,7 +226,7 @@ export const RegisterPage = () => {
                                                 minLength={6} 
                                                 value={formData.password} 
                                                 onChange={handleChange} 
-                                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
+                                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 text-sm" 
                                                 placeholder="••••••••"
                                             />
                                         </div>
@@ -233,14 +245,14 @@ export const RegisterPage = () => {
                                                 minLength={6} 
                                                 value={formData.confirmPassword} 
                                                 onChange={handleChange} 
-                                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
+                                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 text-sm" 
                                                 placeholder="••••••••"
                                             />
                                         </div>
                                     </div>
                                 </div>
 
-                                <Button type="submit" fullWidth size="lg" isLoading={isLoading}>
+                                <Button type="submit" fullWidth size="lg" isLoading={isLoading} className="font-bold">
                                     Register as {roleMap[role]?.label.split(' ')[0]}
                                 </Button>
                             </form>
@@ -248,7 +260,7 @@ export const RegisterPage = () => {
                         
                         <div className="bg-gray-50 px-8 py-4 border-t border-gray-200 text-center text-sm">
                             Already have an account?{' '}
-                            <Link to="/login" className="font-medium text-green-600 hover:text-green-500">
+                            <Link to="/login" className="font-bold text-green-600 hover:text-green-500">
                                 Sign in instead
                             </Link>
                         </div>
