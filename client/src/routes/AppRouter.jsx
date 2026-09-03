@@ -57,6 +57,7 @@ import ImpactDashboard from '../pages/admin/ImpactDashboard';
 // Shared Pages
 import NotificationsPage from '../pages/shared/NotificationsPage';
 import ReviewsPage from '../pages/shared/ReviewsPage';
+import SettingsPage from '../pages/shared/SettingsPage';
 const PublicLayoutWrapper = () => (<Outlet />);
 const DashboardLayoutWrapper = () => (<DashboardLayout>
     <Outlet />
@@ -147,6 +148,7 @@ export const AppRouter = () => {
         <Route element={<ProtectedRoute><DashboardLayoutWrapper /></ProtectedRoute>}>
           <Route path="/notifications" element={<NotificationsPage />}/>
           <Route path="/reviews" element={<ReviewsPage />}/>
+          <Route path="/settings" element={<SettingsPage />}/>
         </Route>
 
         {/* 404 Page */}
