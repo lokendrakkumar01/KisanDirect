@@ -155,6 +155,7 @@ export const AppRouter = () => {
                     <Route path="/logistics/deliveries" element={<DeliveriesPage />}/>
                     <Route path="/logistics/routes" element={<RouteOptimization />}/>
                     <Route path="/logistics/route-optimization" element={<RouteOptimization />}/>
+                    <Route path="/logistics/optimize" element={<RouteOptimization />}/>
                     <Route path="/logistics/map" element={<LogisticsMap />}/>
                     <Route path="/logistics/vehicles" element={<VehiclesPage />}/>
                     <Route path="/logistics/drivers" element={<DriversPage />}/>
