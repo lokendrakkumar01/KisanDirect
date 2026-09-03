@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import { getProfile, getListings, createListing } from '../controllers/farmerController.js';
+import { authenticate } from '../middleware/auth.js';
+import { requireRole } from '../middleware/roleGuard.js';
+const router = Router();
+router.use(authenticate);
+router.use(requireRole(['farmer']));
+router.get('/profile', getProfile);
+router.get('/listings', getListings);
+router.post('/listings', createListing);
+export default router;

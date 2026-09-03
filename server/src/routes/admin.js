@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import { getDashboard, getUsers, verifyUser } from '../controllers/adminController.js';
+import { authenticate } from '../middleware/auth.js';
+import { requireRole } from '../middleware/roleGuard.js';
+const router = Router();
+router.use(authenticate);
+router.use(requireRole(['admin']));
+router.get('/dashboard', getDashboard);
+router.get('/users', getUsers);
+router.put('/users/:id/verify', verifyUser);
+export default router;

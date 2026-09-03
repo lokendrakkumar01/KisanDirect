@@ -1,12 +1,12 @@
 {
-  "name": "kisandirect-server",
+  "name": "agroconnect-server",
   "version": "1.0.0",
-  "description": "KisanDirect Backend API Server",
-  "main": "dist/index.js",
+  "description": "AgroConnect Backend API Server",
+  "main": "src/index.js",
+  "type": "module",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -18,15 +18,5 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^7.6.0",
     "uuid": "^11.1.0"
-  },
-  "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.13.4",
-    "@types/uuid": "^10.0.0",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.7.3"
   }
 }

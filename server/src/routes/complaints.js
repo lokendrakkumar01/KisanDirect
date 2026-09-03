@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getComplaints, createComplaint, updateComplaintStatus } from '../controllers/complaintController.js';
+import { authenticate } from '../middleware/auth.js';
+import { requireRole } from '../middleware/roleGuard.js';
+const router = Router();
+router.use(authenticate);
+router.get('/', getComplaints);
+router.post('/', createComplaint);
+router.put('/:id/status', requireRole(['admin']), updateComplaintStatus);
+export default router;

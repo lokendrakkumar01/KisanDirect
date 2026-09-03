@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getRequirements, createRequirement } from '../controllers/bulkBuyerController.js';
+import { authenticate } from '../middleware/auth.js';
+import { requireRole } from '../middleware/roleGuard.js';
+const router = Router();
+router.use(authenticate);
+router.use(requireRole(['bulk_buyer']));
+router.get('/requirements', getRequirements);
+router.post('/requirements', createRequirement);
+export default router;

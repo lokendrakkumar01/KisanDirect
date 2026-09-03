@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getMembers, getInventory } from '../controllers/fpoController.js';
+import { authenticate } from '../middleware/auth.js';
+import { requireRole } from '../middleware/roleGuard.js';
+const router = Router();
+router.use(authenticate);
+router.use(requireRole(['fpo']));
+router.get('/members', getMembers);
+router.get('/inventory', getInventory);
+export default router;

@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import { getDeliveries, updateDeliveryStatus, getOptimizedRoute } from '../controllers/logisticsController.js';
+import { authenticate } from '../middleware/auth.js';
+import { requireRole } from '../middleware/roleGuard.js';
+const router = Router();
+router.use(authenticate);
+router.use(requireRole(['logistics']));
+router.get('/deliveries', getDeliveries);
+router.put('/deliveries/:id/status', updateDeliveryStatus);
+router.post('/optimize-route', getOptimizedRoute);
+export default router;
