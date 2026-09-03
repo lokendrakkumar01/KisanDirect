@@ -92,6 +92,7 @@ export const AppRouter = () => {
                     <Route path="/" element={<LandingPage />}/>
                     <Route path="/marketplace" element={<MarketplacePage />}/>
                     <Route path="/marketplace/:id" element={<ProductDetailPage />}/>
+                    <Route path="/marketplace/product/:id" element={<ProductDetailPage />}/>
                     <Route path="/how-it-works" element={<HowItWorksPage />}/>
                     <Route path="/about" element={<AboutPage />}/>
                     <Route path="/login" element={<LoginPage />}/>
