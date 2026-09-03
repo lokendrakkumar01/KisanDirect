@@ -20,7 +20,14 @@ export const users = [
     { id: uuidv4(), name: 'Mumbai Grand Hotel', email: 'mumbaihotel@example.com', phone: '9876543241', role: 'bulk_buyer', isVerified: true, verificationStatus: 'verified', createdAt: NOW, updatedAt: NOW },
     { id: uuidv4(), name: 'FreshMart Supermarket', email: 'freshmart@example.com', phone: '9876543242', role: 'bulk_buyer', isVerified: true, verificationStatus: 'verified', createdAt: NOW, updatedAt: NOW },
     { id: uuidv4(), name: 'Speedy Logistics', email: 'speedy@example.com', phone: '9876543250', role: 'logistics', isVerified: true, verificationStatus: 'verified', createdAt: NOW, updatedAt: NOW },
-    { id: uuidv4(), name: 'Admin', email: 'admin@kisandirect.com', phone: '9999999999', role: 'admin', isVerified: true, verificationStatus: 'verified', createdAt: NOW, updatedAt: NOW }
+    { id: uuidv4(), name: 'Platform Admin (DoCA)', email: 'admin@demo.com', phone: '9999999999', role: 'admin', isVerified: true, verificationStatus: 'verified', createdAt: NOW, updatedAt: NOW },
+    { id: uuidv4(), name: 'Platform Admin', email: 'admin@kisandirect.com', phone: '9999999999', role: 'admin', isVerified: true, verificationStatus: 'verified', createdAt: NOW, updatedAt: NOW },
+    { id: uuidv4(), name: 'Platform Admin', email: 'admin@agroconnect.com', phone: '9999999999', role: 'admin', isVerified: true, verificationStatus: 'verified', createdAt: NOW, updatedAt: NOW },
+    { id: uuidv4(), name: 'Ramesh Patil (Farmer)', email: 'farmer@demo.com', phone: '9876543210', role: 'farmer', isVerified: true, verificationStatus: 'verified', createdAt: NOW, updatedAt: NOW },
+    { id: uuidv4(), name: 'Nashik Fresh Farmers FPO', email: 'fpo@demo.com', phone: '9876543220', role: 'fpo', isVerified: true, verificationStatus: 'verified', createdAt: NOW, updatedAt: NOW },
+    { id: uuidv4(), name: 'Pune Fresh Restaurant', email: 'buyer@demo.com', phone: '9876543240', role: 'bulk_buyer', isVerified: true, verificationStatus: 'verified', createdAt: NOW, updatedAt: NOW },
+    { id: uuidv4(), name: 'Amit Kumar (Consumer)', email: 'consumer@demo.com', phone: '9876543230', role: 'consumer', isVerified: true, verificationStatus: 'verified', createdAt: NOW, updatedAt: NOW },
+    { id: uuidv4(), name: 'Speedy Logistics Operator', email: 'logistics@demo.com', phone: '9876543250', role: 'logistics', isVerified: true, verificationStatus: 'verified', createdAt: NOW, updatedAt: NOW }
 ];
 export const userPasswords = {};
 users.forEach(u => userPasswords[u.email] = DEFAULT_PASSWORD);
