@@ -13,6 +13,7 @@ import { HowItWorksPage } from '../pages/public/HowItWorksPage';
 import { AboutPage } from '../pages/public/AboutPage';
 import { LoginPage } from '../pages/auth/LoginPage';
 import { RegisterPage } from '../pages/auth/RegisterPage';
+import { AdminLoginPage } from '../pages/auth/AdminLoginPage';
 
 // Farmer Pages
 import { FarmerDashboard } from '../pages/farmer/FarmerDashboard';
@@ -94,6 +95,7 @@ export const AppRouter = () => {
                     <Route path="/how-it-works" element={<HowItWorksPage />}/>
                     <Route path="/about" element={<AboutPage />}/>
                     <Route path="/login" element={<LoginPage />}/>
+                    <Route path="/admin/login" element={<AdminLoginPage />}/>
                     <Route path="/register" element={<RegisterPage />}/>
                 </Route>
 

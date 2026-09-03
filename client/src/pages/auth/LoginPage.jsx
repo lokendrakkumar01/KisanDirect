@@ -57,7 +57,12 @@ export const LoginPage = () => {
                     <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
                         <div className="text-center mb-6">
                             <h2 className="text-3xl font-extrabold text-gray-900">Welcome Back</h2>
-                            <p className="text-gray-500 mt-1">Sign in to your AgroConnect Portal</p>
+                            <p className="text-gray-500 mt-1">Sign in to your AgroConnect Account</p>
+                            <div className="mt-3">
+                                <Link to="/admin/login" className="inline-flex items-center text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-3 py-1.5 rounded-full hover:bg-red-100 transition">
+                                    <ShieldCheck className="w-4 h-4 mr-1" /> Dedicated Platform Admin Login Portal &rarr;
+                                </Link>
+                            </div>
                         </div>
 
                         {/* Clear Selected Role Banner */}
