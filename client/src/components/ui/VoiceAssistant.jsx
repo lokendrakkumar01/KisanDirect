@@ -9,7 +9,7 @@ export const VoiceAssistant = () => {
     const [isListening, setIsListening] = useState(false);
     const [selectedLang, setSelectedLang] = useState('hi-IN');
     const [transcript, setTranscript] = useState('');
-    const [responseMessage, setResponseMessage] = useState('अपनी भाषा चुनें और माइक दबाकर सवाल बोलें। Select language and speak.');
+    const [responseMessage, setResponseMessage] = useState('अपनी पसंदीदा भाषा चुनें, माइक पर क्लिक करें और बोलें। Select language and click mic to speak.');
     const [isProcessing, setIsProcessing] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const recognitionRef = useRef(null);
@@ -17,17 +17,24 @@ export const VoiceAssistant = () => {
     const { user } = useAuth();
 
     const SUPPORTED_LANGUAGES = [
-        { code: 'hi-IN', name: 'हिन्दी (Hindi) 🇮🇳', promptLang: 'Hindi' },
-        { code: 'en-IN', name: 'English (India) 🇮🇳', promptLang: 'English' },
-        { code: 'mr-IN', name: 'मराठी (Marathi) 🚩', promptLang: 'Marathi' },
-        { code: 'gu-IN', name: 'ગુજરાતી (Gujarati) 🌾', promptLang: 'Gujarati' },
-        { code: 'pa-IN', name: 'ਪੰਜਾਬੀ (Punjabi) 🚜', promptLang: 'Punjabi' },
-        { code: 'bn-IN', name: 'বাংলা (Bengali) 🌾', promptLang: 'Bengali' },
-        { code: 'ta-IN', name: 'தமிழ் (Tamil) 🌴', promptLang: 'Tamil' },
-        { code: 'te-IN', name: 'తెలుగు (Telugu) 🌽', promptLang: 'Telugu' },
-        { code: 'kn-IN', name: 'ಕನ್ನಡ (Kannada) 🌻', promptLang: 'Kannada' },
-        { code: 'ml-IN', name: 'മലയാളം (Malayalam) 🥥', promptLang: 'Malayalam' }
+        { code: 'hi-IN', name: 'हिन्दी (Hindi) 🇮🇳', promptLang: 'Hindi', navConfirmation: 'मार्केटप्लेस पर जा रहे हैं।' },
+        { code: 'en-IN', name: 'English (India) 🇮🇳', promptLang: 'English', navConfirmation: 'Navigating to your requested page.' },
+        { code: 'mr-IN', name: 'मराठी (Marathi) 🚩', promptLang: 'Marathi', navConfirmation: 'तुमच्या विनंतीनुसार नवीन पृष्ठावर जात आहे.' },
+        { code: 'gu-IN', name: 'ગુજરાતી (Gujarati) 🌾', promptLang: 'Gujarati', navConfirmation: 'નવા પૃષ્ઠ પર જઈ રહ્યા છીએ.' },
+        { code: 'pa-IN', name: 'ਪੰਜਾਬੀ (Punjabi) 🚜', promptLang: 'Punjabi', navConfirmation: 'ਤੁਹਾਡੇ ਕਹੇ ਪੰਨੇ ਤੇ ਜਾ ਰਹੇ ਹਾਂ।' },
+        { code: 'bn-IN', name: 'বাংলা (Bengali) 🌾', promptLang: 'Bengali', navConfirmation: 'নতুন পৃষ্ঠায় যাচ্ছি।' },
+        { code: 'ta-IN', name: 'தமிழ் (Tamil) 🌴', promptLang: 'Tamil', navConfirmation: 'புதிய பக்கத்திற்கு செல்கிறது.' },
+        { code: 'te-IN', name: 'తెలుగు (Telugu) 🌽', promptLang: 'Telugu', navConfirmation: 'కొత్త పేజీకి వెళ్తోంది.' },
+        { code: 'kn-IN', name: 'ಕನ್ನಡ (Kannada) 🌻', promptLang: 'Kannada', navConfirmation: 'ಹೊಸ ಪುಟಕ್ಕೆ ಹೋಗುತ್ತಿದ್ದೇವೆ.' },
+        { code: 'ml-IN', name: 'മലയാളം (Malayalam) 🥥', promptLang: 'Malayalam', navConfirmation: 'പുതിയ പേജിലേക്ക് പോകുന്നു.' }
     ];
+
+    // Pre-load synthesis voices
+    useEffect(() => {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.getVoices();
+        }
+    }, []);
 
     useEffect(() => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -70,23 +77,32 @@ export const VoiceAssistant = () => {
     }, [selectedLang]);
 
     const speakText = (text) => {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const cleanText = text.replace(/[*_#•🤖]/g, '').trim();
-            const utterance = new SpeechSynthesisUtterance(cleanText);
-            utterance.lang = selectedLang;
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
-            utterance.onstart = () => setIsSpeaking(true);
-            utterance.onend = () => setIsSpeaking(false);
-            utterance.onerror = () => setIsSpeaking(false);
-            window.speechSynthesis.speak(utterance);
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel(); // Stop current speech
+
+        const cleanText = text.replace(/[*_#•🤖]/g, '').trim();
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = selectedLang;
+        utterance.rate = 0.95;
+        utterance.pitch = 1.0;
+
+        // Find browser voice matching current language
+        const voices = window.speechSynthesis.getVoices();
+        const langPrefix = selectedLang.split('-')[0];
+        const matchVoice = voices.find(v => v.lang === selectedLang || v.lang.startsWith(langPrefix));
+        if (matchVoice) {
+            utterance.voice = matchVoice;
         }
+
+        utterance.onstart = () => setIsSpeaking(true);
+        utterance.onend = () => setIsSpeaking(false);
+        utterance.onerror = () => setIsSpeaking(false);
+        window.speechSynthesis.speak(utterance);
     };
 
     const toggleListening = () => {
         if (!recognitionRef.current) {
-            const msg = 'Speech recognition not supported in this browser. Please use Google Chrome or Microsoft Edge.';
+            const msg = 'Speech recognition not supported in this browser. Please use Chrome or Edge.';
             setResponseMessage(msg);
             speakText(msg);
             return;
@@ -97,7 +113,8 @@ export const VoiceAssistant = () => {
             setIsListening(false);
         } else {
             setTranscript('');
-            setResponseMessage('Listening for your voice command in ' + (SUPPORTED_LANGUAGES.find(l => l.code === selectedLang)?.name || selectedLang) + '...');
+            const langObj = SUPPORTED_LANGUAGES.find(l => l.code === selectedLang);
+            setResponseMessage(`Listening in ${langObj?.name}... Speak your command now.`);
             try {
                 recognitionRef.current.lang = selectedLang;
                 recognitionRef.current.start();
@@ -110,14 +127,18 @@ export const VoiceAssistant = () => {
     const handleVoiceCommand = async (commandText) => {
         const text = commandText.toLowerCase().trim();
         setIsProcessing(true);
-        setResponseMessage('Analyzing voice request...');
+        setResponseMessage('Analyzing your spoken command...');
 
-        // 1. Universal Multilingual Navigation Keywords
+        const langObj = SUPPORTED_LANGUAGES.find(l => l.code === selectedLang);
+        const navMsg = langObj?.navConfirmation || 'Opening page...';
+
+        // 1. Marketplace Navigation
         if (
             text.includes('marketplace') || text.includes('मार्केटप्लेस') || text.includes('मार्किटप्लेस') || 
-            text.includes('बाज़ार') || text.includes('ખરીદો') || text.includes('சந்தை') || text.includes('చbuying')
+            text.includes('बाज़ार') || text.includes('ખરીદો') || text.includes('சந்தை') || text.includes('చbuying') ||
+            text.includes('મંડી') || text.includes('मंडी')
         ) {
-            const reply = 'Navigating to direct AgroConnect Marketplace.';
+            const reply = `${navMsg} (Opening Marketplace)`;
             setResponseMessage(reply);
             speakText(reply);
             setTimeout(() => { setIsOpen(false); navigate('/marketplace'); }, 1200);
@@ -125,12 +146,13 @@ export const VoiceAssistant = () => {
             return;
         }
 
+        // 2. Dashboard Navigation
         if (
             text.includes('dashboard') || text.includes('डैशबोर्ड') || text.includes('home') || 
-            text.includes('होम') || text.includes('मुख्य पृष्ठ')
+            text.includes('होम') || text.includes('मुख्य पृष्ठ') || text.includes('ડેશબોર્ડ')
         ) {
             const dashPath = user?.role ? getRoleDashboardPath(user.role) : '/';
-            const reply = `Navigating to ${user?.role || 'user'} dashboard.`;
+            const reply = `${navMsg} (Opening Dashboard)`;
             setResponseMessage(reply);
             speakText(reply);
             setTimeout(() => { setIsOpen(false); navigate(dashPath); }, 1200);
@@ -138,11 +160,12 @@ export const VoiceAssistant = () => {
             return;
         }
 
+        // 3. Add Produce / Listing Navigation
         if (
             text.includes('add produce') || text.includes('add crop') || text.includes('फसल जोड़ो') || 
-            text.includes('शेतमाल जोडा') || text.includes('પાક ઉમેરો') || text.includes('પાલ')
+            text.includes('शेतमाल जोडा') || text.includes('પાક ઉમેરો') || text.includes('बेचो') || text.includes('सेल')
         ) {
-            const reply = 'Opening Add Produce form for farmers.';
+            const reply = `${navMsg} (Opening Add Produce)`;
             setResponseMessage(reply);
             speakText(reply);
             setTimeout(() => { setIsOpen(false); navigate('/farmer/add-produce'); }, 1200);
@@ -150,12 +173,13 @@ export const VoiceAssistant = () => {
             return;
         }
 
+        // 4. Orders & Deliveries Tracking
         if (
             text.includes('order') || text.includes('ऑर्डर') || text.includes('track') || 
-            text.includes('ट्रैक') || text.includes('डिलिव्हरी')
+            text.includes('ट्रैक') || text.includes('डिलिव्हरी') || text.includes('ઓર્ડર')
         ) {
             const orderPath = user?.role === 'farmer' ? '/farmer/orders' : user?.role === 'logistics' ? '/logistics/deliveries' : '/consumer/orders';
-            const reply = 'Opening orders and delivery tracking.';
+            const reply = `${navMsg} (Opening Orders)`;
             setResponseMessage(reply);
             speakText(reply);
             setTimeout(() => { setIsOpen(false); navigate(orderPath); }, 1200);
@@ -163,11 +187,12 @@ export const VoiceAssistant = () => {
             return;
         }
 
+        // 5. Logistics Map Navigation
         if (
             text.includes('map') || text.includes('मैप') || text.includes('route') || 
-            text.includes('नक्शा') || text.includes('रास्ता') || text.includes('मार्ग')
+            text.includes('नक्शा') || text.includes('रास्ता') || text.includes('मार्ग') || text.includes('નકશો')
         ) {
-            const reply = 'Opening Live Google Logistics Map.';
+            const reply = `${navMsg} (Opening Map)`;
             setResponseMessage(reply);
             speakText(reply);
             setTimeout(() => { setIsOpen(false); navigate('/logistics/map'); }, 1200);
@@ -175,10 +200,30 @@ export const VoiceAssistant = () => {
             return;
         }
 
-        // 2. Multilingual Search Commands (e.g. "search tomato", "टमाटर खोजो", "कांदा शोधा")
+        // 6. AI Insights Navigation
+        if (text.includes('insight') || text.includes('सलाह') || text.includes('भाव पूर्वानुमान') || text.includes('ai')) {
+            const reply = `${navMsg} (Opening AI Insights)`;
+            setResponseMessage(reply);
+            speakText(reply);
+            setTimeout(() => { setIsOpen(false); navigate('/farmer/insights'); }, 1200);
+            setIsProcessing(false);
+            return;
+        }
+
+        // 7. Cart Navigation
+        if (text.includes('cart') || text.includes('कार्ट') || text.includes('झोला') || text.includes('टोकरी')) {
+            const reply = `${navMsg} (Opening Cart)`;
+            setResponseMessage(reply);
+            speakText(reply);
+            setTimeout(() => { setIsOpen(false); navigate('/consumer/cart'); }, 1200);
+            setIsProcessing(false);
+            return;
+        }
+
+        // 8. Search Command (e.g., "search tomato", "टमाटर खोजो", "कांदा शोधा")
         if (text.includes('search') || text.includes('find') || text.includes('खोजो') || text.includes('ढूंढो') || text.includes('शोधा')) {
             const cropMatch = text.replace(/(search|find|for|produce|crop|खोजो|ढूंढो|दिखाओ|शोधा)/gi, '').trim();
-            const reply = `Searching marketplace for ${cropMatch || 'produce'}.`;
+            const reply = `${navMsg} (Searching ${cropMatch || 'produce'})`;
             setResponseMessage(reply);
             speakText(reply);
             setTimeout(() => { setIsOpen(false); navigate(`/marketplace?q=${encodeURIComponent(cropMatch)}`); }, 1200);
@@ -186,16 +231,16 @@ export const VoiceAssistant = () => {
             return;
         }
 
-        // 3. Agricultural & Mandi Price AI Query via Gemini API in Target Selected Language
+        // 9. Agricultural AI Query via Gemini API in Target Selected Language
         try {
-            const activeLangName = SUPPORTED_LANGUAGES.find(l => l.code === selectedLang)?.promptLang || 'Hindi';
-            const promptWithLang = `Please respond to this agricultural request in ${activeLangName} language: "${commandText}"`;
+            const activeLangName = langObj?.promptLang || 'Hindi';
+            const promptWithLang = `Please answer this agricultural request strictly in ${activeLangName} language: "${commandText}"`;
             
             const aiResult = await askGeminiAI(promptWithLang, user?.role || 'farmer');
             setResponseMessage(aiResult);
             speakText(aiResult);
         } catch (err) {
-            const errReply = 'Sorry, could not process voice request. Please try again.';
+            const errReply = 'Could not process voice query. Please try again.';
             setResponseMessage(errReply);
             speakText(errReply);
         } finally {
@@ -221,7 +266,7 @@ export const VoiceAssistant = () => {
                     <div className="relative">
                         <Mic className="w-5 h-5 animate-pulse text-amber-300" />
                     </div>
-                    <span className="text-sm font-bold">Multilingual Voice AI 🎤</span>
+                    <span className="text-sm font-bold">Voice AI 🎤</span>
                 </button>
             ) : (
                 <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-80 sm:w-96 p-5 space-y-4 animate-in slide-in-from-bottom-5 duration-200">
@@ -235,7 +280,7 @@ export const VoiceAssistant = () => {
                                 <h3 className="font-extrabold text-sm text-gray-900 flex items-center gap-1">
                                     AgroVoice Multilingual <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-current" />
                                 </h3>
-                                <p className="text-[10px] text-gray-500 font-semibold">10+ Regional Indian Languages</p>
+                                <p className="text-[10px] text-gray-500 font-semibold">Native Speech Audio Synthesis</p>
                             </div>
                         </div>
                         <button 
@@ -247,11 +292,14 @@ export const VoiceAssistant = () => {
                     </div>
 
                     {/* Language Selector Dropdown */}
-                    <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-200">
+                    <div className="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
                         <Globe className="w-4 h-4 text-emerald-600 flex-shrink-0 ml-1" />
                         <select 
                             value={selectedLang} 
-                            onChange={(e) => setSelectedLang(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedLang(e.target.value);
+                                setResponseMessage(`Switched language to ${SUPPORTED_LANGUAGES.find(l => l.code === e.target.value)?.name}`);
+                            }}
                             className="w-full bg-transparent text-xs font-bold text-gray-800 focus:outline-none cursor-pointer"
                         >
                             {SUPPORTED_LANGUAGES.map(lang => (
@@ -291,12 +339,12 @@ export const VoiceAssistant = () => {
                         {isProcessing ? (
                             <div className="flex items-center gap-2 text-purple-700 font-semibold py-2">
                                 <Loader2 className="w-4 h-4 animate-spin" />
-                                <span>Processing query via Gemini AI...</span>
+                                <span>Processing command via Gemini AI...</span>
                             </div>
                         ) : (
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">Voice Response</span>
+                                    <span className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">Voice Audio Response</span>
                                     {isSpeaking && (
                                         <button onClick={stopSpeaking} className="text-red-500 font-bold flex items-center gap-1 text-[10px]">
                                             <Volume2 className="w-3 h-3 animate-bounce" /> Stop Audio
@@ -308,18 +356,18 @@ export const VoiceAssistant = () => {
                         )}
                     </div>
 
-                    {/* Quick Voice Command Tips */}
+                    {/* Quick Voice Command Buttons */}
                     <div className="space-y-1.5 pt-1">
-                        <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">Try Spoken Commands:</span>
+                        <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">Quick Voice Navigation:</span>
                         <div className="flex flex-wrap gap-1.5 text-[10px]">
                             <button onClick={() => handleVoiceCommand('Open Marketplace')} className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-2 py-1 rounded-md">
                                 🛒 "Marketplace"
                             </button>
-                            <button onClick={() => handleVoiceCommand('Tomato demand forecast')} className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-2 py-1 rounded-md">
-                                🍅 "Tomato Demand"
-                            </button>
                             <button onClick={() => handleVoiceCommand('Add produce')} className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-2 py-1 rounded-md">
                                 🌾 "Add Produce"
+                            </button>
+                            <button onClick={() => handleVoiceCommand('Open Dashboard')} className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-2 py-1 rounded-md">
+                                📊 "Dashboard"
                             </button>
                             <button onClick={() => handleVoiceCommand('Open Logistics Map')} className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-2 py-1 rounded-md">
                                 🗺️ "Open Map"
