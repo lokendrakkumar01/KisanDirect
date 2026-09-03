@@ -65,6 +65,42 @@ python main.py
 
 ---
 
+## 🛡️ How to Run & Test the Admin Portal on Localhost
+
+To test the **Platform Admin Portal** (DoCA Governance Dashboard):
+
+1. Make sure Frontend Client (`http://localhost:3000`) and Backend Server (`http://localhost:5000`) are running.
+2. Open your browser and go to:
+   **`http://localhost:3000/login`**
+3. Click the **🛡️ Platform Admin (DoCA Governance)** button in the SIH Demo Mode panel, or enter:
+   - **Email:** `admin@demo.com`
+   - **Password:** `demo123`
+4. Click **Sign in**. You will automatically be navigated to the Admin Portal at:
+   **`http://localhost:3000/admin/dashboard`**
+
+### Key Admin Options Available to Test:
+- **`http://localhost:3000/admin/dashboard`** — Platform KPI Cards, Order & Trade Volume Charts, Growth Trends.
+- **`http://localhost:3000/admin/users`** — User Directory with Role Filter Tabs (Farmers, FPOs, Consumers, Buyers), Live Search, and **Account Verification Action**.
+- **`http://localhost:3000/admin/orders`** — All Platform Orders with Status Filter & Live Status Update Dropdowns.
+- **`http://localhost:3000/admin/analytics`** — Price Realization & Supply-Demand Gap Charts.
+- **`http://localhost:3000/admin/complaints`** — Support Desk with Ticket Resolution Modal.
+- **`http://localhost:3000/admin/impact`** — Platform Socio-Economic & Carbon Savings Impact Dashboard.
+
+---
+
+## 👥 Demo Login Credentials (All Passwords: `demo123`)
+
+| Role | Localhost Login Link | Demo Email | Password |
+| :--- | :--- | :--- | :--- |
+| 🛡️ **Platform Admin** | `http://localhost:3000/login` | `admin@demo.com` | `demo123` |
+| 🌾 **Farmer** | `http://localhost:3000/login` | `farmer@demo.com` | `demo123` |
+| 🏭 **FPO** | `http://localhost:3000/login` | `fpo@demo.com` | `demo123` |
+| 🏢 **Bulk Buyer** | `http://localhost:3000/login` | `buyer@demo.com` | `demo123` |
+| 🛒 **Consumer** | `http://localhost:3000/login` | `consumer@demo.com` | `demo123` |
+| 🚛 **Logistics Operator** | `http://localhost:3000/login` | `logistics@demo.com` | `demo123` |
+
+---
+
 ## 🌐 Localhost Port Summary
 
 | Microservice | Port | URL | Description |
@@ -83,19 +119,6 @@ MONGODB_URI=mongodb+srv://lokendrakuma9568_db_user:zkOWnoDmc3QOIIjJ@cluster0.mji
 JWT_SECRET=agroconnect-super-secret-jwt-key-2026
 PORT=5000
 ```
-
----
-
-## 👥 Demo Login Credentials (All Passwords: `demo123`)
-
-| Role | Demo Email | Password |
-| :--- | :--- | :--- |
-| 🌾 **Farmer** | `farmer@demo.com` (or `ramesh.patil@example.com`) | `demo123` |
-| 🏭 **FPO** | `fpo@demo.com` (or `nashikfresh@example.com`) | `demo123` |
-| 🛒 **Consumer** | `consumer@demo.com` (or `priya.consumer@example.com`) | `demo123` |
-| 🏢 **Bulk Buyer** | `buyer@demo.com` (or `punefresh@example.com`) | `demo123` |
-| 🚛 **Logistics Operator** | `logistics@demo.com` | `demo123` |
-| 🛡️ **Platform Admin** | `admin@demo.com` | `demo123` |
 
 ---
 
