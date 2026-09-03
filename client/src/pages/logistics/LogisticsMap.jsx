@@ -1,36 +1,84 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
-import { Map as MapIcon, Filter } from 'lucide-react';
-export default function LogisticsMap() {
-    return (<div className="h-[calc(100vh-8rem)] flex flex-col space-y-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800">Live Logistics Map</h1>
-        <div className="flex items-center gap-2 bg-white p-2 rounded-lg shadow-sm border">
-          <Filter className="w-4 h-4 text-gray-500"/>
-          <label className="text-sm flex items-center gap-1"><input type="checkbox" defaultChecked/> Farmers</label>
-          <label className="text-sm flex items-center gap-1"><input type="checkbox" defaultChecked/> Buyers</label>
-          <label className="text-sm flex items-center gap-1"><input type="checkbox" defaultChecked/> Vehicles</label>
-        </div>
-      </div>
+import { Filter } from 'lucide-react';
+import MapView from '../../components/map/MapView';
 
-      <Card className="flex-1 overflow-hidden">
-        <div className="h-full relative bg-gray-100 flex flex-col items-center justify-center">
-          <Badge variant="warning" className="absolute top-4 right-4 z-10 shadow-md">Prototype Simulation</Badge>
-          <div className="absolute bottom-4 left-4 z-10 bg-white p-3 rounded-lg shadow-md border text-xs space-y-2">
-             <div className="font-semibold mb-1">Legend</div>
-             <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-green-500"></div> Farmer / Pickup</div>
-             <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-orange-500"></div> Buyer / Destination</div>
-             <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-purple-500"></div> Active Vehicle</div>
-          </div>
-          
-          <div className="text-center text-gray-500">
-            <MapIcon className="w-16 h-16 mx-auto mb-2 opacity-30"/>
-            <p className="text-lg">MapView Component</p>
-            <p className="text-sm">Centers on Maharashtra region</p>
-          </div>
-          {/* <MapView center={[19.0760, 72.8777]} zoom={7} /> */}
+export default function LogisticsMap() {
+    const [showFarmers, setShowFarmers] = useState(true);
+    const [showBuyers, setShowBuyers] = useState(true);
+    const [showVehicles, setShowVehicles] = useState(true);
+
+    const ALL_MARKERS = [
+        { id: 'm1', title: 'Ramesh Patil Farm', name: 'Ramesh Patil Farm', type: 'farmer', location: { lat: 20.0059, lng: 73.7898, city: 'Nashik', state: 'Maharashtra' }, description: 'Fresh Red Tomatoes (500 KG)' },
+        { id: 'm2', title: 'Sunil Shinde Orchard', name: 'Sunil Shinde Orchard', type: 'farmer', location: { lat: 20.0825, lng: 74.1086, city: 'Niphad', state: 'Maharashtra' }, description: 'Seedless Grapes (200 KG)' },
+        { id: 'm3', title: 'Nashik Fresh Farmers FPO', name: 'Nashik Fresh Farmers FPO', type: 'fpo', location: { lat: 20.1582, lng: 73.9922, city: 'Pimpalgaon', state: 'Maharashtra' }, description: 'Export Red Onions (5000 KG)' },
+        { id: 'm4', title: 'Pune Fresh Restaurant', name: 'Pune Fresh Restaurant', type: 'buyer', location: { lat: 18.5204, lng: 73.8567, city: 'Pune', state: 'Maharashtra' }, description: 'Bulk Buyer (Tomato & Onion)' },
+        { id: 'm5', title: 'Mumbai Grand Hotel', name: 'Mumbai Grand Hotel', type: 'buyer', location: { lat: 19.0760, lng: 72.8777, city: 'Mumbai', state: 'Maharashtra' }, description: 'Bulk Buyer (Mango & Vegetables)' },
+        { id: 'm6', title: 'Logistics Truck MH-15-AB-1234', name: 'Speedy Transport 1', type: 'vehicle', location: { lat: 19.8456, lng: 73.9482, city: 'Sinnar', state: 'Maharashtra' }, description: 'In Transit to Pune' }
+    ];
+
+    const activeMarkers = ALL_MARKERS.filter(m => {
+        if (m.type === 'farmer' || m.type === 'fpo') return showFarmers;
+        if (m.type === 'buyer') return showBuyers;
+        if (m.type === 'vehicle') return showVehicles;
+        return true;
+    });
+
+    return (
+        <div className="h-[calc(100vh-8rem)] flex flex-col space-y-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-800">Live Logistics Google Map</h1>
+                    <p className="text-sm text-gray-500">Google Maps Platform powered real-time agricultural supply chain tracking</p>
+                </div>
+                <div className="flex items-center gap-4 bg-white p-2.5 rounded-lg shadow-sm border text-xs font-semibold">
+                    <div className="flex items-center gap-1 text-gray-600">
+                        <Filter className="w-4 h-4 text-gray-500"/> Layers:
+                    </div>
+                    <label className="flex items-center gap-1.5 cursor-pointer text-gray-800">
+                        <input 
+                            type="checkbox" 
+                            checked={showFarmers} 
+                            onChange={(e) => setShowFarmers(e.target.checked)}
+                            className="rounded text-green-600 focus:ring-green-500" 
+                        /> 
+                        <span className="w-2.5 h-2.5 rounded-full bg-green-600"></span> Farmers &amp; FPOs
+                    </label>
+                    <label className="flex items-center gap-1.5 cursor-pointer text-gray-800">
+                        <input 
+                            type="checkbox" 
+                            checked={showBuyers} 
+                            onChange={(e) => setShowBuyers(e.target.checked)}
+                            className="rounded text-green-600 focus:ring-green-500" 
+                        /> 
+                        <span className="w-2.5 h-2.5 rounded-full bg-orange-600"></span> Bulk Buyers
+                    </label>
+                    <label className="flex items-center gap-1.5 cursor-pointer text-gray-800">
+                        <input 
+                            type="checkbox" 
+                            checked={showVehicles} 
+                            onChange={(e) => setShowVehicles(e.target.checked)}
+                            className="rounded text-green-600 focus:ring-green-500" 
+                        /> 
+                        <span className="w-2.5 h-2.5 rounded-full bg-purple-600"></span> Active Vehicles
+                    </label>
+                </div>
+            </div>
+
+            <Card className="flex-1 overflow-hidden p-0 relative border-gray-200">
+                <div className="h-full relative">
+                    <Badge variant="primary" className="absolute top-4 right-4 z-10 shadow-md bg-white text-gray-800 border font-bold">
+                        Google Maps API Enabled 🗺️
+                    </Badge>
+                    <MapView 
+                        center={{ lat: 19.8760, lng: 73.8777 }} 
+                        zoom={8} 
+                        markers={activeMarkers} 
+                        className="h-full rounded-none" 
+                    />
+                </div>
+            </Card>
         </div>
-      </Card>
-    </div>);
+    );
 }
