@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { GeminiAiWidget } from '../ui/GeminiAiWidget';
+import { VoiceAssistant } from '../ui/VoiceAssistant';
 
 export const DashboardLayout = ({ children }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -16,8 +17,10 @@ export const DashboardLayout = ({ children }) => {
                     </div>
                 </main>
             </div>
-            {/* Gemini AI Floating Assistant */}
+            {/* Gemini AI Floating Assistant (Bottom Right) */}
             <GeminiAiWidget />
+            {/* AgroVoice AI Voice Assistant (Bottom Left) */}
+            <VoiceAssistant />
         </div>
     );
 };
