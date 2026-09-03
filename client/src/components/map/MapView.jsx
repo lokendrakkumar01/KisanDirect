@@ -1,10 +1,38 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useGoogleMapScript } from '../../utils/useGoogleMap';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 
 const DEFAULT_CENTER = { lat: 19.9975, lng: 73.7898 }; // Nashik, Maharashtra
 
+// Fix Leaflet default icon URLs
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+const createLeafletIcon = (color) => {
+    return new L.Icon({
+        iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+};
+
+const leafletIcons = {
+    farmer: createLeafletIcon('green'),
+    fpo: createLeafletIcon('blue'),
+    buyer: createLeafletIcon('orange'),
+    vehicle: createLeafletIcon('violet')
+};
+
 const getMarkerIconSvg = (color) => {
-    // Custom SVG marker pin
     const fillHex = color === 'green' ? '#16A34A' : color === 'blue' ? '#2563EB' : color === 'orange' ? '#EA580C' : '#9333EA';
     return `data:image/svg+xml;utf8,${encodeURIComponent(`
         <svg width="34" height="42" viewBox="0 0 34 42" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -18,109 +46,145 @@ export const MapView = ({
     center = DEFAULT_CENTER, 
     zoom = 8, 
     markers = [], 
-    className = 'h-96' 
+    className = 'h-96 min-h-[400px]' 
 }) => {
     const { isLoaded, loadError } = useGoogleMapScript();
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
     const googleMarkersRef = useRef([]);
+    const [useFallback, setUseFallback] = useState(false);
 
     useEffect(() => {
+        if (loadError) {
+            setUseFallback(true);
+            return;
+        }
+
+        // Timer fallback if Google Maps takes too long or fails in background
+        const timeoutId = setTimeout(() => {
+            if (!window.google || !window.google.maps) {
+                setUseFallback(true);
+            }
+        }, 3000);
+
         if (!isLoaded || !mapRef.current) return;
 
-        const initialCenter = Array.isArray(center) 
-            ? { lat: center[0], lng: center[1] } 
-            : center;
+        try {
+            const initialCenter = Array.isArray(center) 
+                ? { lat: Number(center[0]), lng: Number(center[1]) } 
+                : { lat: Number(center.lat), lng: Number(center.lng) };
 
-        if (!mapInstanceRef.current) {
-            mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
-                center: initialCenter,
-                zoom: zoom,
-                mapTypeId: 'roadmap',
-                streetViewControl: false,
-                mapTypeControl: true,
-                fullscreenControl: true,
-                zoomControl: true,
-                styles: [
-                    { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] }
-                ]
-            });
-        } else {
-            mapInstanceRef.current.setCenter(initialCenter);
-            mapInstanceRef.current.setZoom(zoom);
-        }
-
-        // Clear existing markers
-        googleMarkersRef.current.forEach(m => m.setMap(null));
-        googleMarkersRef.current = [];
-
-        // Add Markers
-        if (markers && markers.length > 0) {
-            const bounds = new window.google.maps.LatLngBounds();
-
-            markers.forEach((item) => {
-                const lat = item.location?.lat || item.lat;
-                const lng = item.location?.lng || item.lng;
-                if (!lat || !lng) return;
-
-                const pos = { lat: Number(lat), lng: Number(lng) };
-                bounds.extend(pos);
-
-                const color = item.type === 'farmer' ? 'green' : item.type === 'fpo' ? 'blue' : item.type === 'buyer' ? 'orange' : 'purple';
-
-                const marker = new window.google.maps.Marker({
-                    position: pos,
-                    map: mapInstanceRef.current,
-                    title: item.title || item.name || 'Location',
-                    icon: {
-                        url: getMarkerIconSvg(color),
-                        scaledSize: new window.google.maps.Size(32, 40),
-                        anchor: new window.google.maps.Point(16, 40)
-                    }
+            if (!mapInstanceRef.current) {
+                mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
+                    center: initialCenter,
+                    zoom: zoom,
+                    mapTypeId: 'roadmap',
+                    streetViewControl: false,
+                    mapTypeControl: true,
+                    fullscreenControl: true,
+                    zoomControl: true,
+                    styles: [
+                        { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] }
+                    ]
                 });
-
-                const infoContent = `
-                    <div style="padding: 6px; font-family: sans-serif; max-width: 200px;">
-                        <h4 style="margin:0 0 4px 0; font-weight:bold; font-size:14px; color:#111827;">${item.title || item.name || 'AgroConnect Hub'}</h4>
-                        <p style="margin:0; font-size:12px; color:#4B5563; text-transform:capitalize;">Role: ${item.type || 'Farmer'}</p>
-                        ${item.description ? `<p style="margin:4px 0 0 0; font-size:12px; color:#6B7280;">${item.description}</p>` : ''}
-                        <p style="margin:6px 0 0 0; font-size:11px; color:#9CA3AF;">${item.location?.city || 'Maharashtra'}, ${item.location?.state || 'India'}</p>
-                    </div>
-                `;
-
-                const infoWindow = new window.google.maps.InfoWindow({ content: infoContent });
-                marker.addListener('click', () => {
-                    infoWindow.open(mapInstanceRef.current, marker);
-                });
-
-                googleMarkersRef.current.push(marker);
-            });
-
-            if (markers.length > 1) {
-                mapInstanceRef.current.fitBounds(bounds);
+            } else {
+                mapInstanceRef.current.setCenter(initialCenter);
+                mapInstanceRef.current.setZoom(zoom);
             }
-        }
-    }, [isLoaded, center, zoom, markers]);
 
-    if (loadError) {
+            // Clear existing markers
+            googleMarkersRef.current.forEach(m => m.setMap(null));
+            googleMarkersRef.current = [];
+
+            // Add Markers
+            if (markers && markers.length > 0) {
+                const bounds = new window.google.maps.LatLngBounds();
+
+                markers.forEach((item) => {
+                    const lat = item.location?.lat || item.lat;
+                    const lng = item.location?.lng || item.lng;
+                    if (!lat || !lng) return;
+
+                    const pos = { lat: Number(lat), lng: Number(lng) };
+                    bounds.extend(pos);
+
+                    const color = item.type === 'farmer' ? 'green' : item.type === 'fpo' ? 'blue' : item.type === 'buyer' ? 'orange' : 'purple';
+
+                    const marker = new window.google.maps.Marker({
+                        position: pos,
+                        map: mapInstanceRef.current,
+                        title: item.title || item.name || 'Location',
+                        icon: {
+                            url: getMarkerIconSvg(color),
+                            scaledSize: new window.google.maps.Size(32, 40),
+                            anchor: new window.google.maps.Point(16, 40)
+                        }
+                    });
+
+                    const infoContent = `
+                        <div style="padding: 6px; font-family: sans-serif; max-width: 200px;">
+                            <h4 style="margin:0 0 4px 0; font-weight:bold; font-size:14px; color:#111827;">${item.title || item.name || 'AgroConnect Hub'}</h4>
+                            <p style="margin:0; font-size:12px; color:#4B5563; text-transform:capitalize;">Role: ${item.type || 'Farmer'}</p>
+                            ${item.description ? `<p style="margin:4px 0 0 0; font-size:12px; color:#6B7280;">${item.description}</p>` : ''}
+                            <p style="margin:6px 0 0 0; font-size:11px; color:#9CA3AF;">${item.location?.city || 'Maharashtra'}, ${item.location?.state || 'India'}</p>
+                        </div>
+                    `;
+
+                    const infoWindow = new window.google.maps.InfoWindow({ content: infoContent });
+                    marker.addListener('click', () => {
+                        infoWindow.open(mapInstanceRef.current, marker);
+                    });
+
+                    googleMarkersRef.current.push(marker);
+                });
+
+                if (markers.length > 1) {
+                    mapInstanceRef.current.fitBounds(bounds);
+                }
+            }
+            clearTimeout(timeoutId);
+        } catch (err) {
+            console.error('Google Maps init error, using fallback:', err);
+            setUseFallback(true);
+        }
+    }, [isLoaded, loadError, center, zoom, markers]);
+
+    const leafletCenter = Array.isArray(center) ? center : [center.lat || 19.9975, center.lng || 73.7898];
+
+    if (useFallback) {
         return (
-            <div className={`w-full rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center p-6 text-center text-gray-500 ${className}`}>
-                <div>
-                    <p className="font-bold text-gray-800">Google Maps Error</p>
-                    <p className="text-xs">Failed to load Google Maps script. Check API key.</p>
-                </div>
+            <div className={`w-full rounded-xl overflow-hidden border border-gray-200 relative min-h-[450px] ${className}`}>
+                <MapContainer center={leafletCenter} zoom={zoom} style={{ height: '100%', width: '100%', minHeight: '450px' }}>
+                    <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                    {markers.map((item, idx) => {
+                        const lat = item.location?.lat || item.lat || 19.9975;
+                        const lng = item.location?.lng || item.lng || 73.7898;
+                        const icon = leafletIcons[item.type] || leafletIcons.farmer;
+                        return (
+                            <Marker key={item.id || idx} position={[Number(lat), Number(lng)]} icon={icon}>
+                                <Popup>
+                                    <div className="font-sans text-xs">
+                                        <h4 className="font-bold text-gray-900 text-sm">{item.title || item.name}</h4>
+                                        <p className="text-gray-600 capitalize">Type: {item.type}</p>
+                                        {item.description && <p className="mt-1">{item.description}</p>}
+                                    </div>
+                                </Popup>
+                            </Marker>
+                        );
+                    })}
+                </MapContainer>
             </div>
         );
     }
 
     return (
-        <div className={`w-full rounded-xl overflow-hidden border border-gray-200 relative ${className}`}>
+        <div className={`w-full rounded-xl overflow-hidden border border-gray-200 relative min-h-[450px] ${className}`}>
             {!isLoaded && (
                 <div className="absolute inset-0 bg-gray-100 flex items-center justify-center text-sm font-semibold text-gray-500 z-10">
-                    Loading Google Maps (API Powered)...
+                    Loading Interactive Map...
                 </div>
             )}
-            <div ref={mapRef} className="w-full h-full" />
+            <div ref={mapRef} className="w-full h-full min-h-[450px]" />
         </div>
     );
 };

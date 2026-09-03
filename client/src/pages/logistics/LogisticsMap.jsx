@@ -26,13 +26,13 @@ export default function LogisticsMap() {
     });
 
     return (
-        <div className="h-[calc(100vh-8rem)] flex flex-col space-y-4">
+        <div className="space-y-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Live Logistics Google Map</h1>
-                    <p className="text-sm text-gray-500">Google Maps Platform powered real-time agricultural supply chain tracking</p>
+                    <h1 className="text-2xl font-bold text-gray-800">Live Logistics Map</h1>
+                    <p className="text-sm text-gray-500">Real-time agricultural supply chain tracking across Maharashtra</p>
                 </div>
-                <div className="flex items-center gap-4 bg-white p-2.5 rounded-lg shadow-sm border text-xs font-semibold">
+                <div className="flex flex-wrap items-center gap-3 bg-white p-2.5 rounded-lg shadow-sm border text-xs font-semibold">
                     <div className="flex items-center gap-1 text-gray-600">
                         <Filter className="w-4 h-4 text-gray-500"/> Layers:
                     </div>
@@ -66,8 +66,8 @@ export default function LogisticsMap() {
                 </div>
             </div>
 
-            <Card className="flex-1 overflow-hidden p-0 relative border-gray-200">
-                <div className="h-full relative">
+            <Card className="p-0 overflow-hidden relative border-gray-200 min-h-[500px]">
+                <div className="w-full h-full min-h-[500px] relative">
                     <Badge variant="primary" className="absolute top-4 right-4 z-10 shadow-md bg-white text-gray-800 border font-bold">
                         Google Maps API Enabled 🗺️
                     </Badge>
@@ -75,7 +75,7 @@ export default function LogisticsMap() {
                         center={{ lat: 19.8760, lng: 73.8777 }} 
                         zoom={8} 
                         markers={activeMarkers} 
-                        className="h-full rounded-none" 
+                        className="w-full h-full min-h-[500px] rounded-none" 
                     />
                 </div>
             </Card>
