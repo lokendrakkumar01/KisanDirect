@@ -6,7 +6,7 @@ import L from 'leaflet';
 
 const DEFAULT_CENTER = { lat: 19.9975, lng: 73.7898 }; // Nashik, Maharashtra
 
-// Fix Leaflet default icon URLs
+// Fix Leaflet default icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -55,24 +55,25 @@ export const MapView = ({
     const [useFallback, setUseFallback] = useState(false);
 
     useEffect(() => {
+        // Global Google Maps Auth Failure listener to suppress grey error box
+        window.gm_authFailure = () => {
+            console.warn('Google Maps API auth notice, switching to crisp Leaflet map');
+            setUseFallback(true);
+        };
+    }, []);
+
+    useEffect(() => {
         if (loadError) {
             setUseFallback(true);
             return;
         }
-
-        // Timer fallback if Google Maps takes too long or fails in background
-        const timeoutId = setTimeout(() => {
-            if (!window.google || !window.google.maps) {
-                setUseFallback(true);
-            }
-        }, 3000);
 
         if (!isLoaded || !mapRef.current) return;
 
         try {
             const initialCenter = Array.isArray(center) 
                 ? { lat: Number(center[0]), lng: Number(center[1]) } 
-                : { lat: Number(center.lat), lng: Number(center.lng) };
+                : { lat: Number(center.lat || 19.9975), lng: Number(center.lng || 73.7898) };
 
             if (!mapInstanceRef.current) {
                 mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
@@ -92,11 +93,9 @@ export const MapView = ({
                 mapInstanceRef.current.setZoom(zoom);
             }
 
-            // Clear existing markers
             googleMarkersRef.current.forEach(m => m.setMap(null));
             googleMarkersRef.current = [];
 
-            // Add Markers
             if (markers && markers.length > 0) {
                 const bounds = new window.google.maps.LatLngBounds();
 
@@ -142,9 +141,7 @@ export const MapView = ({
                     mapInstanceRef.current.fitBounds(bounds);
                 }
             }
-            clearTimeout(timeoutId);
         } catch (err) {
-            console.error('Google Maps init error, using fallback:', err);
             setUseFallback(true);
         }
     }, [isLoaded, loadError, center, zoom, markers]);

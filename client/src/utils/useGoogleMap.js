@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyCHgk1CcahOfXyoQJKKOAQr';
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 export const useGoogleMapScript = () => {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -28,9 +28,6 @@ export const useGoogleMapScript = () => {
         script.onerror = (err) => setLoadError(err);
         document.head.appendChild(script);
 
-        return () => {
-            // keep script tag for reuse
-        };
     }, []);
 
     return { isLoaded, loadError };
