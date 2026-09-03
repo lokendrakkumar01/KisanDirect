@@ -41,27 +41,37 @@ export const AuthProvider = ({ children }) => {
         loadUser();
     }, [token]);
     const login = async (data) => {
-        const response = await apiLogin(data);
-        if (response.success && response.data) {
-            setToken(response.data.token);
-            setUser(response.data.user);
-            localStorage.setItem('token', response.data.token);
-            return response.data.user;
-        }
-        else {
-            throw new Error(response.error || 'Login failed');
+        try {
+            const response = await apiLogin(data);
+            if (response.success && response.data) {
+                setToken(response.data.token);
+                setUser(response.data.user);
+                localStorage.setItem('token', response.data.token);
+                return response.data.user;
+            }
+            else {
+                throw new Error(response.error || 'Login failed');
+            }
+        } catch (err) {
+            const message = err.response?.data?.error || err.message || 'Login failed';
+            throw new Error(message);
         }
     };
     const register = async (data) => {
-        const response = await apiRegister(data);
-        if (response.success && response.data) {
-            setToken(response.data.token);
-            setUser(response.data.user);
-            localStorage.setItem('token', response.data.token);
-            return response.data.user;
-        }
-        else {
-            throw new Error(response.error || 'Registration failed');
+        try {
+            const response = await apiRegister(data);
+            if (response.success && response.data) {
+                setToken(response.data.token);
+                setUser(response.data.user);
+                localStorage.setItem('token', response.data.token);
+                return response.data.user;
+            }
+            else {
+                throw new Error(response.error || 'Registration failed');
+            }
+        } catch (err) {
+            const message = err.response?.data?.error || err.message || 'Registration failed';
+            throw new Error(message);
         }
     };
     const logout = () => {
