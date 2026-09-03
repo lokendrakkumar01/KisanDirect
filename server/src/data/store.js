@@ -24,6 +24,14 @@ class DataStore {
         this.userPasswords[user.email] = passwordHash;
         return user;
     }
+    updateUserRole(id, role) {
+        const user = this.getUserById(id);
+        if (user) {
+            user.role = role;
+            return user;
+        }
+        return null;
+    }
     // Listings
     getListings() { return this.listings; }
     getListingById(id) { return this.listings.find(l => l.id === id); }
