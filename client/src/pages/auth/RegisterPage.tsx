@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, Lock, Sprout, Store, UserCheck, ShieldAlert, Users } from 'lucide-react';
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { Button } from '../../components/ui/Button';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth, getRoleDashboardPath } from '../../contexts/AuthContext';
 import { UserRole } from '../../types';
 
 export const RegisterPage: React.FC = () => {
@@ -37,14 +37,14 @@ export const RegisterPage: React.FC = () => {
     setIsLoading(true);
     
     try {
-      await register({
+      const newUser = await register({
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         password: formData.password,
         role: role
       });
-      navigate('/dashboard'); // Route handler will redirect based on role
+      navigate(getRoleDashboardPath(newUser.role));
     } catch (err: any) {
       setError(err.message || 'Failed to register. Please try again.');
     } finally {

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Shield, UserCheck, Sprout, Store, Truck, ShieldAlert, Users } from 'lucide-react';
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { Button } from '../../components/ui/Button';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth, getRoleDashboardPath } from '../../contexts/AuthContext';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -19,8 +19,8 @@ export const LoginPage: React.FC = () => {
     setIsLoading(true);
     
     try {
-      await login({ email, password });
-      navigate('/dashboard'); // Common dashboard path, internally resolves based on role
+      const loggedUser = await login({ email, password });
+      navigate(getRoleDashboardPath(loggedUser.role));
     } catch (err: any) {
       setError(err.message || 'Failed to login. Please check your credentials.');
     } finally {

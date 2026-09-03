@@ -3,13 +3,25 @@ import { User, LoginRequest, RegisterRequest } from '../types';
 import { login as apiLogin, register as apiRegister, getMe } from '../services/authService';
 import api from '../services/api';
 
+export const getRoleDashboardPath = (role?: string): string => {
+  switch (role) {
+    case 'farmer': return '/farmer/dashboard';
+    case 'fpo': return '/fpo/dashboard';
+    case 'consumer': return '/consumer/dashboard';
+    case 'bulk_buyer': return '/buyer/dashboard';
+    case 'logistics': return '/logistics/dashboard';
+    case 'admin': return '/admin/dashboard';
+    default: return '/farmer/dashboard';
+  }
+};
+
 interface AuthContextType {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (data: LoginRequest) => Promise<void>;
-  register: (data: RegisterRequest) => Promise<void>;
+  login: (data: LoginRequest) => Promise<User>;
+  register: (data: RegisterRequest) => Promise<User>;
   logout: () => void;
 }
 
@@ -42,23 +54,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     loadUser();
   }, [token]);
 
-  const login = async (data: LoginRequest) => {
+  const login = async (data: LoginRequest): Promise<User> => {
     const response = await apiLogin(data);
     if (response.success && response.data) {
       setToken(response.data.token);
       setUser(response.data.user);
       localStorage.setItem('token', response.data.token);
+      return response.data.user;
     } else {
       throw new Error(response.error || 'Login failed');
     }
   };
 
-  const register = async (data: RegisterRequest) => {
+  const register = async (data: RegisterRequest): Promise<User> => {
     const response = await apiRegister(data);
     if (response.success && response.data) {
       setToken(response.data.token);
       setUser(response.data.user);
       localStorage.setItem('token', response.data.token);
+      return response.data.user;
     } else {
       throw new Error(response.error || 'Registration failed');
     }

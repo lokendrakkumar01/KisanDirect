@@ -1,9 +1,10 @@
 import React, { Suspense } from 'react';
-import { Routes, Route, Outlet } from 'react-router-dom';
+import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
 import { PublicLayout } from '../components/layout/PublicLayout';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { LoadingPage } from '../components/ui/LoadingSpinner';
+import { useAuth, getRoleDashboardPath } from '../contexts/AuthContext';
 
 // Public & Auth Pages
 import { LandingPage } from '../pages/public/LandingPage';
@@ -76,10 +77,18 @@ const DashboardLayoutWrapper = () => (
   </DashboardLayout>
 );
 
+const DashboardRedirect = () => {
+  const { user } = useAuth();
+  return <Navigate to={getRoleDashboardPath(user?.role)} replace />;
+};
+
 export const AppRouter: React.FC = () => {
   return (
     <Suspense fallback={<LoadingPage />}>
       <Routes>
+        {/* Dashboard Redirect */}
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardRedirect /></ProtectedRoute>} />
+
         {/* Public Routes */}
         <Route element={<PublicLayoutWrapper />}>
           <Route path="/" element={<LandingPage />} />
