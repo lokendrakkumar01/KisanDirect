@@ -3,9 +3,14 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Filter, MapPin, Star, ShieldCheck, ShoppingCart, CheckCircle } from 'lucide-react';
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { useCart } from '../../contexts/CartContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { Lock } from 'lucide-react';
 import api from '../../services/api';
 
 export const MarketplacePage = () => {
+    const { isAuthenticated, user } = useAuth();
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const initialQuery = searchParams.get('q') || searchParams.get('search') || '';
 
@@ -105,9 +110,16 @@ export const MarketplacePage = () => {
     const handleAddToCart = (e, listing) => {
         e.preventDefault();
         e.stopPropagation();
-        addToCart(listing, listing.minOrderQuantity || 1);
-        setToastMsg(`Added "${listing.productName}" (${listing.minOrderQuantity || 1} ${listing.unit}) to Cart!`);
-        setTimeout(() => setToastMsg(''), 3500);
+        if (!isAuthenticated) {
+            setToastMsg(`🔐 Please Login or Register first to add "${listing.productName}" to cart!`);
+            setTimeout(() => {
+                navigate('/login');
+            }, 1200);
+        } else {
+            addToCart(listing, listing.minOrderQuantity || 1);
+            setToastMsg(`Added "${listing.productName}" (${listing.minOrderQuantity || 1} ${listing.unit}) to Cart!`);
+            setTimeout(() => setToastMsg(''), 3500);
+        }
     };
 
     const filteredListings = listings.filter(item => {
@@ -151,6 +163,23 @@ export const MarketplacePage = () => {
             <div className="bg-gray-50 min-h-screen py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
+                    {!isAuthenticated && (
+                        <div className="bg-gradient-to-r from-amber-600 via-amber-700 to-emerald-900 text-white p-4 rounded-2xl mb-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-3">
+                            <div className="flex items-center gap-2.5 text-xs sm:text-sm font-bold">
+                                <Lock className="w-5 h-5 text-amber-300 flex-shrink-0" />
+                                <span>You are viewing in Guest Mode. Please Login or Register to complete produce purchases and contact verified farmers!</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Link to="/login" className="bg-white text-emerald-950 hover:bg-gray-100 font-extrabold text-xs px-4 py-2 rounded-xl transition shadow-xs">
+                                    Login
+                                </Link>
+                                <Link to="/register" className="bg-amber-400 text-emerald-950 hover:bg-amber-300 font-extrabold text-xs px-4 py-2 rounded-xl transition shadow-xs">
+                                    Register
+                                </Link>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Header & Search Bar */}
                     <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                         <div>

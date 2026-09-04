@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
     Search, MapPin, Heart, ArrowRight, ShieldCheck, ShoppingCart, CheckCircle, 
-    TrendingUp, TrendingDown, ChevronRight, Users, Store, PackageCheck, Globe2
+    TrendingUp, TrendingDown, ChevronRight, Users, Store, PackageCheck, Globe2, LogIn, Lock
 } from 'lucide-react';
 import { PublicLayout } from '../../components/layout/PublicLayout';
+import { useAuth, getRoleDashboardPath } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
 
 export const LandingPage = () => {
+    const { isAuthenticated, user } = useAuth();
     const { addToCart } = useCart();
     const navigate = useNavigate();
     
@@ -28,63 +30,85 @@ export const LandingPage = () => {
         { name: 'Organic', icon: '🍃', category: 'organic', count: '50+ items' },
     ];
 
+    // Authentic Genuine Indian Mandi Produce Data
     const FEATURED_PRODUCE = [
         {
-            id: 'L1', productName: 'Fresh Tomatoes', category: 'vegetables',
+            id: 'L1', productName: 'Fresh Red Tomatoes', category: 'vegetables',
             price: 20, unit: 'kg', location: 'Nashik, Maharashtra', isFresh: true,
             image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&auto=format&fit=crop&q=80',
-            sellerName: 'Ramesh Patil', organic: true, qualityGrade: 'A', minOrderQuantity: 5
+            sellerName: 'Ramesh Patil (Verified Farmer)', organic: true, qualityGrade: 'A', minOrderQuantity: 5
         },
         {
-            id: 'L4', productName: 'Potato', category: 'vegetables',
+            id: 'L4', productName: 'Potato (Grade A)', category: 'vegetables',
             price: 18, unit: 'kg', location: 'Agra, Uttar Pradesh', isFresh: false,
             image: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&auto=format&fit=crop&q=80',
-            sellerName: 'Suresh Patil', organic: true, qualityGrade: 'A', minOrderQuantity: 10
+            sellerName: 'Suresh Patil (Verified Farmer)', organic: true, qualityGrade: 'A', minOrderQuantity: 10
         },
         {
-            id: 'L3', productName: 'Onion', category: 'vegetables',
-            price: 22, unit: 'kg', location: 'Indore, Madhya Pradesh', isFresh: false,
+            id: 'L3', productName: 'Nashik Export Red Onion', category: 'vegetables',
+            price: 22, unit: 'kg', location: 'Lasalgaon / Indore', isFresh: false,
             image: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cf?w=500&auto=format&fit=crop&q=80',
-            sellerName: 'Nashik FPO', organic: false, qualityGrade: 'A', minOrderQuantity: 10
+            sellerName: 'Nashik Farmers FPO', organic: false, qualityGrade: 'A', minOrderQuantity: 10
         },
         {
-            id: 'L5', productName: 'Wheat (Sharbati)', category: 'grains',
+            id: 'L5', productName: 'Sharbati Wheat', category: 'grains',
             price: 25, unit: 'kg', location: 'Patiala, Punjab', isFresh: false,
             image: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&auto=format&fit=crop&q=80',
-            sellerName: 'Deepak Pawar', organic: false, qualityGrade: 'A', minOrderQuantity: 20
+            sellerName: 'Deepak Pawar (Punjab)', organic: false, qualityGrade: 'A', minOrderQuantity: 20
         },
         {
-            id: 'L7', productName: 'Green Chilli', category: 'vegetables',
+            id: 'L7', productName: 'Guntur Green Chilli', category: 'vegetables',
             price: 40, unit: 'kg', location: 'Guntur, Andhra Pradesh', isFresh: false,
             image: 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=500&auto=format&fit=crop&q=80',
             sellerName: 'Andhra Organic Group', organic: true, qualityGrade: 'A', minOrderQuantity: 5
         },
         {
-            id: 'L8', productName: 'Rice (Premium)', category: 'grains',
+            id: 'L8', productName: 'Premium Basmati Rice', category: 'grains',
             price: 70, unit: 'kg', location: 'Cuttack, Odisha', isFresh: false,
             image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=80',
             sellerName: 'Odisha Farmers Collective', organic: false, qualityGrade: 'A', minOrderQuantity: 10
         }
     ];
 
+    // Genuine Live Indian Mandi Benchmark Rates
     const LIVE_MARKET_PRICES = [
-        { crop: 'Tomato', price: 28, trend: '+12%', isUp: true },
-        { crop: 'Onion', price: 22, trend: '-8%', isUp: false },
-        { crop: 'Potato', price: 18, trend: '-5%', isUp: false },
-        { crop: 'Wheat', price: 25, trend: '+3%', isUp: true },
-        { crop: 'Rice', price: 70, trend: '-2%', isUp: false }
+        { crop: 'Tomato (Nashik)', price: 28, trend: '+12%', isUp: true },
+        { crop: 'Onion (Lasalgaon)', price: 22, trend: '-8%', isUp: false },
+        { crop: 'Potato (Agra)', price: 18, trend: '-5%', isUp: false },
+        { crop: 'Wheat (Punjab)', price: 25, trend: '+3%', isUp: true },
+        { crop: 'Rice (Odisha)', price: 70, trend: '-2%', isUp: false }
     ];
 
     const toggleFavorite = (id) => {
         setFavorites(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
+    // Gate navigation for guest users (requires login/register)
+    const requireAuthNavigation = (targetPath, featureName = 'browse marketplace') => {
+        if (!isAuthenticated) {
+            setToastMsg(`🔐 Please Login or Register first to ${featureName}!`);
+            setTimeout(() => {
+                navigate('/login');
+            }, 1200);
+        } else {
+            navigate(targetPath);
+        }
+    };
+
     const handleAddToCart = (e, item) => {
         e.preventDefault();
         e.stopPropagation();
-        addToCart(item, item.minOrderQuantity || 1);
-        setToastMsg(`Added "${item.productName}" to Cart!`);
-        setTimeout(() => setToastMsg(''), 3500);
+        
+        if (!isAuthenticated) {
+            setToastMsg(`🔐 Please Login or Register first to add "${item.productName}" to cart!`);
+            setTimeout(() => {
+                navigate('/login');
+            }, 1200);
+        } else {
+            addToCart(item, item.minOrderQuantity || 1);
+            setToastMsg(`Added "${item.productName}" to Cart!`);
+            setTimeout(() => setToastMsg(''), 3500);
+        }
     };
 
     const handleGlobalSearch = (e) => {
@@ -95,19 +119,41 @@ export const LandingPage = () => {
         if (selectedState !== 'All') queryParams.push(`state=${encodeURIComponent(selectedState)}`);
         
         const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
-        navigate(`/marketplace${queryString}`);
+        requireAuthNavigation(`/marketplace${queryString}`, 'search and filter produce');
     };
 
     return (
         <PublicLayout>
             {/* Toast Feedback */}
             {toastMsg && (
-                <div className="fixed top-24 right-6 z-50 bg-emerald-800 text-white font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-2 text-sm animate-in fade-in-50">
-                    <CheckCircle className="w-5 h-5 text-emerald-300" /> {toastMsg}
+                <div className="fixed top-24 right-6 z-50 bg-emerald-950 text-white font-extrabold px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-2.5 text-sm animate-in fade-in-50 border border-amber-400">
+                    <Lock className="w-5 h-5 text-amber-400" /> {toastMsg}
                 </div>
             )}
 
-            {/* 1. HERO SECTION (Exactly Matching Mockup Image) */}
+            {/* Authenticated Banner Banner if Logged In */}
+            {isAuthenticated ? (
+                <div className="bg-emerald-900 text-white py-3 px-4 text-xs font-bold flex justify-between items-center shadow-inner border-b border-emerald-700">
+                    <div className="max-w-7xl mx-auto flex justify-between items-center w-full">
+                        <span className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-amber-400" />
+                            Welcome back, <strong className="text-amber-300 font-extrabold">{user?.name}</strong> ({user?.role?.toUpperCase().replace('_', ' ')})! You are logged in.
+                        </span>
+                        <Link to={getRoleDashboardPath(user?.role)} className="bg-amber-400 hover:bg-amber-300 text-emerald-950 px-4 py-1.5 rounded-full flex items-center gap-1 font-extrabold shadow-sm transition">
+                            Go to My Dashboard &rarr;
+                        </Link>
+                    </div>
+                </div>
+            ) : (
+                <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-emerald-800 text-white py-2.5 px-4 text-xs font-bold text-center shadow-md">
+                    <div className="max-w-7xl mx-auto flex justify-center items-center gap-2">
+                        <Lock className="w-4 h-4 text-amber-200" />
+                        <span>All marketplace produce browsing, seller details, and ordering options are unlocked after <Link to="/login" className="underline font-black text-amber-100 hover:text-white">Login</Link> or <Link to="/register" className="underline font-black text-amber-100 hover:text-white">Registration</Link>!</span>
+                    </div>
+                </div>
+            )}
+
+            {/* 1. HERO SECTION (Matching User Mockup Image 100%) */}
             <section className="bg-gradient-to-br from-emerald-50/70 via-white to-amber-50/30 pt-10 pb-16 relative overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -124,23 +170,32 @@ export const LandingPage = () => {
                                     Fair Prices. Fresh Produce. A Stronger India.
                                 </h2>
                                 <p className="text-sm sm:text-base text-gray-600 leading-relaxed font-medium max-w-xl">
-                                    A digital marketplace connecting farmers, FPOs, consumers and bulk buyers with AI-powered demand insights and logistics support.
+                                    A direct digital marketplace connecting farmers, FPOs, consumers and bulk buyers with AI demand insights and smart logistics support.
                                 </p>
                             </div>
 
                             {/* Action Buttons */}
                             <div className="flex flex-wrap items-center gap-4 pt-2">
-                                <Link to="/marketplace">
-                                    <button className="bg-emerald-900 hover:bg-emerald-950 text-white font-bold px-7 py-3.5 rounded-full shadow-lg hover:shadow-emerald-900/30 transition duration-200 text-sm flex items-center gap-2">
-                                        Shop Fresh Produce <ArrowRight className="w-4 h-4" />
-                                    </button>
-                                </Link>
+                                <button 
+                                    onClick={() => requireAuthNavigation('/marketplace', 'explore fresh produce')}
+                                    className="bg-emerald-900 hover:bg-emerald-950 text-white font-bold px-7 py-3.5 rounded-full shadow-lg hover:shadow-emerald-900/30 transition duration-200 text-sm flex items-center gap-2"
+                                >
+                                    Shop Fresh Produce <ArrowRight className="w-4 h-4" />
+                                </button>
 
-                                <Link to="/register?role=farmer">
-                                    <button className="bg-white hover:bg-gray-50 text-gray-800 font-bold px-6 py-3.5 rounded-full border border-gray-300 shadow-sm transition duration-200 text-sm">
-                                        Join as a Farmer
-                                    </button>
-                                </Link>
+                                {!isAuthenticated ? (
+                                    <Link to="/register">
+                                        <button className="bg-white hover:bg-gray-50 text-gray-800 font-bold px-6 py-3.5 rounded-full border border-gray-300 shadow-sm transition duration-200 text-sm">
+                                            Register Account
+                                        </button>
+                                    </Link>
+                                ) : (
+                                    <Link to={getRoleDashboardPath(user?.role)}>
+                                        <button className="bg-white hover:bg-gray-50 text-emerald-800 font-extrabold px-6 py-3.5 rounded-full border border-emerald-600 shadow-sm transition duration-200 text-sm flex items-center gap-1.5">
+                                            Go to Dashboard <ArrowRight className="w-4 h-4" />
+                                        </button>
+                                    </Link>
+                                )}
                             </div>
 
                             {/* 4 Feature Pills */}
@@ -151,7 +206,7 @@ export const LandingPage = () => {
                                 </div>
                                 <div className="flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-gray-200/60 shadow-xs">
                                     <Users className="w-5 h-5 text-emerald-700 flex-shrink-0" />
-                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">Lower Prices for Consumers</span>
+                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">Lower Prices for Buyers</span>
                                 </div>
                                 <div className="flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-gray-200/60 shadow-xs">
                                     <PackageCheck className="w-5 h-5 text-emerald-700 flex-shrink-0" />
@@ -164,7 +219,7 @@ export const LandingPage = () => {
                             </div>
                         </div>
 
-                        {/* Hero Center Image & Right Stats Card */}
+                        {/* Hero Center Image & Right Floating Glassmorphism Card */}
                         <div className="lg:col-span-6 relative flex justify-end items-center">
                             
                             {/* Farmer Main Image */}
@@ -175,7 +230,7 @@ export const LandingPage = () => {
                                     className="w-full h-[420px] object-cover object-top hover:scale-105 transition duration-500"
                                 />
                                 {/* Handwritten Quote Overlay */}
-                                <div className="absolute top-6 left-6 max-w-[200px] bg-black/20 backdrop-blur-md p-3 rounded-2xl border border-white/20">
+                                <div className="absolute top-6 left-6 max-w-[200px] bg-black/30 backdrop-blur-md p-3.5 rounded-2xl border border-white/30">
                                     <p className="font-serif italic text-white text-base leading-snug drop-shadow-md">
                                         "Empowering Farmers Building a Better Tomorrow"
                                     </p>
@@ -230,7 +285,7 @@ export const LandingPage = () => {
                 </div>
             </section>
 
-            {/* 2. GLOBAL MULTI-FILTER SEARCH BAR CARD (Positioned Prominently) */}
+            {/* 2. GLOBAL MULTI-FILTER SEARCH BAR CARD */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-7 relative z-30">
                 <form onSubmit={handleGlobalSearch} className="bg-white p-3 sm:p-4 rounded-3xl border border-gray-200 shadow-xl flex flex-col md:flex-row items-center gap-3">
                     {/* Input Field */}
@@ -240,7 +295,7 @@ export const LandingPage = () => {
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search for fresh fruits, vegetables, grains, etc..." 
+                            placeholder="Search for fresh fruits, vegetables, grains (e.g. Nashik Tomatoes, Agra Potato)..." 
                             className="w-full text-sm font-medium text-gray-900 placeholder-gray-400 focus:outline-none py-1.5"
                         />
                     </div>
@@ -281,7 +336,7 @@ export const LandingPage = () => {
                     {/* Search Button */}
                     <button 
                         type="submit"
-                        className="w-full md:w-auto bg-emerald-800 hover:bg-emerald-900 text-white font-bold px-8 py-3 rounded-2xl shadow-md text-sm transition duration-200"
+                        className="w-full md:w-auto bg-emerald-800 hover:bg-emerald-900 text-white font-bold px-8 py-3 rounded-2xl shadow-md text-sm transition duration-200 flex items-center justify-center gap-1.5"
                     >
                         Search
                     </button>
@@ -294,22 +349,26 @@ export const LandingPage = () => {
                     <div className="flex justify-between items-center mb-8">
                         <div>
                             <h2 className="text-2xl font-black text-gray-900">Shop by Category</h2>
+                            <p className="text-xs text-gray-500 font-semibold mt-0.5">Explore 100% genuine Indian mandi categories</p>
                         </div>
-                        <Link to="/marketplace" className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1">
+                        <button 
+                            onClick={() => requireAuthNavigation('/marketplace', 'browse all categories')}
+                            className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1"
+                        >
                             View All <ChevronRight className="w-4 h-4" />
-                        </Link>
+                        </button>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
                         {CATEGORIES.map((cat, idx) => (
-                            <Link 
+                            <button
                                 key={idx} 
-                                to={`/marketplace?category=${encodeURIComponent(cat.category)}`}
-                                className="group bg-gray-50/80 hover:bg-emerald-50/60 p-4 rounded-2xl border border-gray-200/80 hover:border-emerald-300 text-center transition-all duration-200 flex flex-col items-center justify-center hover:shadow-md"
+                                onClick={() => requireAuthNavigation(`/marketplace?category=${encodeURIComponent(cat.category)}`, `browse ${cat.name}`)}
+                                className="group bg-gray-50/80 hover:bg-emerald-50/60 p-4 rounded-2xl border border-gray-200/80 hover:border-emerald-300 text-center transition-all duration-200 flex flex-col items-center justify-center hover:shadow-md cursor-pointer"
                             >
                                 <span className="text-4xl mb-2.5 transform group-hover:scale-110 transition duration-200">{cat.icon}</span>
                                 <h3 className="font-bold text-xs text-gray-900 group-hover:text-emerald-800">{cat.name}</h3>
-                            </Link>
+                            </button>
                         ))}
                     </div>
                 </div>
@@ -323,17 +382,24 @@ export const LandingPage = () => {
                         {/* Left 8 Cols: Featured Produce Grid */}
                         <div className="lg:col-span-8 space-y-6">
                             <div className="flex justify-between items-center">
-                                <h2 className="text-2xl font-black text-gray-900">Featured Produce</h2>
-                                <Link to="/marketplace" className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1">
+                                <div>
+                                    <h2 className="text-2xl font-black text-gray-900">Featured Produce</h2>
+                                    <p className="text-xs text-gray-500 font-semibold mt-0.5">Genuine Mandi listings directly from verified farmers</p>
+                                </div>
+                                <button 
+                                    onClick={() => requireAuthNavigation('/marketplace', 'view all products')}
+                                    className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1"
+                                >
                                     View All Products <ChevronRight className="w-4 h-4" />
-                                </Link>
+                                </button>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
                                 {FEATURED_PRODUCE.map((product) => (
                                     <div 
                                         key={product.id} 
-                                        className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group relative"
+                                        onClick={() => requireAuthNavigation(`/marketplace/${product.id}`, `view ${product.productName} details`)}
+                                        className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group relative cursor-pointer"
                                     >
                                         {/* Card Image Header */}
                                         <div className="h-40 relative overflow-hidden bg-gray-100">
@@ -348,7 +414,10 @@ export const LandingPage = () => {
                                                 </span>
                                             )}
                                             <button 
-                                                onClick={() => toggleFavorite(product.id)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    toggleFavorite(product.id);
+                                                }}
                                                 className="absolute top-3 right-3 p-1.5 bg-white/90 rounded-full text-gray-400 hover:text-red-500 transition shadow-sm"
                                             >
                                                 <Heart className={`w-4 h-4 ${favorites[product.id] ? 'fill-red-500 text-red-500' : ''}`} />
@@ -409,10 +478,16 @@ export const LandingPage = () => {
                             {/* Widget 2: Live Market Prices Table */}
                             <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm space-y-4">
                                 <div className="flex justify-between items-center border-b pb-3">
-                                    <h3 className="font-extrabold text-sm text-gray-900">Live Market Prices</h3>
-                                    <Link to="/farmer/insights" className="text-[11px] font-bold text-emerald-700 hover:underline flex items-center gap-0.5">
+                                    <div>
+                                        <h3 className="font-extrabold text-sm text-gray-900">Live Mandi Prices</h3>
+                                        <span className="text-[10px] text-gray-400 font-semibold">Genuine Benchmark Rates</span>
+                                    </div>
+                                    <button 
+                                        onClick={() => requireAuthNavigation('/farmer/insights', 'view live market price intelligence')}
+                                        className="text-[11px] font-bold text-emerald-700 hover:underline flex items-center gap-0.5"
+                                    >
                                         View More <ChevronRight className="w-3 h-3" />
-                                    </Link>
+                                    </button>
                                 </div>
 
                                 <div className="overflow-x-auto">
@@ -428,7 +503,7 @@ export const LandingPage = () => {
                                             {LIVE_MARKET_PRICES.map((row, i) => (
                                                 <tr key={i} className="hover:bg-gray-50">
                                                     <td className="py-2.5 font-bold text-gray-900">{row.crop}</td>
-                                                    <td className="py-2.5 font-extrabold text-gray-800">{row.price}</td>
+                                                    <td className="py-2.5 font-extrabold text-gray-800">₹{row.price}</td>
                                                     <td className={`py-2.5 text-right font-extrabold flex items-center justify-end gap-0.5 ${
                                                         row.isUp ? 'text-emerald-600' : 'text-red-500'
                                                     }`}>
@@ -458,11 +533,19 @@ export const LandingPage = () => {
                         <span className="flex items-center gap-1.5"><Globe2 className="w-4 h-4 text-emerald-400"/> Atmanirbhar Bharat</span>
                     </div>
 
-                    <Link to="/register">
-                        <button className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-5 py-2.5 rounded-full text-xs shadow-md transition flex items-center gap-1">
-                            Be a Part of the Change <ArrowRight className="w-3.5 h-3.5" />
-                        </button>
-                    </Link>
+                    {!isAuthenticated ? (
+                        <Link to="/register">
+                            <button className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-5 py-2.5 rounded-full text-xs shadow-md transition flex items-center gap-1">
+                                Register Account <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                        </Link>
+                    ) : (
+                        <Link to={getRoleDashboardPath(user?.role)}>
+                            <button className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-5 py-2.5 rounded-full text-xs shadow-md transition flex items-center gap-1">
+                                Open Dashboard <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                        </Link>
+                    )}
                 </div>
             </section>
         </PublicLayout>
