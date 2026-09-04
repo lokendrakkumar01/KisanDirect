@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Filter, MapPin, Star, ShieldCheck, ShoppingCart, CheckCircle } from 'lucide-react';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Search, Filter, MapPin, Star, ShieldCheck, ShoppingCart, CheckCircle, Lock, Globe2 } from 'lucide-react';
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { Lock } from 'lucide-react';
 import api from '../../services/api';
 
 export const MarketplacePage = () => {
@@ -19,10 +17,47 @@ export const MarketplacePage = () => {
     const [searchTerm, setSearchTerm] = useState(initialQuery);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [selectedGrade, setSelectedGrade] = useState('All');
+    const [selectedOrigin, setSelectedOrigin] = useState('All');
     const [organicOnly, setOrganicOnly] = useState(false);
     const [sellerType, setSellerType] = useState('All');
     const [toastMsg, setToastMsg] = useState('');
     const { addToCart } = useCart();
+
+    // High quality real Unsplash farm produce photos
+    const REAL_PRODUCE_IMAGES = {
+        tomato: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&auto=format&fit=crop&q=80',
+        grapes: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=600&auto=format&fit=crop&q=80',
+        onion: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cf?w=600&auto=format&fit=crop&q=80',
+        potato: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600&auto=format&fit=crop&q=80',
+        wheat: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&auto=format&fit=crop&q=80',
+        mango: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=600&auto=format&fit=crop&q=80',
+        chilli: 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=600&auto=format&fit=crop&q=80',
+        rice: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&auto=format&fit=crop&q=80',
+        fruit: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=600&auto=format&fit=crop&q=80',
+        grain: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&auto=format&fit=crop&q=80',
+    };
+
+    const getProduceRealImage = (item) => {
+        if (item.image && typeof item.image === 'string' && item.image.startsWith('http')) {
+            return item.image;
+        }
+        const name = (item.productName || item.title || '').toLowerCase();
+        const cat = (item.category || '').toLowerCase();
+
+        if (name.includes('tomato')) return REAL_PRODUCE_IMAGES.tomato;
+        if (name.includes('onion')) return REAL_PRODUCE_IMAGES.onion;
+        if (name.includes('potato')) return REAL_PRODUCE_IMAGES.potato;
+        if (name.includes('grape')) return REAL_PRODUCE_IMAGES.grapes;
+        if (name.includes('wheat')) return REAL_PRODUCE_IMAGES.wheat;
+        if (name.includes('mango')) return REAL_PRODUCE_IMAGES.mango;
+        if (name.includes('chilli') || name.includes('chili')) return REAL_PRODUCE_IMAGES.chilli;
+        if (name.includes('rice')) return REAL_PRODUCE_IMAGES.rice;
+
+        if (cat.includes('fruit')) return REAL_PRODUCE_IMAGES.fruit;
+        if (cat.includes('grain')) return REAL_PRODUCE_IMAGES.grain;
+
+        return REAL_PRODUCE_IMAGES.tomato;
+    };
 
     const DEMO_LISTINGS = [
         {
@@ -30,7 +65,7 @@ export const MarketplacePage = () => {
             productName: 'Fresh Red Tomatoes', category: 'vegetables', description: 'Freshly harvested Grade A red tomatoes directly from Nashik farm.',
             quantity: 500, availableQuantity: 500, unit: 'kg', price: 25, minOrderQuantity: 10, qualityGrade: 'A',
             organic: true, harvestDate: '2026-09-01', availableFrom: '2026-09-02',
-            image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&auto=format&fit=crop&q=80',
+            image: REAL_PRODUCE_IMAGES.tomato,
             location: { address: '', city: 'Nashik', district: 'Nashik', state: 'Maharashtra', pincode: '422001' },
             rating: 4.8, totalReviews: 24, sellerType: 'farmer', status: 'active'
         },
@@ -39,17 +74,17 @@ export const MarketplacePage = () => {
             productName: 'Seedless Green Grapes', category: 'fruits', description: 'Sweet export-grade seedless grapes from Niphad vineyard.',
             quantity: 200, availableQuantity: 150, unit: 'kg', price: 80, minOrderQuantity: 5, qualityGrade: 'A',
             organic: false, harvestDate: '2026-09-03', availableFrom: '2026-09-04',
-            image: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=600&auto=format&fit=crop&q=80',
+            image: REAL_PRODUCE_IMAGES.grapes,
             location: { address: '', city: 'Niphad', district: 'Nashik', state: 'Maharashtra', pincode: '422303' },
             rating: 4.9, totalReviews: 36, sellerType: 'farmer', status: 'active'
         },
         {
             id: 'L3', farmerId: 'F3', farmerName: 'Nashik Fresh Farmers FPO', farmName: 'FPO Aggregation Center', sellerType: 'fpo',
-            productName: 'Nashik Export Red Onions', category: 'vegetables', description: 'Bulk aggregated red onions from 150 member farmers.',
+            productName: 'Nashik Export Red Onions', category: 'vegetables', description: 'Bulk aggregated red onions from 150 member farmers in Lasalgaon mandi.',
             quantity: 5000, availableQuantity: 4000, unit: 'kg', price: 30, minOrderQuantity: 50, qualityGrade: 'A',
             organic: false, harvestDate: '2026-08-28', availableFrom: '2026-08-30',
-            image: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cf?w=600&auto=format&fit=crop&q=80',
-            location: { address: '', city: 'Pimpalgaon', district: 'Nashik', state: 'Maharashtra', pincode: '422209' },
+            image: REAL_PRODUCE_IMAGES.onion,
+            location: { address: '', city: 'Lasalgaon', district: 'Nashik', state: 'Maharashtra', pincode: '422209' },
             rating: 4.6, totalReviews: 120, status: 'active'
         },
         {
@@ -57,25 +92,25 @@ export const MarketplacePage = () => {
             productName: 'Organic Potatoes', category: 'vegetables', description: 'Pesticide-free organic potatoes grown in fertile Agra & Pune soil.',
             quantity: 800, availableQuantity: 750, unit: 'kg', price: 22, minOrderQuantity: 15, qualityGrade: 'A',
             organic: true, harvestDate: '2026-09-02', availableFrom: '2026-09-03',
-            image: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600&auto=format&fit=crop&q=80',
+            image: REAL_PRODUCE_IMAGES.potato,
             location: { address: '', city: 'Agra', district: 'Agra', state: 'Uttar Pradesh', pincode: '282001' },
             rating: 4.7, totalReviews: 42, sellerType: 'farmer', status: 'active'
         },
         {
             id: 'L5', farmerId: 'F5', farmerName: 'Deepak Pawar', farmName: 'Pawar Grain Farms',
-            productName: 'Premium Sharbati Wheat', category: 'grains', description: 'Golden Sharbati wheat grains, clean and triple-sifted.',
+            productName: 'Premium Sharbati Wheat', category: 'grains', description: 'Golden Sharbati wheat grains, clean and triple-sifted from Punjab fields.',
             quantity: 1200, availableQuantity: 1200, unit: 'kg', price: 28, minOrderQuantity: 50, qualityGrade: 'A',
             organic: false, harvestDate: '2026-08-25', availableFrom: '2026-08-26',
-            image: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&auto=format&fit=crop&q=80',
+            image: REAL_PRODUCE_IMAGES.wheat,
             location: { address: '', city: 'Patiala', district: 'Patiala', state: 'Punjab', pincode: '147001' },
             rating: 4.5, totalReviews: 18, sellerType: 'farmer', status: 'active'
         },
         {
             id: 'L6', farmerId: 'F6', farmerName: 'Pune Organic Collective FPO', farmName: 'Pune Collective', sellerType: 'fpo',
-            productName: 'Organic Alphonso Mangoes', category: 'fruits', description: 'Certified organic naturally ripened Alphonso mangoes.',
+            productName: 'Organic Alphonso Mangoes', category: 'fruits', description: 'Certified organic naturally ripened Alphonso mangoes from Ratnagiri.',
             quantity: 300, availableQuantity: 250, unit: 'box', price: 650, minOrderQuantity: 2, qualityGrade: 'A',
             organic: true, harvestDate: '2026-09-01', availableFrom: '2026-09-02',
-            image: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=600&auto=format&fit=crop&q=80',
+            image: REAL_PRODUCE_IMAGES.mango,
             location: { address: '', city: 'Ratnagiri', district: 'Ratnagiri', state: 'Maharashtra', pincode: '415612' },
             rating: 4.9, totalReviews: 85, status: 'active'
         },
@@ -84,16 +119,16 @@ export const MarketplacePage = () => {
             productName: 'Guntur Green Chilli', category: 'spices', description: 'Fresh spicy green chillies direct from Guntur mandi.',
             quantity: 400, availableQuantity: 400, unit: 'kg', price: 40, minOrderQuantity: 5, qualityGrade: 'A',
             organic: true, harvestDate: '2026-09-02', availableFrom: '2026-09-03',
-            image: 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=600&auto=format&fit=crop&q=80',
+            image: REAL_PRODUCE_IMAGES.chilli,
             location: { address: '', city: 'Guntur', district: 'Guntur', state: 'Andhra Pradesh', pincode: '522001' },
             rating: 4.9, totalReviews: 50, sellerType: 'farmer', status: 'active'
         },
         {
             id: 'L8', farmerId: 'F8', farmerName: 'Odisha Farmers Collective', farmName: 'Cuttack Rice Mills', sellerType: 'fpo',
-            productName: 'Premium Basmati Rice', category: 'grains', description: 'Long grain aromatic Basmati rice, aged for 12 months.',
+            productName: 'Premium Basmati Rice', category: 'grains', description: 'Long grain aromatic Basmati rice, aged for 12 months in Odisha mills.',
             quantity: 2500, availableQuantity: 2200, unit: 'kg', price: 70, minOrderQuantity: 10, qualityGrade: 'A',
             organic: false, harvestDate: '2026-08-20', availableFrom: '2026-08-22',
-            image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&auto=format&fit=crop&q=80',
+            image: REAL_PRODUCE_IMAGES.rice,
             location: { address: '', city: 'Cuttack', district: 'Cuttack', state: 'Odisha', pincode: '753001' },
             rating: 4.8, totalReviews: 95, status: 'active'
         }
@@ -164,6 +199,12 @@ export const MarketplacePage = () => {
             matchGrade = item.qualityGrade === selectedGrade;
         }
 
+        let matchOrigin = true;
+        if (selectedOrigin !== 'All') {
+            const itemState = item.location?.state || 'Maharashtra';
+            matchOrigin = itemState.toLowerCase() === selectedOrigin.toLowerCase();
+        }
+
         let matchOrganic = true;
         if (organicOnly) {
             matchOrganic = item.organic === true;
@@ -173,7 +214,7 @@ export const MarketplacePage = () => {
         if (sellerType === 'farmer') matchSeller = item.sellerType === 'farmer';
         if (sellerType === 'fpo') matchSeller = item.sellerType === 'fpo';
 
-        return matchSearch && matchCat && matchGrade && matchOrganic && matchSeller;
+        return matchSearch && matchCat && matchGrade && matchOrigin && matchOrganic && matchSeller;
     });
 
     return (
@@ -208,7 +249,7 @@ export const MarketplacePage = () => {
                             <input 
                                 type="text" 
                                 placeholder="Search crops, vegetables, farmers, cities..." 
-                                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm shadow-sm font-medium" 
+                                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm shadow-sm font-medium" 
                                 value={searchTerm} 
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -225,8 +266,8 @@ export const MarketplacePage = () => {
                     </div>
 
                     {toastMsg && (
-                        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center shadow-sm text-sm font-semibold">
-                            <CheckCircle className="w-5 h-5 mr-2 flex-shrink-0" /> {toastMsg}
+                        <div className="bg-emerald-950 text-white px-5 py-3 rounded-2xl mb-6 flex items-center shadow-lg text-xs sm:text-sm font-bold border border-amber-400">
+                            <CheckCircle className="w-5 h-5 mr-2 text-amber-400 flex-shrink-0" /> {toastMsg}
                         </div>
                     )}
 
@@ -235,7 +276,7 @@ export const MarketplacePage = () => {
                         <div className="w-full lg:w-64 flex-shrink-0">
                             <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm sticky top-24 space-y-6">
                                 <div className="flex items-center gap-2 border-b pb-3">
-                                    <Filter className="w-5 h-5 text-gray-700"/>
+                                    <Filter className="w-5 h-5 text-emerald-700"/>
                                     <h2 className="font-bold text-gray-900">Filter Produce</h2>
                                 </div>
                                 
@@ -244,12 +285,32 @@ export const MarketplacePage = () => {
                                     <select 
                                         value={selectedCategory} 
                                         onChange={(e) => setSelectedCategory(e.target.value)}
-                                        className="w-full border rounded-xl p-2.5 text-sm bg-white focus:ring-2 focus:ring-green-500 font-medium"
+                                        className="w-full border rounded-xl p-2.5 text-xs font-semibold bg-white focus:ring-2 focus:ring-emerald-500"
                                     >
-                                        <option value="All">All Categories</option>
+                                        <option value="All">All Categories 🌾</option>
                                         <option value="vegetables">Vegetables 🍅</option>
                                         <option value="fruits">Fruits 🍇</option>
                                         <option value="grains">Grains &amp; Cereals 🌾</option>
+                                        <option value="spices">Spices 🌶️</option>
+                                    </select>
+                                </div>
+
+                                {/* Origin State Filter Option */}
+                                <div>
+                                    <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1">
+                                        <Globe2 className="w-4 h-4 text-emerald-600" /> Origin State / Mandi Hub
+                                    </h3>
+                                    <select 
+                                        value={selectedOrigin} 
+                                        onChange={(e) => setSelectedOrigin(e.target.value)}
+                                        className="w-full border rounded-xl p-2.5 text-xs font-semibold bg-white focus:ring-2 focus:ring-emerald-500"
+                                    >
+                                        <option value="All">All States 📍</option>
+                                        <option value="Maharashtra">Maharashtra (Nashik / Lasalgaon)</option>
+                                        <option value="Uttar Pradesh">Uttar Pradesh (Agra)</option>
+                                        <option value="Punjab">Punjab (Patiala)</option>
+                                        <option value="Andhra Pradesh">Andhra Pradesh (Guntur)</option>
+                                        <option value="Odisha">Odisha (Cuttack)</option>
                                     </select>
                                 </div>
 
@@ -260,9 +321,9 @@ export const MarketplacePage = () => {
                                             <button 
                                                 key={g} 
                                                 onClick={() => setSelectedGrade(g)}
-                                                className={`px-3 py-1 border rounded-lg text-xs font-bold transition ${
+                                                className={`px-3 py-1 border rounded-lg text-xs font-bold transition cursor-pointer ${
                                                     selectedGrade === g 
-                                                        ? 'bg-green-600 text-white border-green-600' 
+                                                        ? 'bg-emerald-700 text-white border-emerald-700' 
                                                         : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                                                 }`}
                                             >
@@ -277,30 +338,30 @@ export const MarketplacePage = () => {
                                     <select 
                                         value={sellerType} 
                                         onChange={(e) => setSellerType(e.target.value)}
-                                        className="w-full border rounded-xl p-2.5 text-sm bg-white focus:ring-2 focus:ring-green-500 font-medium"
+                                        className="w-full border rounded-xl p-2.5 text-xs font-semibold bg-white focus:ring-2 focus:ring-emerald-500"
                                     >
                                         <option value="All">All Sellers</option>
                                         <option value="farmer">Individual Farmers 👨‍🌾</option>
-                                        <option value="fpo">FPO (Bulk Produce) 🏭</option>
+                                        <option value="fpo">FPO (Bulk Produce) 🏢</option>
                                     </select>
                                 </div>
                                 
-                                <label className="flex items-center p-3 bg-green-50 rounded-xl border border-green-100 cursor-pointer">
+                                <label className="flex items-center p-3 bg-emerald-50 rounded-xl border border-emerald-100 cursor-pointer">
                                     <input 
                                         type="checkbox" 
                                         checked={organicOnly}
                                         onChange={(e) => setOrganicOnly(e.target.checked)}
-                                        className="rounded text-green-600 focus:ring-green-500"
+                                        className="rounded text-emerald-600 focus:ring-emerald-500"
                                     />
-                                    <span className="ml-2.5 text-xs font-bold text-green-900 flex items-center">
-                                        <ShieldCheck className="w-4 h-4 mr-1 text-green-600"/> Certified Organic Only
+                                    <span className="ml-2.5 text-xs font-bold text-emerald-900 flex items-center">
+                                        <ShieldCheck className="w-4 h-4 mr-1 text-emerald-600"/> Certified Organic Only
                                     </span>
                                 </label>
 
-                                {(searchTerm || selectedCategory !== 'All' || selectedGrade !== 'All' || organicOnly || sellerType !== 'All') && (
+                                {(searchTerm || selectedCategory !== 'All' || selectedGrade !== 'All' || selectedOrigin !== 'All' || organicOnly || sellerType !== 'All') && (
                                     <button
-                                        onClick={() => { setSearchTerm(''); setSelectedCategory('All'); setSelectedGrade('All'); setOrganicOnly(false); setSellerType('All'); }}
-                                        className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 rounded-xl transition"
+                                        onClick={() => { setSearchTerm(''); setSelectedCategory('All'); setSelectedGrade('All'); setSelectedOrigin('All'); setOrganicOnly(false); setSellerType('All'); }}
+                                        className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 rounded-xl transition cursor-pointer"
                                     >
                                         Reset All Filters
                                     </button>
@@ -313,7 +374,7 @@ export const MarketplacePage = () => {
                             <div className="flex justify-between items-center mb-4">
                                 <span className="text-gray-600 text-sm font-medium">
                                     Showing <strong className="text-gray-900">{filteredListings.length}</strong> fresh produce listings
-                                    {searchTerm && <span> for "<span className="text-green-600 font-bold">{searchTerm}</span>"</span>}
+                                    {searchTerm && <span> for "<span className="text-emerald-600 font-bold">{searchTerm}</span>"</span>}
                                 </span>
                             </div>
 
@@ -324,8 +385,8 @@ export const MarketplacePage = () => {
                                     <p className="text-gray-600 text-base font-bold mb-1">No produce listings found.</p>
                                     <p className="text-gray-400 text-xs mb-4">Try searching for "Tomato", "Onion", "Grapes", "Wheat", or "Potato"</p>
                                     <button 
-                                        onClick={() => { setSearchTerm(''); setSelectedCategory('All'); setSelectedGrade('All'); setOrganicOnly(false); setSellerType('All'); }}
-                                        className="bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-green-700 transition"
+                                        onClick={() => { setSearchTerm(''); setSelectedCategory('All'); setSelectedGrade('All'); setSelectedOrigin('All'); setOrganicOnly(false); setSellerType('All'); }}
+                                        className="bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-emerald-800 transition"
                                     >
                                         Clear Search &amp; Reset Filters
                                     </button>
@@ -335,76 +396,75 @@ export const MarketplacePage = () => {
                                     {filteredListings.map(listing => {
                                         const city = listing.location?.city || listing.location?.address || 'Nashik';
                                         const state = listing.location?.state || 'Maharashtra';
+                                        const realImage = getProduceRealImage(listing);
+
                                         return (
                                             <div key={listing.id} className="group bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition flex flex-col">
                                                 <Link to={`/marketplace/${listing.id}`} className="block relative">
-                                                    <div className="h-44 bg-gray-100 flex items-center justify-center relative overflow-hidden">
-                                                        {listing.image ? (
-                                                            <img 
-                                                                src={listing.image} 
-                                                                alt={listing.productName} 
-                                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                                            />
-                                                        ) : (
-                                                            <span className="text-6xl group-hover:scale-110 transition-transform duration-300">
-                                                                {listing.category === 'vegetables' ? '🍅' : listing.category === 'fruits' ? '🍇' : '🌾'}
-                                                            </span>
-                                                        )}
+                                                    <div className="h-48 bg-gray-100 flex items-center justify-center relative overflow-hidden">
+                                                        <img 
+                                                            src={realImage} 
+                                                            alt={listing.productName} 
+                                                            className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+                                                        />
                                                         {listing.organic && (
-                                                            <div className="absolute top-3 left-3 bg-green-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow flex items-center">
+                                                            <div className="absolute top-3 left-3 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow flex items-center">
                                                                 <ShieldCheck className="w-3.5 h-3.5 mr-1"/> Organic
                                                             </div>
                                                         )}
                                                         <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-900 text-[10px] font-extrabold px-2.5 py-1 rounded-md shadow border">
-                                                            Grade {listing.qualityGrade}
+                                                            Grade {listing.qualityGrade || 'A'}
+                                                        </div>
+                                                        <div className="absolute bottom-2 left-3 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+                                                            <MapPin className="w-3 h-3 text-amber-400" /> Origin: {city}, {state}
                                                         </div>
                                                     </div>
                                                 </Link>
 
-                                                <div className="p-5 flex-1 flex flex-col">
-                                                    <div className="flex justify-between items-start mb-2">
-                                                        <Link to={`/marketplace/${listing.id}`} className="font-bold text-base text-gray-900 group-hover:text-green-600 transition line-clamp-1">
-                                                            {listing.productName}
-                                                        </Link>
-                                                        <span className="bg-green-50 text-green-700 font-extrabold px-2.5 py-1 rounded text-xs whitespace-nowrap ml-2">
-                                                            ₹{listing.price}/{listing.unit}
-                                                        </span>
-                                                    </div>
-                                                    <p className="text-xs text-gray-500 line-clamp-2 mb-3">{listing.description}</p>
-                                                    
-                                                    <div className="flex items-center text-gray-600 text-xs mb-3 font-medium">
-                                                        <MapPin className="w-3.5 h-3.5 mr-1 text-gray-400 flex-shrink-0"/> {city}, {state}
-                                                    </div>
-
-                                                    <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100 text-xs">
-                                                        <div className="flex items-center gap-1.5">
-                                                            {listing.sellerType === 'fpo' ? (
-                                                                <span className="bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded text-[10px]">FPO</span>
-                                                            ) : (
-                                                                <span className="bg-green-100 text-green-800 font-bold px-2 py-0.5 rounded text-[10px]">FARMER</span>
-                                                            )}
-                                                            <span className="font-medium text-gray-700 truncate max-w-[110px]" title={listing.farmerName}>
-                                                                {listing.farmerName}
+                                                <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                                                    <div>
+                                                        <div className="flex justify-between items-start mb-1.5">
+                                                            <Link to={`/marketplace/${listing.id}`} className="font-bold text-base text-gray-900 group-hover:text-emerald-700 transition line-clamp-1">
+                                                                {listing.productName}
+                                                            </Link>
+                                                            <span className="bg-emerald-50 text-emerald-800 font-extrabold px-2.5 py-1 rounded-md text-xs whitespace-nowrap ml-2">
+                                                                ₹{listing.price}/{listing.unit}
                                                             </span>
                                                         </div>
-                                                        <div className="flex items-center text-amber-500 font-bold">
-                                                            <Star className="w-3.5 h-3.5 fill-current mr-1 text-amber-500"/>
-                                                            <span>{listing.rating || 4.8}</span>
-                                                        </div>
+                                                        <p className="text-xs text-gray-500 line-clamp-2 mb-2 font-medium">{listing.description}</p>
                                                     </div>
 
-                                                    <div className="mt-4 pt-3 border-t flex gap-2">
-                                                        <Link to={`/marketplace/${listing.id}`} className="flex-1">
-                                                            <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-2.5 rounded-xl text-xs transition">
-                                                                View Details
+                                                    <div className="space-y-3 pt-2 border-t border-gray-100">
+                                                        <div className="flex items-center justify-between text-xs">
+                                                            <div className="flex items-center gap-1.5">
+                                                                {listing.sellerType === 'fpo' ? (
+                                                                    <span className="bg-blue-100 text-blue-800 font-extrabold px-2 py-0.5 rounded text-[10px]">FPO 🏢</span>
+                                                                ) : (
+                                                                    <span className="bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded text-[10px]">FARMER 👨‍🌾</span>
+                                                                )}
+                                                                <span className="font-bold text-gray-800 truncate max-w-[120px]" title={listing.farmerName}>
+                                                                    {listing.farmerName}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex items-center text-amber-500 font-bold">
+                                                                <Star className="w-3.5 h-3.5 fill-amber-400 mr-1 text-amber-400"/>
+                                                                <span>{listing.rating || 4.8}</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex gap-2">
+                                                            <Link to={`/marketplace/${listing.id}`} className="flex-1">
+                                                                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-2.5 rounded-xl text-xs transition cursor-pointer">
+                                                                    View Details
+                                                                </button>
+                                                            </Link>
+                                                            <button 
+                                                                onClick={(e) => handleAddToCart(e, listing)}
+                                                                className="flex-1 bg-emerald-800 hover:bg-emerald-900 text-white font-bold py-2 px-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                                                            >
+                                                                <ShoppingCart className="w-3.5 h-3.5" /> Buy Direct
                                                             </button>
-                                                        </Link>
-                                                        <button 
-                                                            onClick={(e) => handleAddToCart(e, listing)}
-                                                            className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5"
-                                                        >
-                                                            <ShoppingCart className="w-3.5 h-3.5" /> Buy Direct
-                                                        </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

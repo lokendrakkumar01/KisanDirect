@@ -67,6 +67,24 @@ export const ProductDetailPage = () => {
             image: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=800&auto=format&fit=crop&q=80',
             location: { address: 'Coastal Orchard Hub', city: 'Ratnagiri', state: 'Maharashtra', pincode: '415612' },
             rating: 4.9, totalReviews: 85, sellerType: 'fpo'
+        },
+        'L7': {
+            id: 'L7', farmerId: 'F7', farmerName: 'Andhra Organic Group', farmName: 'Guntur Spice Fields',
+            productName: 'Guntur Green Chilli', category: 'spices', description: 'Fresh spicy green chillies direct from Guntur mandi. High pungent quality, freshly picked for spice processing and culinary use.',
+            quantity: 400, availableQuantity: 400, unit: 'kg', price: 40, minOrderQuantity: 5, qualityGrade: 'A',
+            organic: true, harvestDate: '2026-09-02', availableFrom: '2026-09-03',
+            image: 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=800&auto=format&fit=crop&q=80',
+            location: { address: 'Guntur Mandi Market', city: 'Guntur', state: 'Andhra Pradesh', pincode: '522001' },
+            rating: 4.9, totalReviews: 50, sellerType: 'farmer'
+        },
+        'L8': {
+            id: 'L8', farmerId: 'F8', farmerName: 'Odisha Farmers Collective', farmName: 'Cuttack Rice Mills',
+            productName: 'Premium Basmati Rice', category: 'grains', description: 'Long grain aromatic Basmati rice, aged for 12 months in Odisha mills. Superfine texture, zero broken grains, rich aroma.',
+            quantity: 2500, availableQuantity: 2200, unit: 'kg', price: 70, minOrderQuantity: 10, qualityGrade: 'A',
+            organic: false, harvestDate: '2026-08-20', availableFrom: '2026-08-22',
+            image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&auto=format&fit=crop&q=80',
+            location: { address: 'Cuttack Rice Mill Zone', city: 'Cuttack', state: 'Odisha', pincode: '753001' },
+            rating: 4.8, totalReviews: 95, sellerType: 'fpo'
         }
     };
 

@@ -8,7 +8,7 @@ import { askGeminiAI } from '../../services/geminiAiService';
 export const AIInsights = () => {
     const [selectedCrop, setSelectedCrop] = useState('Tomato');
     const [loading, setLoading] = useState(true);
-    const [geminiAnalysis, setGeminiAnalysis] = useState('');
+    const [aiAnalysis, setAiAnalysis] = useState('');
     const [customQuery, setCustomQuery] = useState('');
     const [queryResult, setQueryResult] = useState('');
     const [isQuerying, setIsQuerying] = useState(false);
@@ -18,7 +18,7 @@ export const AIInsights = () => {
             setLoading(true);
             try {
                 const res = await askGeminiAI(`Provide a comprehensive market insight for ${selectedCrop} in Maharashtra (Nashik/Pune/Ahmednagar mandis). Include 7-day demand trend, price forecast per KG, and advisory for farmers.`, 'farmer');
-                setGeminiAnalysis(res);
+                setAiAnalysis(res);
             } catch (err) {
                 console.error(err);
             } finally {
@@ -37,7 +37,7 @@ export const AIInsights = () => {
             const res = await askGeminiAI(customQuery, 'farmer');
             setQueryResult(res);
         } catch (err) {
-            setQueryResult('Failed to query Gemini AI. Please try again.');
+            setQueryResult('Failed to query AI Assistant. Please try again.');
         } finally {
             setIsQuerying(false);
         }
@@ -57,8 +57,8 @@ export const AIInsights = () => {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">AgroConnect Gemini AI Market Insights</h1>
-                    <p className="text-gray-500 mt-1">Real-time Gemini AI Powered market forecasts, price trends, and crop advisory.</p>
+                    <h1 className="text-2xl font-bold text-gray-900">AgroConnect AI Market Insights</h1>
+                    <p className="text-gray-500 mt-1">Real-time AI Powered market forecasts, price trends, and crop advisory.</p>
                 </div>
                 <div className="flex items-center space-x-2 bg-purple-50 text-purple-700 px-3.5 py-1.5 rounded-full border border-purple-200 shadow-sm font-bold text-xs">
                     <BrainCircuit className="w-4 h-4 text-purple-600 animate-pulse"/>

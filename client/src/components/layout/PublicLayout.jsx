@@ -2,6 +2,7 @@ import React from 'react';
 import { PublicNav } from './PublicNav';
 import { Footer } from './Footer';
 import { VoiceAssistant } from '../ui/VoiceAssistant';
+import { GeminiAiWidget } from '../ui/GeminiAiWidget';
 
 export const PublicLayout = ({ children }) => {
     return (
@@ -11,7 +12,10 @@ export const PublicLayout = ({ children }) => {
                 {children}
             </main>
             <Footer />
+            {/* Multilingual Voice Assistant (Bottom Left) */}
             <VoiceAssistant />
+            {/* AI Assistant Chat Widget (Bottom Right) */}
+            <GeminiAiWidget />
         </div>
     );
 };

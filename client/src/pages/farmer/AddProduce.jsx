@@ -276,13 +276,13 @@ export const AddProduce = () => {
 
             <div className="space-y-6">
                 <Card className="border-blue-200 bg-gradient-to-b from-blue-50 to-indigo-50 shadow-sm">
-                    <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-4 py-3 flex justify-between items-center text-white rounded-t-xl">
+                    <div className="bg-gradient-to-r from-emerald-800 to-teal-900 px-4 py-3 flex justify-between items-center text-white rounded-t-xl">
                         <div className="flex items-center space-x-2">
-                            <BrainCircuit className="w-5 h-5 text-yellow-300"/>
-                            <h3 className="font-extrabold text-sm">Gemini AI Price Intelligence</h3>
+                            <BrainCircuit className="w-5 h-5 text-amber-300"/>
+                            <h3 className="font-extrabold text-sm">Smart AI Price Intelligence</h3>
                         </div>
                         <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full border border-white/30 font-bold uppercase">
-                            AI Powered <Sparkles className="w-3 h-3 inline text-yellow-300 fill-current"/>
+                            AI Powered <Sparkles className="w-3 h-3 inline text-amber-300 fill-current"/>
                         </span>
                     </div>
                     <CardBody className="space-y-4">
@@ -294,9 +294,9 @@ export const AddProduce = () => {
                                     <p className="text-xs text-gray-500 font-semibold mt-1">Suggested Mandi Range: ₹{(formData.price * 0.9).toFixed(0)} - ₹{(formData.price * 1.15).toFixed(0)}</p>
                                 </div>
                                 <div className="space-y-2.5 mt-4">
-                                    <p className="text-xs font-extrabold text-gray-700 uppercase">Gemini AI Market Guidance</p>
+                                    <p className="text-xs font-extrabold text-gray-700 uppercase">AI Assistant Market Guidance</p>
                                     {aiLoading ? (
-                                        <p className="text-xs text-blue-600 animate-pulse font-medium">Fetching Gemini AI pricing recommendation...</p>
+                                        <p className="text-xs text-emerald-700 animate-pulse font-medium">Fetching AI pricing recommendation...</p>
                                     ) : (
                                         <p className="text-xs text-gray-800 leading-relaxed bg-white p-3 rounded-lg border border-blue-100 whitespace-pre-wrap">
                                             {geminiPriceAdvice || 'Select a crop to get Gemini AI real-time market advice.'}
