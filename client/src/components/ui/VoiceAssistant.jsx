@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mic, MicOff, Volume2, X, Sparkles, Loader2, Bot, Globe } from 'lucide-react';
+import { Mic, MicOff, Volume2, X, Sparkles, Loader2, Bot, Globe, Send } from 'lucide-react';
 import { askGeminiAI } from '../../services/geminiAiService';
 import { useAuth, getRoleDashboardPath } from '../../contexts/AuthContext';
 
@@ -9,10 +9,13 @@ export const VoiceAssistant = () => {
     const [isListening, setIsListening] = useState(false);
     const [selectedLang, setSelectedLang] = useState('hi-IN');
     const [transcript, setTranscript] = useState('');
+    const [manualText, setManualText] = useState('');
     const [responseMessage, setResponseMessage] = useState('अपनी पसंदीदा भाषा चुनें, माइक पर क्लिक करें और बोलें। Select language and click mic to speak.');
     const [isProcessing, setIsProcessing] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
+    
     const recognitionRef = useRef(null);
+    const transcriptRef = useRef('');
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -40,13 +43,14 @@ export const VoiceAssistant = () => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
             const recognition = new SpeechRecognition();
-            recognition.continuous = false;
+            recognition.continuous = true;
             recognition.interimResults = true;
             recognition.lang = selectedLang;
 
             recognition.onstart = () => {
                 setIsListening(true);
-                setTranscript('Listening... (सुन रहा हूँ...)');
+                transcriptRef.current = '';
+                setTranscript('Listening... (बोलिए...)');
             };
 
             recognition.onresult = (event) => {
@@ -54,22 +58,29 @@ export const VoiceAssistant = () => {
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     current += event.results[i][0].transcript;
                 }
-                setTranscript(current);
-
-                if (event.results[0].isFinal) {
-                    handleVoiceCommand(current);
+                if (current.trim()) {
+                    setTranscript(current);
+                    transcriptRef.current = current;
                 }
             };
 
             recognition.onerror = (event) => {
                 console.warn('Speech recognition error:', event.error);
                 setIsListening(false);
-                setTranscript('');
-                setResponseMessage('Voice recognition error. Please try tapping the microphone again.');
+                if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+                    setResponseMessage('Microphone access denied. Please allow microphone permissions in your browser bar.');
+                } else if (event.error === 'no-speech') {
+                    setResponseMessage('No speech detected. Please tap the microphone and speak clearly.');
+                } else {
+                    setResponseMessage(`Voice error (${event.error}). Tap microphone to try again or type below.`);
+                }
             };
 
             recognition.onend = () => {
                 setIsListening(false);
+                if (transcriptRef.current.trim()) {
+                    handleVoiceCommand(transcriptRef.current);
+                }
             };
 
             recognitionRef.current = recognition;
@@ -102,32 +113,43 @@ export const VoiceAssistant = () => {
 
     const toggleListening = () => {
         if (!recognitionRef.current) {
-            const msg = 'Speech recognition not supported in this browser. Please use Chrome or Edge.';
+            const msg = 'Speech recognition not supported in this browser. Please use Chrome or Edge, or type your query below.';
             setResponseMessage(msg);
             speakText(msg);
             return;
         }
 
         if (isListening) {
-            recognitionRef.current.stop();
+            try {
+                recognitionRef.current.stop();
+            } catch (e) {}
             setIsListening(false);
+            if (transcriptRef.current.trim()) {
+                handleVoiceCommand(transcriptRef.current);
+            }
         } else {
             setTranscript('');
+            transcriptRef.current = '';
             const langObj = SUPPORTED_LANGUAGES.find(l => l.code === selectedLang);
             setResponseMessage(`Listening in ${langObj?.name}... Speak your command now.`);
             try {
                 recognitionRef.current.lang = selectedLang;
                 recognitionRef.current.start();
             } catch (err) {
-                console.warn(err);
+                console.warn('Start error:', err);
+                try {
+                    recognitionRef.current.stop();
+                    setTimeout(() => recognitionRef.current.start(), 200);
+                } catch (e2) {}
             }
         }
     };
 
     const handleVoiceCommand = async (commandText) => {
+        if (!commandText || !commandText.trim()) return;
         const text = commandText.toLowerCase().trim();
         setIsProcessing(true);
-        setResponseMessage('Analyzing your spoken command...');
+        setResponseMessage(`Recognized: "${commandText}" - Processing...`);
 
         const langObj = SUPPORTED_LANGUAGES.find(l => l.code === selectedLang);
         const navMsg = langObj?.navConfirmation || 'Opening page...';
@@ -136,7 +158,7 @@ export const VoiceAssistant = () => {
         if (
             text.includes('marketplace') || text.includes('मार्केटप्लेस') || text.includes('मार्किटप्लेस') || 
             text.includes('बाज़ार') || text.includes('ખરીદો') || text.includes('சந்தை') || text.includes('చbuying') ||
-            text.includes('મંડી') || text.includes('मंडी')
+            text.includes('મંડી') || text.includes('मंडी') || text.includes('फसल खरीदें')
         ) {
             const reply = `${navMsg} (Opening Marketplace)`;
             setResponseMessage(reply);
@@ -163,7 +185,7 @@ export const VoiceAssistant = () => {
         // 3. Add Produce / Listing Navigation
         if (
             text.includes('add produce') || text.includes('add crop') || text.includes('फसल जोड़ो') || 
-            text.includes('शेतमाल जोडा') || text.includes('પાક ઉમેરો') || text.includes('बेचो') || text.includes('सेल')
+            text.includes('शेतमाल जोडा') || text.includes('પાક ઉમેરો') || text.includes('बेचो') || text.includes('सेल') || text.includes('फसल बेचो')
         ) {
             const reply = `${navMsg} (Opening Add Produce)`;
             setResponseMessage(reply);
@@ -248,6 +270,13 @@ export const VoiceAssistant = () => {
         }
     };
 
+    const handleManualSubmit = (e) => {
+        e.preventDefault();
+        if (!manualText.trim()) return;
+        handleVoiceCommand(manualText.trim());
+        setManualText('');
+    };
+
     const stopSpeaking = () => {
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
@@ -278,7 +307,7 @@ export const VoiceAssistant = () => {
                             </div>
                             <div>
                                 <h3 className="font-extrabold text-sm text-gray-900 flex items-center gap-1">
-                                    AgroVoice Multilingual <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-current" />
+                                    AgroVoice AI Assistant <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-current" />
                                 </h3>
                                 <p className="text-[10px] text-gray-500 font-semibold">Native Speech Audio Synthesis</p>
                             </div>
@@ -310,7 +339,7 @@ export const VoiceAssistant = () => {
                         </select>
                     </div>
 
-                    {/* Mic Visualizer */}
+                    {/* Mic Visualizer Button */}
                     <div className="flex flex-col items-center justify-center py-4 bg-emerald-50/50 rounded-2xl border border-emerald-100 relative">
                         <button
                             onClick={toggleListening}
@@ -344,7 +373,7 @@ export const VoiceAssistant = () => {
                         ) : (
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">Voice Audio Response</span>
+                                    <span className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">Voice Response</span>
                                     {isSpeaking && (
                                         <button onClick={stopSpeaking} className="text-red-500 font-bold flex items-center gap-1 text-[10px]">
                                             <Volume2 className="w-3 h-3 animate-bounce" /> Stop Audio
@@ -356,9 +385,26 @@ export const VoiceAssistant = () => {
                         )}
                     </div>
 
-                    {/* Quick Voice Command Buttons */}
+                    {/* Text Fallback Input Bar */}
+                    <form onSubmit={handleManualSubmit} className="flex gap-2">
+                        <input 
+                            type="text" 
+                            value={manualText}
+                            onChange={(e) => setManualText(e.target.value)}
+                            placeholder="Or type voice command here..."
+                            className="flex-1 text-xs px-3 py-2 border rounded-xl focus:ring-2 focus:ring-emerald-500 font-medium"
+                        />
+                        <button 
+                            type="submit"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-xl flex items-center justify-center transition"
+                        >
+                            <Send className="w-3.5 h-3.5" />
+                        </button>
+                    </form>
+
+                    {/* Quick Voice Navigation Buttons */}
                     <div className="space-y-1.5 pt-1">
-                        <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">Quick Voice Navigation:</span>
+                        <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">Quick Navigation Shortcuts:</span>
                         <div className="flex flex-wrap gap-1.5 text-[10px]">
                             <button onClick={() => handleVoiceCommand('Open Marketplace')} className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-2 py-1 rounded-md">
                                 🛒 "Marketplace"
