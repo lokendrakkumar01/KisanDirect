@@ -49,6 +49,7 @@ import FPOAnalytics from '../pages/fpo/FPOAnalytics';
 
 // Logistics Pages
 import LogisticsDashboard from '../pages/logistics/LogisticsDashboard';
+import DriverPartnerPage from '../pages/logistics/DriverPartnerPage';
 import DeliveriesPage from '../pages/logistics/DeliveriesPage';
 import RouteOptimization from '../pages/logistics/RouteOptimization';
 import LogisticsMap from '../pages/logistics/LogisticsMap';
@@ -152,6 +153,8 @@ export const AppRouter = () => {
                 {/* Logistics Routes */}
                 <Route element={<ProtectedRoute allowedRoles={['logistics']}><DashboardLayoutWrapper /></ProtectedRoute>}>
                     <Route path="/logistics/dashboard" element={<LogisticsDashboard />}/>
+                    <Route path="/logistics/driver-partner" element={<DriverPartnerPage />}/>
+                    <Route path="/driver/portal" element={<DriverPartnerPage />}/>
                     <Route path="/logistics/deliveries" element={<DeliveriesPage />}/>
                     <Route path="/logistics/routes" element={<RouteOptimization />}/>
                     <Route path="/logistics/route-optimization" element={<RouteOptimization />}/>

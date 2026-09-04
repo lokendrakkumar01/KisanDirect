@@ -36,10 +36,11 @@ export const Sidebar = ({ isOpen, onClose }) => {
         ],
         logistics: [
             { name: 'Dashboard', path: '/logistics/dashboard', icon: Home },
-            { name: 'Deliveries', path: '/logistics/deliveries', icon: Truck },
+            { name: 'Driver Partner Portal 🚚', path: '/logistics/driver-partner', icon: Truck },
+            { name: 'Deliveries', path: '/logistics/deliveries', icon: ClipboardList },
             { name: 'Routes Map', path: '/logistics/map', icon: Map },
             { name: 'Vehicles', path: '/logistics/vehicles', icon: Settings },
-            { name: 'Drivers', path: '/logistics/drivers', icon: Users },
+            { name: 'Drivers Roster', path: '/logistics/drivers', icon: Users },
         ],
         admin: [
             { name: 'Dashboard', path: '/admin/dashboard', icon: Home },
