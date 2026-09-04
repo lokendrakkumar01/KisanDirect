@@ -54,21 +54,21 @@ export const AIInsights = () => {
     ];
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 animate-in fade-in duration-200">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">AgroConnect AI Market Insights</h1>
-                    <p className="text-gray-500 mt-1">Real-time AI Powered market forecasts, price trends, and crop advisory.</p>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-emerald-100">AgroConnect AI Market Insights</h1>
+                    <p className="text-gray-500 dark:text-emerald-300 mt-1 font-medium">Real-time AI Powered market forecasts, price trends, and crop advisory.</p>
                 </div>
-                <div className="flex items-center space-x-2 bg-purple-50 text-purple-700 px-3.5 py-1.5 rounded-full border border-purple-200 shadow-sm font-bold text-xs">
-                    <BrainCircuit className="w-4 h-4 text-purple-600 animate-pulse"/>
-                    <span className="flex items-center gap-1">Gemini 1.5 Flash API Connected <Sparkles className="w-3 h-3 text-amber-500 fill-current"/></span>
+                <div className="flex items-center space-x-2 bg-emerald-50 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 px-3.5 py-1.5 rounded-full border border-emerald-300 dark:border-emerald-700 shadow-sm font-bold text-xs">
+                    <BrainCircuit className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-pulse"/>
+                    <span className="flex items-center gap-1">AI Assistant Connected <Sparkles className="w-3 h-3 text-amber-500 fill-current"/></span>
                 </div>
             </div>
 
-            <div className="flex space-x-4 mb-6">
+            <div className="flex flex-wrap gap-4 mb-6">
                 <select 
-                    className="form-select rounded-xl border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 font-bold text-sm" 
+                    className="form-select rounded-xl border-gray-300 dark:border-emerald-700 bg-white dark:bg-emerald-900 text-gray-900 dark:text-emerald-100 shadow-sm focus:border-green-500 focus:ring-green-500 font-bold text-sm" 
                     value={selectedCrop} 
                     onChange={(e) => setSelectedCrop(e.target.value)}
                 >

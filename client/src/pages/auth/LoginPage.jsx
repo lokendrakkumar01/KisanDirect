@@ -20,7 +20,7 @@ export const LoginPage = () => {
         fpo: { name: 'FPO Admin', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50 border-blue-200 text-blue-800' },
         buyer: { name: 'Bulk Buyer', icon: Store, color: 'text-purple-600', bg: 'bg-purple-50 border-purple-200 text-purple-800' },
         consumer: { name: 'Consumer', icon: UserCheck, color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200 text-amber-800' },
-        logistics: { name: 'Logistics Partner', icon: Truck, color: 'text-gray-600', bg: 'bg-gray-100 border-gray-300 text-gray-800' },
+        logistics: { name: 'Driver Partner Portal', icon: Truck, color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200 text-emerald-900' },
         admin: { name: 'Platform Admin', icon: ShieldCheck, color: 'text-red-600', bg: 'bg-red-50 border-red-200 text-red-800' }
     };
 
@@ -123,15 +123,15 @@ export const LoginPage = () => {
                                     Consumer
                                 </button>
                                 <button
-                                    type="button"
-                                    onClick={() => setDemoCreds('logistics@demo.com', 'logistics')}
-                                    className={`p-2 text-xs font-bold rounded-lg border text-center flex flex-col items-center gap-1 transition ${
-                                        selectedRole === 'logistics' ? 'border-gray-600 bg-gray-100 text-gray-800 ring-2 ring-gray-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'
-                                    }`}
-                                >
-                                    <Truck className="w-4 h-4 text-gray-600" />
-                                    Logistics
-                                </button>
+                                     type="button"
+                                     onClick={() => setDemoCreds('logistics@demo.com', 'logistics')}
+                                     className={`p-2 text-xs font-bold rounded-lg border text-center flex flex-col items-center gap-1 transition ${
+                                         selectedRole === 'logistics' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-2 ring-emerald-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                                     }`}
+                                 >
+                                     <Truck className="w-4 h-4 text-emerald-600" />
+                                     Driver Partner Portal
+                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setDemoCreds('admin@demo.com', 'admin')}
