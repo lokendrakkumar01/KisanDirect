@@ -1,318 +1,468 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Leaf, TrendingUp, Truck, Shield, Users, BarChart3, ArrowRight, Zap, MapPin, Star, ShieldCheck, ShoppingCart, CheckCircle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { 
+    Search, MapPin, Heart, ArrowRight, ShieldCheck, ShoppingCart, CheckCircle, 
+    TrendingUp, TrendingDown, ChevronRight, Users, Store, PackageCheck, Globe2
+} from 'lucide-react';
 import { PublicLayout } from '../../components/layout/PublicLayout';
-import { Button } from '../../components/ui/Button';
 import { useCart } from '../../contexts/CartContext';
 
 export const LandingPage = () => {
     const { addToCart } = useCart();
+    const navigate = useNavigate();
+    
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [selectedState, setSelectedState] = useState('All');
+    const [favorites, setFavorites] = useState({});
     const [toastMsg, setToastMsg] = useState('');
+
+    const CATEGORIES = [
+        { name: 'Vegetables', icon: '🍅', category: 'vegetables', count: '45+ items' },
+        { name: 'Fruits', icon: '🍋', category: 'fruits', count: '30+ items' },
+        { name: 'Grains & Cereals', icon: '🌾', category: 'grains', count: '25+ items' },
+        { name: 'Pulses', icon: '🫘', category: 'pulses', count: '18+ items' },
+        { name: 'Oilseeds', icon: '🌻', category: 'oilseeds', count: '12+ items' },
+        { name: 'Dairy', icon: '🥛', category: 'dairy', count: '15+ items' },
+        { name: 'Spices', icon: '🌶️', category: 'spices', count: '20+ items' },
+        { name: 'Organic', icon: '🍃', category: 'organic', count: '50+ items' },
+    ];
 
     const FEATURED_PRODUCE = [
         {
-            id: 'L1', farmerId: 'F1', farmerName: 'Ramesh Patil', farmName: 'Ramesh Organic Farms',
-            productName: 'Fresh Red Tomatoes', category: 'vegetables', description: 'Freshly harvested Grade A red tomatoes directly from Nashik farm.',
-            quantity: 500, availableQuantity: 500, unit: 'kg', price: 25, minOrderQuantity: 10, qualityGrade: 'A',
-            organic: true, location: { city: 'Nashik', state: 'Maharashtra' }, rating: 4.8, sellerType: 'farmer'
+            id: 'L1', productName: 'Fresh Tomatoes', category: 'vegetables',
+            price: 20, unit: 'kg', location: 'Nashik, Maharashtra', isFresh: true,
+            image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&auto=format&fit=crop&q=80',
+            sellerName: 'Ramesh Patil', organic: true, qualityGrade: 'A', minOrderQuantity: 5
         },
         {
-            id: 'L3', farmerId: 'F3', farmerName: 'Nashik Fresh Farmers FPO', farmName: 'FPO Aggregation Center', sellerType: 'fpo',
-            productName: 'Nashik Export Red Onions', category: 'vegetables', description: 'Bulk aggregated red onions from 150 local member farmers.',
-            quantity: 5000, availableQuantity: 4000, unit: 'kg', price: 30, minOrderQuantity: 50, qualityGrade: 'A',
-            organic: false, location: { city: 'Pimpalgaon', state: 'Maharashtra' }, rating: 4.6
+            id: 'L4', productName: 'Potato', category: 'vegetables',
+            price: 18, unit: 'kg', location: 'Agra, Uttar Pradesh', isFresh: false,
+            image: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&auto=format&fit=crop&q=80',
+            sellerName: 'Suresh Patil', organic: true, qualityGrade: 'A', minOrderQuantity: 10
         },
         {
-            id: 'L2', farmerId: 'F2', farmerName: 'Sunil Shinde', farmName: 'Shinde Orchards',
-            productName: 'Seedless Green Grapes', category: 'fruits', description: 'Sweet export-grade seedless grapes from Niphad vineyard.',
-            quantity: 200, availableQuantity: 150, unit: 'kg', price: 80, minOrderQuantity: 5, qualityGrade: 'A',
-            organic: false, location: { city: 'Niphad', state: 'Maharashtra' }, rating: 4.9, sellerType: 'farmer'
+            id: 'L3', productName: 'Onion', category: 'vegetables',
+            price: 22, unit: 'kg', location: 'Indore, Madhya Pradesh', isFresh: false,
+            image: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cf?w=500&auto=format&fit=crop&q=80',
+            sellerName: 'Nashik FPO', organic: false, qualityGrade: 'A', minOrderQuantity: 10
         },
         {
-            id: 'L4', farmerId: 'F4', farmerName: 'Priya Deshmukh', farmName: 'Priya Organic Fields',
-            productName: 'Organic Potatoes', category: 'vegetables', description: 'Pesticide-free organic potatoes grown in fertile Pune soil.',
-            quantity: 800, availableQuantity: 750, unit: 'kg', price: 22, minOrderQuantity: 15, qualityGrade: 'A',
-            organic: true, location: { city: 'Pune', state: 'Maharashtra' }, rating: 4.7, sellerType: 'farmer'
+            id: 'L5', productName: 'Wheat (Sharbati)', category: 'grains',
+            price: 25, unit: 'kg', location: 'Patiala, Punjab', isFresh: false,
+            image: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&auto=format&fit=crop&q=80',
+            sellerName: 'Deepak Pawar', organic: false, qualityGrade: 'A', minOrderQuantity: 20
+        },
+        {
+            id: 'L7', productName: 'Green Chilli', category: 'vegetables',
+            price: 40, unit: 'kg', location: 'Guntur, Andhra Pradesh', isFresh: false,
+            image: 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=500&auto=format&fit=crop&q=80',
+            sellerName: 'Andhra Organic Group', organic: true, qualityGrade: 'A', minOrderQuantity: 5
+        },
+        {
+            id: 'L8', productName: 'Rice (Premium)', category: 'grains',
+            price: 70, unit: 'kg', location: 'Cuttack, Odisha', isFresh: false,
+            image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=80',
+            sellerName: 'Odisha Farmers Collective', organic: false, qualityGrade: 'A', minOrderQuantity: 10
         }
     ];
+
+    const LIVE_MARKET_PRICES = [
+        { crop: 'Tomato', price: 28, trend: '+12%', isUp: true },
+        { crop: 'Onion', price: 22, trend: '-8%', isUp: false },
+        { crop: 'Potato', price: 18, trend: '-5%', isUp: false },
+        { crop: 'Wheat', price: 25, trend: '+3%', isUp: true },
+        { crop: 'Rice', price: 70, trend: '-2%', isUp: false }
+    ];
+
+    const toggleFavorite = (id) => {
+        setFavorites(prev => ({ ...prev, [id]: !prev[id] }));
+    };
 
     const handleAddToCart = (e, item) => {
         e.preventDefault();
         e.stopPropagation();
         addToCart(item, item.minOrderQuantity || 1);
-        setToastMsg(`Added "${item.productName}" (${item.minOrderQuantity || 1} ${item.unit}) to Cart!`);
+        setToastMsg(`Added "${item.productName}" to Cart!`);
         setTimeout(() => setToastMsg(''), 3500);
+    };
+
+    const handleGlobalSearch = (e) => {
+        e?.preventDefault();
+        let queryParams = [];
+        if (searchQuery.trim()) queryParams.push(`q=${encodeURIComponent(searchQuery.trim())}`);
+        if (selectedCategory !== 'All') queryParams.push(`category=${encodeURIComponent(selectedCategory.toLowerCase())}`);
+        if (selectedState !== 'All') queryParams.push(`state=${encodeURIComponent(selectedState)}`);
+        
+        const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+        navigate(`/marketplace${queryString}`);
     };
 
     return (
         <PublicLayout>
-            {/* HERO SECTION */}
-            <section className="relative bg-gradient-to-b from-green-50 to-white pt-16 pb-20 overflow-hidden">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="text-center max-w-4xl mx-auto">
-                        <div className="flex items-center justify-center mb-4">
-                            <Leaf className="h-12 w-12 text-green-600 mr-3"/>
-                            <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight">AgroConnect</h1>
-                        </div>
-                        <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                            Farm to Buyer, <span className="text-green-600">Direct &amp; Smart.</span>
-                        </h2>
-                        <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                            India's first AI-powered agricultural marketplace connecting farmers directly with consumers and bulk buyers. Transparent pricing, smart logistics, zero middlemen.
-                        </p>
-                        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-12">
-                            <Link to="/marketplace">
-                                <Button size="lg" className="w-full sm:w-auto font-bold bg-green-600 hover:bg-green-700" rightIcon={<ArrowRight size={20}/>}>
-                                    Explore Marketplace 🛒
-                                </Button>
-                            </Link>
-                            <Link to="/register">
-                                <Button variant="secondary" size="lg" className="w-full sm:w-auto font-bold">
-                                    Sell Your Produce 🌾
-                                </Button>
-                            </Link>
-                            <Link to="/register">
-                                <Button variant="accent" size="lg" className="w-full sm:w-auto font-bold">
-                                    Post Bulk Requirement 🏢
-                                </Button>
-                            </Link>
-                        </div>
-                    </div>
-                    
-                    {/* Animated Supply Chain Visual */}
-                    <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl border border-gray-100 p-8 relative">
-                        <div className="absolute top-0 right-0 bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl">
-                            SIH 2026 Direct Trade Platform
-                        </div>
-                        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                            <div className="flex flex-col items-center text-center p-4 bg-green-50 rounded-xl w-full md:w-1/4 border border-green-100 relative group">
-                                <div className="bg-green-100 p-3 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                                    <Leaf className="text-green-600 h-8 w-8"/>
-                                </div>
-                                <h3 className="font-bold text-gray-900">Farmer / FPO</h3>
-                                <p className="text-xs text-gray-500 mt-1">Lists fresh produce</p>
+            {/* Toast Feedback */}
+            {toastMsg && (
+                <div className="fixed top-24 right-6 z-50 bg-emerald-800 text-white font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-2 text-sm animate-in fade-in-50">
+                    <CheckCircle className="w-5 h-5 text-emerald-300" /> {toastMsg}
+                </div>
+            )}
+
+            {/* 1. HERO SECTION (Exactly Matching Mockup Image) */}
+            <section className="bg-gradient-to-br from-emerald-50/70 via-white to-amber-50/30 pt-10 pb-16 relative overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        
+                        {/* Hero Left Column Text */}
+                        <div className="lg:col-span-6 space-y-6 text-left">
+                            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900 leading-tight tracking-tight">
+                                Directly from <br />
+                                <span className="text-gray-900">Farmers to You</span>
+                            </h1>
+
+                            <div className="space-y-1">
+                                <h2 className="text-lg sm:text-xl font-extrabold text-emerald-700">
+                                    Fair Prices. Fresh Produce. A Stronger India.
+                                </h2>
+                                <p className="text-sm sm:text-base text-gray-600 leading-relaxed font-medium max-w-xl">
+                                    A digital marketplace connecting farmers, FPOs, consumers and bulk buyers with AI-powered demand insights and logistics support.
+                                </p>
                             </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex flex-wrap items-center gap-4 pt-2">
+                                <Link to="/marketplace">
+                                    <button className="bg-emerald-900 hover:bg-emerald-950 text-white font-bold px-7 py-3.5 rounded-full shadow-lg hover:shadow-emerald-900/30 transition duration-200 text-sm flex items-center gap-2">
+                                        Shop Fresh Produce <ArrowRight className="w-4 h-4" />
+                                    </button>
+                                </Link>
+
+                                <Link to="/register?role=farmer">
+                                    <button className="bg-white hover:bg-gray-50 text-gray-800 font-bold px-6 py-3.5 rounded-full border border-gray-300 shadow-sm transition duration-200 text-sm">
+                                        Join as a Farmer
+                                    </button>
+                                </Link>
+                            </div>
+
+                            {/* 4 Feature Pills */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-gray-200/80">
+                                <div className="flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-gray-200/60 shadow-xs">
+                                    <ShieldCheck className="w-5 h-5 text-emerald-700 flex-shrink-0" />
+                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">Better Prices for Farmers</span>
+                                </div>
+                                <div className="flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-gray-200/60 shadow-xs">
+                                    <Users className="w-5 h-5 text-emerald-700 flex-shrink-0" />
+                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">Lower Prices for Consumers</span>
+                                </div>
+                                <div className="flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-gray-200/60 shadow-xs">
+                                    <PackageCheck className="w-5 h-5 text-emerald-700 flex-shrink-0" />
+                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">Transparent Supply Chain</span>
+                                </div>
+                                <div className="flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-gray-200/60 shadow-xs">
+                                    <TrendingUp className="w-5 h-5 text-emerald-700 flex-shrink-0" />
+                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">Smarter Agriculture</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Hero Center Image & Right Stats Card */}
+                        <div className="lg:col-span-6 relative flex justify-end items-center">
                             
-                            <div className="hidden md:flex flex-1 items-center justify-center relative">
-                                <div className="h-1 w-full bg-gradient-to-r from-green-300 via-blue-400 to-amber-300 rounded animate-pulse"></div>
-                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2 py-1 rounded-full shadow-sm text-[10px] font-bold text-blue-600 border border-blue-100 flex items-center">
-                                    <Zap size={12} className="mr-1"/> AI Matchmaking
+                            {/* Farmer Main Image */}
+                            <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white w-full max-w-lg">
+                                <img 
+                                    src="https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?w=1000&auto=format&fit=crop&q=80" 
+                                    alt="Smiling Indian Farmer" 
+                                    className="w-full h-[420px] object-cover object-top hover:scale-105 transition duration-500"
+                                />
+                                {/* Handwritten Quote Overlay */}
+                                <div className="absolute top-6 left-6 max-w-[200px] bg-black/20 backdrop-blur-md p-3 rounded-2xl border border-white/20">
+                                    <p className="font-serif italic text-white text-base leading-snug drop-shadow-md">
+                                        "Empowering Farmers Building a Better Tomorrow"
+                                    </p>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col items-center text-center p-4 bg-blue-50 rounded-xl w-full md:w-1/4 border border-blue-100 relative group z-10 shadow-lg transform md:-translate-y-4">
-                                <div className="bg-blue-600 text-white p-4 rounded-full mb-3 shadow-md group-hover:scale-110 transition-transform">
-                                    <Shield className="h-10 w-10"/>
+                            {/* Floating Glassmorphism Stats Card */}
+                            <div className="absolute top-4 -right-2 sm:-right-4 bg-white/95 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-gray-100 shadow-2xl space-y-4 w-44 sm:w-52 z-20">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 bg-emerald-100 text-emerald-800 rounded-xl">
+                                        <Users className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <div className="text-base sm:text-lg font-black text-gray-900">10K+</div>
+                                        <div className="text-[10px] font-bold text-gray-500 uppercase">Farmers Registered</div>
+                                    </div>
                                 </div>
-                                <h3 className="font-extrabold text-gray-900">AgroConnect</h3>
-                                <p className="text-xs font-medium text-blue-700 mt-1">Smart Engine &amp; Logistics</p>
-                            </div>
-                            
-                            <div className="hidden md:flex flex-1 items-center justify-center relative">
-                                <div className="h-1 w-full bg-gradient-to-r from-blue-400 via-purple-300 to-amber-300 rounded animate-pulse"></div>
-                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2 py-1 rounded-full shadow-sm text-[10px] font-bold text-amber-600 border border-amber-100 flex items-center">
-                                    <Truck size={12} className="mr-1"/> Smart Logistics
-                                </div>
-                            </div>
 
-                            <div className="flex flex-col items-center text-center p-4 bg-amber-50 rounded-xl w-full md:w-1/4 border border-amber-100 relative group">
-                                <div className="bg-amber-100 p-3 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                                    <Users className="text-amber-600 h-8 w-8"/>
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 bg-emerald-100 text-emerald-800 rounded-xl">
+                                        <Store className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <div className="text-base sm:text-lg font-black text-gray-900">5K+</div>
+                                        <div className="text-[10px] font-bold text-gray-500 uppercase">Bulk Buyers</div>
+                                    </div>
                                 </div>
-                                <h3 className="font-bold text-gray-900">Consumer / Bulk Buyer</h3>
-                                <p className="text-xs text-gray-500 mt-1">Receives fresh goods</p>
+
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 bg-emerald-100 text-emerald-800 rounded-xl">
+                                        <ShoppingCart className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <div className="text-base sm:text-lg font-black text-gray-900">1L+</div>
+                                        <div className="text-[10px] font-bold text-gray-500 uppercase">Orders Completed</div>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 bg-emerald-100 text-emerald-800 rounded-xl">
+                                        <MapPin className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <div className="text-base sm:text-lg font-black text-gray-900">25+</div>
+                                        <div className="text-[10px] font-bold text-gray-500 uppercase">States Covered</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </section>
 
-            {/* LIVE FEATURED PRODUCE MARKETPLACE SHOWCASE */}
-            <section className="py-16 bg-white border-b border-gray-200">
+            {/* 2. GLOBAL MULTI-FILTER SEARCH BAR CARD (Positioned Prominently) */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-7 relative z-30">
+                <form onSubmit={handleGlobalSearch} className="bg-white p-3 sm:p-4 rounded-3xl border border-gray-200 shadow-xl flex flex-col md:flex-row items-center gap-3">
+                    {/* Input Field */}
+                    <div className="flex-1 flex items-center gap-2 pl-3 w-full border-b md:border-b-0 md:border-r border-gray-200 pb-2 md:pb-0">
+                        <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                        <input 
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Search for fresh fruits, vegetables, grains, etc..." 
+                            className="w-full text-sm font-medium text-gray-900 placeholder-gray-400 focus:outline-none py-1.5"
+                        />
+                    </div>
+
+                    {/* Category Dropdown */}
+                    <div className="w-full md:w-48 border-b md:border-b-0 md:border-r border-gray-200 pb-2 md:pb-0 px-2">
+                        <select 
+                            value={selectedCategory}
+                            onChange={(e) => setSelectedCategory(e.target.value)}
+                            className="w-full text-xs font-bold text-gray-700 bg-transparent focus:outline-none cursor-pointer py-1.5"
+                        >
+                            <option value="All">All Categories</option>
+                            <option value="Vegetables">Vegetables 🍅</option>
+                            <option value="Fruits">Fruits 🍋</option>
+                            <option value="Grains">Grains &amp; Cereals 🌾</option>
+                            <option value="Pulses">Pulses 🫘</option>
+                            <option value="Organic">Certified Organic 🍃</option>
+                        </select>
+                    </div>
+
+                    {/* State Dropdown */}
+                    <div className="w-full md:w-48 px-2">
+                        <select 
+                            value={selectedState}
+                            onChange={(e) => setSelectedState(e.target.value)}
+                            className="w-full text-xs font-bold text-gray-700 bg-transparent focus:outline-none cursor-pointer py-1.5"
+                        >
+                            <option value="All">Select State</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Odisha">Odisha</option>
+                        </select>
+                    </div>
+
+                    {/* Search Button */}
+                    <button 
+                        type="submit"
+                        className="w-full md:w-auto bg-emerald-800 hover:bg-emerald-900 text-white font-bold px-8 py-3 rounded-2xl shadow-md text-sm transition duration-200"
+                    >
+                        Search
+                    </button>
+                </form>
+            </div>
+
+            {/* 3. SHOP BY CATEGORY SECTION */}
+            <section className="py-14 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
+                    <div className="flex justify-between items-center mb-8">
                         <div>
-                            <span className="text-xs font-extrabold text-green-600 uppercase tracking-widest block mb-1">LIVE MARKETPLACE SHOWCASE</span>
-                            <h2 className="text-3xl font-extrabold text-gray-900">Featured Farm Produce Available Now</h2>
-                            <p className="text-sm text-gray-600 mt-1">Direct from verified Maharashtra farmers &amp; FPOs with transparent pricing</p>
+                            <h2 className="text-2xl font-black text-gray-900">Shop by Category</h2>
                         </div>
-                        <Link to="/marketplace">
-                            <Button variant="outline" className="font-bold text-green-700 border-green-200 hover:bg-green-50">
-                                View Full Marketplace &rarr;
-                            </Button>
+                        <Link to="/marketplace" className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1">
+                            View All <ChevronRight className="w-4 h-4" />
                         </Link>
                     </div>
 
-                    {toastMsg && (
-                        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center shadow-sm text-sm">
-                            <CheckCircle className="w-5 h-5 mr-2 flex-shrink-0" /> {toastMsg}
-                        </div>
-                    )}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
+                        {CATEGORIES.map((cat, idx) => (
+                            <Link 
+                                key={idx} 
+                                to={`/marketplace?category=${encodeURIComponent(cat.category)}`}
+                                className="group bg-gray-50/80 hover:bg-emerald-50/60 p-4 rounded-2xl border border-gray-200/80 hover:border-emerald-300 text-center transition-all duration-200 flex flex-col items-center justify-center hover:shadow-md"
+                            >
+                                <span className="text-4xl mb-2.5 transform group-hover:scale-110 transition duration-200">{cat.icon}</span>
+                                <h3 className="font-bold text-xs text-gray-900 group-hover:text-emerald-800">{cat.name}</h3>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            </section>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {FEATURED_PRODUCE.map(item => {
-                            const emoji = item.category === 'vegetables' ? '🍅' : item.category === 'fruits' ? '🍇' : '🌾';
-                            return (
-                                <div key={item.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
-                                    <Link to={`/marketplace/${item.id}`} className="block relative">
-                                        <div className="h-44 bg-gradient-to-br from-green-100 to-amber-50 flex items-center justify-center relative">
-                                            <span className="text-6xl group-hover:scale-110 transition-transform duration-300">{emoji}</span>
-                                            {item.organic && (
-                                                <div className="absolute top-3 left-3 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow flex items-center">
-                                                    <ShieldCheck className="w-3 h-3 mr-1"/> Organic
-                                                </div>
-                                            )}
-                                            <div className="absolute top-3 right-3 bg-white text-gray-800 text-[10px] font-bold px-2 py-0.5 rounded shadow border">
-                                                Grade {item.qualityGrade}
-                                            </div>
-                                        </div>
-                                    </Link>
+            {/* 4. FEATURED PRODUCE & SIDEBAR WIDGETS SECTION */}
+            <section className="py-10 bg-gray-50/60 border-t border-gray-100">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        
+                        {/* Left 8 Cols: Featured Produce Grid */}
+                        <div className="lg:col-span-8 space-y-6">
+                            <div className="flex justify-between items-center">
+                                <h2 className="text-2xl font-black text-gray-900">Featured Produce</h2>
+                                <Link to="/marketplace" className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1">
+                                    View All Products <ChevronRight className="w-4 h-4" />
+                                </Link>
+                            </div>
 
-                                    <div className="p-5 flex-1 flex flex-col">
-                                        <div className="flex justify-between items-start mb-2">
-                                            <Link to={`/marketplace/${item.id}`} className="font-bold text-base text-gray-900 group-hover:text-green-600 transition line-clamp-1">
-                                                {item.productName}
-                                            </Link>
-                                            <span className="bg-green-50 text-green-700 font-extrabold px-2 py-0.5 rounded text-sm whitespace-nowrap ml-1">
-                                                ₹{item.price}/{item.unit}
-                                            </span>
-                                        </div>
-                                        
-                                        <p className="text-xs text-gray-500 line-clamp-2 mb-3">{item.description}</p>
-
-                                        <div className="flex items-center text-gray-600 text-xs mb-3 font-medium">
-                                            <MapPin className="w-3.5 h-3.5 mr-1 text-gray-400 flex-shrink-0"/> {item.location.city}, {item.location.state}
-                                        </div>
-
-                                        <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100 text-xs">
-                                            <div className="flex items-center gap-1">
-                                                {item.sellerType === 'fpo' ? (
-                                                    <span className="bg-blue-100 text-blue-800 font-bold px-1.5 py-0.5 rounded text-[9px]">FPO</span>
-                                                ) : (
-                                                    <span className="bg-green-100 text-green-800 font-bold px-1.5 py-0.5 rounded text-[9px]">FARMER</span>
-                                                )}
-                                                <span className="font-medium text-gray-700 truncate max-w-[90px]" title={item.farmerName}>
-                                                    {item.farmerName}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                                {FEATURED_PRODUCE.map((product) => (
+                                    <div 
+                                        key={product.id} 
+                                        className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group relative"
+                                    >
+                                        {/* Card Image Header */}
+                                        <div className="h-40 relative overflow-hidden bg-gray-100">
+                                            <img 
+                                                src={product.image} 
+                                                alt={product.productName} 
+                                                className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                                            />
+                                            {product.isFresh && (
+                                                <span className="absolute top-3 left-3 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm">
+                                                    Fresh
                                                 </span>
-                                            </div>
-                                            <div className="flex items-center text-amber-500 font-bold">
-                                                <Star className="w-3.5 h-3.5 fill-current mr-0.5"/>
-                                                <span>{item.rating}</span>
-                                            </div>
+                                            )}
+                                            <button 
+                                                onClick={() => toggleFavorite(product.id)}
+                                                className="absolute top-3 right-3 p-1.5 bg-white/90 rounded-full text-gray-400 hover:text-red-500 transition shadow-sm"
+                                            >
+                                                <Heart className={`w-4 h-4 ${favorites[product.id] ? 'fill-red-500 text-red-500' : ''}`} />
+                                            </button>
                                         </div>
 
-                                        <div className="mt-4 pt-3 border-t flex gap-2">
-                                            <Link to={`/marketplace/${item.id}`} className="flex-1">
-                                                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-2 rounded-lg text-xs transition">
-                                                    View Details
-                                                </button>
-                                            </Link>
+                                        {/* Card Body */}
+                                        <div className="p-4 flex-1 flex flex-col">
+                                            <h3 className="font-bold text-sm text-gray-900 group-hover:text-emerald-700 transition">
+                                                {product.productName}
+                                            </h3>
+                                            
+                                            <div className="flex items-baseline gap-1 mt-1">
+                                                <span className="font-extrabold text-base text-gray-900">₹{product.price}</span>
+                                                <span className="text-xs text-gray-500">/ kg</span>
+                                            </div>
+
+                                            <div className="flex items-center text-gray-500 text-[11px] font-medium mt-2">
+                                                <MapPin className="w-3 h-3 text-emerald-600 mr-1 flex-shrink-0" />
+                                                <span>{product.location}</span>
+                                            </div>
+
                                             <button 
-                                                onClick={(e) => handleAddToCart(e, item)}
-                                                className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-2 rounded-lg text-xs transition flex items-center justify-center gap-1"
+                                                onClick={(e) => handleAddToCart(e, product)}
+                                                className="mt-4 w-full bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold py-2 px-3 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 shadow-sm"
                                             >
-                                                <ShoppingCart className="w-3.5 h-3.5" /> Buy Direct
+                                                <ShoppingCart className="w-3.5 h-3.5" /> Add to Cart
                                             </button>
                                         </div>
                                     </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Right 4 Cols: Side Widgets */}
+                        <div className="lg:col-span-4 space-y-6">
+                            
+                            {/* Widget 1: Fresh Food Banner Card */}
+                            <div className="bg-gradient-to-br from-emerald-800 to-emerald-950 text-white p-6 rounded-3xl shadow-lg relative overflow-hidden flex flex-col justify-between min-h-[200px]">
+                                <div className="space-y-2 z-10">
+                                    <h3 className="text-xl font-black leading-tight">Fresh Food <br />Stronger India</h3>
+                                    <p className="text-xs text-emerald-100 font-medium">Support our farmers, choose local.</p>
                                 </div>
-                            );
-                        })}
+                                <div className="pt-4 z-10">
+                                    <Link to="/about">
+                                        <button className="bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-4 py-2 rounded-full backdrop-blur-sm border border-white/20 transition flex items-center gap-1">
+                                            Know More <ArrowRight className="w-3.5 h-3.5" />
+                                        </button>
+                                    </Link>
+                                </div>
+                                <img 
+                                    src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80" 
+                                    alt="Fresh Food" 
+                                    className="absolute right-0 bottom-0 w-36 h-36 object-cover opacity-30 rounded-tl-full pointer-events-none"
+                                />
+                            </div>
+
+                            {/* Widget 2: Live Market Prices Table */}
+                            <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm space-y-4">
+                                <div className="flex justify-between items-center border-b pb-3">
+                                    <h3 className="font-extrabold text-sm text-gray-900">Live Market Prices</h3>
+                                    <Link to="/farmer/insights" className="text-[11px] font-bold text-emerald-700 hover:underline flex items-center gap-0.5">
+                                        View More <ChevronRight className="w-3 h-3" />
+                                    </Link>
+                                </div>
+
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left text-xs">
+                                        <thead>
+                                            <tr className="text-gray-400 uppercase text-[10px] font-bold border-b border-gray-100">
+                                                <th className="pb-2">Product</th>
+                                                <th className="pb-2">Avg. Price (₹/kg)</th>
+                                                <th className="pb-2 text-right">Trend</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-100">
+                                            {LIVE_MARKET_PRICES.map((row, i) => (
+                                                <tr key={i} className="hover:bg-gray-50">
+                                                    <td className="py-2.5 font-bold text-gray-900">{row.crop}</td>
+                                                    <td className="py-2.5 font-extrabold text-gray-800">{row.price}</td>
+                                                    <td className={`py-2.5 text-right font-extrabold flex items-center justify-end gap-0.5 ${
+                                                        row.isUp ? 'text-emerald-600' : 'text-red-500'
+                                                    }`}>
+                                                        {row.isUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                                                        <span>{row.trend}</span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
             </section>
 
-            {/* PROBLEM SECTION */}
-            <section className="py-20 bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Why the Current Supply Chain Needs a Smarter Approach</h2>
-                        <div className="w-24 h-1 bg-red-500 mx-auto mt-4 rounded"></div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
-                        <div className="p-6 bg-red-50 rounded-xl border border-red-100">
-                            <div className="text-red-500 mb-4 flex justify-center"><Users size={40}/></div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-2">Multiple Intermediaries</h3>
-                            <p className="text-sm text-gray-600">Up to 6 layers between farm and fork, causing delays and waste.</p>
-                        </div>
-                        <div className="p-6 bg-orange-50 rounded-xl border border-orange-100">
-                            <div className="text-orange-500 mb-4 flex justify-center"><TrendingUp className="rotate-180" size={40}/></div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-2">Reduced Farmer Realization</h3>
-                            <p className="text-sm text-gray-600">Farmers receive only 20-30% of what the end consumer pays.</p>
-                        </div>
-                        <div className="p-6 bg-yellow-50 rounded-xl border border-yellow-100">
-                            <div className="text-yellow-500 mb-4 flex justify-center"><BarChart3 size={40}/></div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-2">Fragmented Logistics</h3>
-                            <p className="text-sm text-gray-600">Inefficient transport leads to post-harvest losses of up to 40%.</p>
-                        </div>
-                        <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
-                            <div className="text-gray-500 mb-4 flex justify-center"><Zap className="rotate-45 opacity-50" size={40}/></div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-2">Limited Visibility</h3>
-                            <p className="text-sm text-gray-600">No data intelligence on market demand, resulting in mismatched supply.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* SOLUTION SECTION */}
-            <section className="py-20 bg-gray-50 border-y border-gray-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900">One Platform. Multiple Problems Solved.</h2>
-                        <div className="w-24 h-1 bg-green-500 mx-auto mt-4 rounded"></div>
+            {/* 5. BOTTOM IMPACT FOOTER RIBBON */}
+            <section className="bg-emerald-950 text-white py-6">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold">
+                    <div className="flex flex-wrap items-center gap-6 text-emerald-100">
+                        <span className="flex items-center gap-1.5">🌱 Support Farmers</span>
+                        <span className="flex items-center gap-1.5">👥 Choose Fresh</span>
+                        <span className="flex items-center gap-1.5">🤝 Build a Sustainable Future</span>
+                        <span className="flex items-center gap-1.5"><Globe2 className="w-4 h-4 text-emerald-400"/> Atmanirbhar Bharat</span>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                            <div className="bg-green-100 w-14 h-14 rounded-lg flex items-center justify-center mb-6">
-                                <Leaf className="text-green-600 h-7 w-7"/>
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">Direct Marketplace</h3>
-                            <p className="text-gray-600 mb-4">Eliminates middlemen to ensure better prices for both farmers and buyers.</p>
-                            <div className="inline-block bg-blue-50 text-blue-700 text-xs font-semibold px-2 py-1 rounded border border-blue-100">
-                                End-to-end direct purchasing
-                            </div>
-                        </div>
-
-                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                            <div className="bg-green-100 w-14 h-14 rounded-lg flex items-center justify-center mb-6">
-                                <Users className="text-green-600 h-7 w-7"/>
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">FPO Aggregation</h3>
-                            <p className="text-gray-600 mb-4">Enables small farmers to pool resources and fulfill bulk demands effectively.</p>
-                            <div className="inline-block bg-blue-50 text-blue-700 text-xs font-semibold px-2 py-1 rounded border border-blue-100">
-                                FPO Aggregation Portal
-                            </div>
-                        </div>
-
-                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                            <div className="bg-green-100 w-14 h-14 rounded-lg flex items-center justify-center mb-6">
-                                <Zap className="text-green-600 h-7 w-7"/>
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">AI Demand Intelligence</h3>
-                            <p className="text-gray-600 mb-4">Predicts demand trends to advise farmers on what and when to harvest.</p>
-                            <div className="inline-block bg-blue-50 text-blue-700 text-xs font-semibold px-2 py-1 rounded border border-blue-100">
-                                AI Yield &amp; Price Forecasting
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* CTA SECTION */}
-            <section className="py-24 bg-white text-center">
-                <div className="max-w-4xl mx-auto px-4">
-                    <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">Ready to transform agriculture?</h2>
-                    <p className="text-xl text-gray-600 mb-10">Join AgroConnect today and be part of the future of smart farming and direct trade.</p>
-                    <div className="flex flex-col sm:flex-row justify-center gap-4">
-                        <Link to="/register">
-                            <Button size="lg" className="w-full sm:w-auto min-w-[200px] font-bold bg-green-600 hover:bg-green-700">Register as Farmer</Button>
-                        </Link>
-                        <Link to="/register">
-                            <Button variant="secondary" size="lg" className="w-full sm:w-auto min-w-[200px] font-bold">Register as Buyer</Button>
-                        </Link>
-                    </div>
+                    <Link to="/register">
+                        <button className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-5 py-2.5 rounded-full text-xs shadow-md transition flex items-center gap-1">
+                            Be a Part of the Change <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                    </Link>
                 </div>
             </section>
         </PublicLayout>
