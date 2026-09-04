@@ -54,11 +54,11 @@ export const MarketplacePage = () => {
         },
         {
             id: 'L4', farmerId: 'F4', farmerName: 'Priya Deshmukh', farmName: 'Priya Organic Fields',
-            productName: 'Organic Potatoes', category: 'vegetables', description: 'Pesticide-free organic potatoes grown in fertile Pune soil.',
+            productName: 'Organic Potatoes', category: 'vegetables', description: 'Pesticide-free organic potatoes grown in fertile Agra & Pune soil.',
             quantity: 800, availableQuantity: 750, unit: 'kg', price: 22, minOrderQuantity: 15, qualityGrade: 'A',
             organic: true, harvestDate: '2026-09-02', availableFrom: '2026-09-03',
             image: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600&auto=format&fit=crop&q=80',
-            location: { address: '', city: 'Pune', district: 'Pune', state: 'Maharashtra', pincode: '411001' },
+            location: { address: '', city: 'Agra', district: 'Agra', state: 'Uttar Pradesh', pincode: '282001' },
             rating: 4.7, totalReviews: 42, sellerType: 'farmer', status: 'active'
         },
         {
@@ -67,7 +67,7 @@ export const MarketplacePage = () => {
             quantity: 1200, availableQuantity: 1200, unit: 'kg', price: 28, minOrderQuantity: 50, qualityGrade: 'A',
             organic: false, harvestDate: '2026-08-25', availableFrom: '2026-08-26',
             image: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&auto=format&fit=crop&q=80',
-            location: { address: '', city: 'Ahmednagar', district: 'Ahmednagar', state: 'Maharashtra', pincode: '414001' },
+            location: { address: '', city: 'Patiala', district: 'Patiala', state: 'Punjab', pincode: '147001' },
             rating: 4.5, totalReviews: 18, sellerType: 'farmer', status: 'active'
         },
         {
@@ -78,6 +78,24 @@ export const MarketplacePage = () => {
             image: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=600&auto=format&fit=crop&q=80',
             location: { address: '', city: 'Ratnagiri', district: 'Ratnagiri', state: 'Maharashtra', pincode: '415612' },
             rating: 4.9, totalReviews: 85, status: 'active'
+        },
+        {
+            id: 'L7', farmerId: 'F7', farmerName: 'Andhra Organic Group', farmName: 'Guntur Spice Fields',
+            productName: 'Guntur Green Chilli', category: 'spices', description: 'Fresh spicy green chillies direct from Guntur mandi.',
+            quantity: 400, availableQuantity: 400, unit: 'kg', price: 40, minOrderQuantity: 5, qualityGrade: 'A',
+            organic: true, harvestDate: '2026-09-02', availableFrom: '2026-09-03',
+            image: 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=600&auto=format&fit=crop&q=80',
+            location: { address: '', city: 'Guntur', district: 'Guntur', state: 'Andhra Pradesh', pincode: '522001' },
+            rating: 4.9, totalReviews: 50, sellerType: 'farmer', status: 'active'
+        },
+        {
+            id: 'L8', farmerId: 'F8', farmerName: 'Odisha Farmers Collective', farmName: 'Cuttack Rice Mills', sellerType: 'fpo',
+            productName: 'Premium Basmati Rice', category: 'grains', description: 'Long grain aromatic Basmati rice, aged for 12 months.',
+            quantity: 2500, availableQuantity: 2200, unit: 'kg', price: 70, minOrderQuantity: 10, qualityGrade: 'A',
+            organic: false, harvestDate: '2026-08-20', availableFrom: '2026-08-22',
+            image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&auto=format&fit=crop&q=80',
+            location: { address: '', city: 'Cuttack', district: 'Cuttack', state: 'Odisha', pincode: '753001' },
+            rating: 4.8, totalReviews: 95, status: 'active'
         }
     ];
 
