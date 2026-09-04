@@ -5,15 +5,18 @@ import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import './index.css';
 createRoot(document.getElementById('root')).render(<React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          <NotificationProvider>
-            <App />
-          </NotificationProvider>
-        </CartProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <CartProvider>
+            <NotificationProvider>
+              <App />
+            </NotificationProvider>
+          </CartProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>);

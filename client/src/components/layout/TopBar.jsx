@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Bell, Menu, Search, LogOut, X, MessageSquarePlus } from 'lucide-react';
+import { Bell, Menu, Search, LogOut, X, MessageSquarePlus, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { Logo } from './Logo';
 import { Badge } from '../ui/Badge';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,6 +11,7 @@ import { FeedbackModal } from '../ui/FeedbackModal';
 export const TopBar = ({ onMenuClick }) => {
     const { user, logout } = useAuth();
     const { unreadCount } = useNotification();
+    const { isDark, toggleTheme } = useTheme();
     const [searchQuery, setSearchQuery] = useState('');
     const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -61,10 +63,10 @@ export const TopBar = ({ onMenuClick }) => {
 
     return (
         <>
-            <header className="bg-emerald-50/95 backdrop-blur-md border-b border-emerald-200/90 sticky top-0 z-20 shadow-xs">
+            <header className="bg-emerald-50/95 dark:bg-emerald-950/95 backdrop-blur-md border-b border-emerald-200/90 dark:border-emerald-800/80 sticky top-0 z-20 shadow-xs transition-colors duration-300">
                 <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
                     <div className="flex items-center">
-                        <button onClick={onMenuClick} className="text-gray-500 hover:text-gray-900 focus:outline-none lg:hidden mr-4">
+                        <button onClick={onMenuClick} className="text-emerald-900 dark:text-emerald-100 hover:text-emerald-700 focus:outline-none lg:hidden mr-4">
                             <Menu className="h-6 w-6"/>
                         </button>
                         <Logo size="sm" className="hidden lg:flex"/>
@@ -77,10 +79,10 @@ export const TopBar = ({ onMenuClick }) => {
                             <form onSubmit={handleSearchSubmit}>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <Search className="h-4 w-4 text-gray-400"/>
+                                        <Search className="h-4 w-4 text-gray-400 dark:text-emerald-400"/>
                                     </div>
                                     <input 
-                                        className="block w-full pl-9 pr-8 py-2 border border-emerald-300 rounded-xl leading-5 bg-white/90 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 text-xs sm:text-sm font-medium transition duration-150 ease-in-out shadow-2xs" 
+                                        className="block w-full pl-9 pr-8 py-2 border border-emerald-300 dark:border-emerald-700 rounded-xl leading-5 bg-white/90 dark:bg-emerald-900/60 placeholder-gray-500 dark:placeholder-emerald-400 text-gray-900 dark:text-white focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 text-xs sm:text-sm font-medium transition duration-150 ease-in-out shadow-2xs" 
                                         placeholder="Search crops, farmers, orders, mandis..." 
                                         type="search"
                                         value={searchQuery}
@@ -104,8 +106,8 @@ export const TopBar = ({ onMenuClick }) => {
 
                             {/* Search Dropdown Auto-Complete Suggestions */}
                             {isSuggestionsOpen && (searchQuery.trim().length > 0) && (
-                                <div className="absolute left-0 right-0 top-11 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50 animate-in fade-in-50 duration-150">
-                                    <div className="px-3 py-1 text-[10px] font-extrabold text-gray-400 uppercase tracking-wider">
+                                <div className="absolute left-0 right-0 top-11 bg-white dark:bg-emerald-900 rounded-xl shadow-xl border border-gray-200 dark:border-emerald-700 py-2 z-50 animate-in fade-in-50 duration-150">
+                                    <div className="px-3 py-1 text-[10px] font-extrabold text-gray-400 dark:text-emerald-300 uppercase tracking-wider">
                                         Search Suggestions
                                     </div>
                                     {filteredSuggestions.length > 0 ? (
@@ -113,10 +115,10 @@ export const TopBar = ({ onMenuClick }) => {
                                             <button
                                                 key={idx}
                                                 onClick={() => handleSelectSuggestion(item.query)}
-                                                className="w-full text-left px-4 py-2 hover:bg-green-50 text-xs font-semibold text-gray-800 flex justify-between items-center transition"
+                                                className="w-full text-left px-4 py-2 hover:bg-green-50 dark:hover:bg-emerald-800 text-xs font-semibold text-gray-800 dark:text-white flex justify-between items-center transition"
                                             >
                                                 <span>{item.label}</span>
-                                                <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded capitalize">
+                                                <span className="text-[10px] text-gray-400 dark:text-emerald-300 bg-gray-100 dark:bg-emerald-950 px-2 py-0.5 rounded capitalize">
                                                     {item.category}
                                                 </span>
                                             </button>
@@ -124,7 +126,7 @@ export const TopBar = ({ onMenuClick }) => {
                                     ) : (
                                         <button
                                             onClick={() => handleSelectSuggestion(searchQuery)}
-                                            className="w-full text-left px-4 py-2 hover:bg-green-50 text-xs font-bold text-green-700"
+                                            className="w-full text-left px-4 py-2 hover:bg-green-50 dark:hover:bg-emerald-800 text-xs font-bold text-green-700 dark:text-emerald-300"
                                         >
                                             Search marketplace for "{searchQuery}" &rarr;
                                         </button>
@@ -134,16 +136,25 @@ export const TopBar = ({ onMenuClick }) => {
                         </div>
                     </div>
 
-                    <div className="flex items-center ml-4 space-x-3 sm:space-x-4">
+                    <div className="flex items-center ml-4 space-x-2.5 sm:space-x-3">
+                        {/* Theme Switcher Toggle */}
+                        <button 
+                            onClick={toggleTheme}
+                            className="p-2 rounded-full bg-emerald-100/80 dark:bg-emerald-900/80 text-emerald-900 dark:text-emerald-100 hover:bg-emerald-200 dark:hover:bg-emerald-800 border border-emerald-300/80 dark:border-emerald-700 transition cursor-pointer flex items-center justify-center shadow-2xs"
+                            title={isDark ? "Switch to Light Mode ☀️" : "Switch to Dark Mode 🌙"}
+                        >
+                            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-emerald-800" />}
+                        </button>
+
                         <button 
                             onClick={() => setIsFeedbackOpen(true)}
-                            className="hidden sm:flex items-center gap-1 text-xs font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-full transition shadow-xs cursor-pointer"
+                            className="hidden sm:flex items-center gap-1 text-xs font-bold text-amber-950 dark:text-amber-200 bg-amber-100/90 dark:bg-amber-950/80 hover:bg-amber-200 dark:hover:bg-amber-900 border border-amber-300 dark:border-amber-700 px-3 py-1.5 rounded-full transition shadow-2xs cursor-pointer"
                         >
-                            <MessageSquarePlus className="w-3.5 h-3.5 text-amber-600" />
+                            <MessageSquarePlus className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
                             <span>+ Feedback</span>
                         </button>
 
-                        <Link to="/notifications" className="relative p-1.5 text-gray-500 hover:text-green-700 hover:bg-green-50 rounded-full transition focus:outline-none">
+                        <Link to="/notifications" className="relative p-1.5 text-emerald-900 dark:text-emerald-200 hover:text-emerald-700 hover:bg-emerald-100 dark:hover:bg-emerald-900 rounded-full transition focus:outline-none">
                             <span className="sr-only">View notifications</span>
                             <Bell className="h-5 w-5"/>
                             {unreadCount > 0 && (
@@ -155,15 +166,15 @@ export const TopBar = ({ onMenuClick }) => {
 
                         <div className="relative flex items-center space-x-3">
                             <div className="flex flex-col items-end hidden sm:flex">
-                                <span className="text-sm font-bold text-gray-900 leading-tight">{user?.name || 'User'}</span>
+                                <span className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{user?.name || 'User'}</span>
                                 <Badge variant={badgeVariant} className="text-[10px] px-2 py-0.5 mt-0.5">
                                     {roleLabel}
                                 </Badge>
                             </div>
-                            <div className="h-9 w-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold border border-green-200 shadow-xs">
+                            <div className="h-9 w-9 rounded-full bg-emerald-100 dark:bg-emerald-800 flex items-center justify-center text-emerald-800 dark:text-emerald-100 font-bold border border-emerald-300 dark:border-emerald-600 shadow-xs">
                                 {user?.name?.charAt(0).toUpperCase() || 'U'}
                             </div>
-                            <button onClick={logout} className="p-1.5 text-gray-400 hover:text-red-600 transition-colors rounded hover:bg-red-50 cursor-pointer" title="Logout">
+                            <button onClick={logout} className="p-1.5 text-gray-400 dark:text-emerald-300 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded hover:bg-red-50 dark:hover:bg-red-950/50 cursor-pointer" title="Logout">
                                 <LogOut className="h-5 w-5"/>
                             </button>
                         </div>
