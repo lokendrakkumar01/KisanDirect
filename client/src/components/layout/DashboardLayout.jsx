@@ -7,7 +7,7 @@ import { VoiceAssistant } from '../ui/VoiceAssistant';
 export const DashboardLayout = ({ children }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     return (
-        <div className="min-h-screen bg-gray-50 flex overflow-hidden relative">
+        <div className="min-h-screen bg-gray-50 dark:bg-emerald-950/40 text-gray-900 dark:text-emerald-100 flex overflow-hidden relative transition-colors duration-300">
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}/>
             <div className="flex-1 flex flex-col w-0 overflow-hidden">
                 <TopBar onMenuClick={() => setIsSidebarOpen(true)}/>

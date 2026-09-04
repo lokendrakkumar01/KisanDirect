@@ -53,21 +53,21 @@ export const Sidebar = ({ isOpen, onClose }) => {
     const menuItems = roleMenus[user.role] || [];
     return (<>
       <div className={`fixed inset-0 bg-gray-900 bg-opacity-50 z-20 lg:hidden transition-opacity ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={onClose}/>
-      <aside className={`fixed inset-y-0 left-0 bg-white w-64 border-r border-gray-200 z-30 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed inset-y-0 left-0 bg-white dark:bg-emerald-950/95 w-64 border-r border-gray-200 dark:border-emerald-800/80 z-30 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="h-full flex flex-col">
           <div className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
             {menuItems.map((item) => {
             const Icon = item.icon;
-            return (<NavLink key={item.path} to={item.path} className={({ isActive }) => `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive
-                    ? 'bg-green-50 text-green-700'
-                    : 'text-gray-700 hover:bg-gray-50'}`} onClick={() => window.innerWidth < 1024 && onClose()}>
+            return (<NavLink key={item.path} to={item.path} className={({ isActive }) => `flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-150 ${isActive
+                    ? 'bg-emerald-100 dark:bg-emerald-800/90 text-emerald-950 dark:text-emerald-100 font-extrabold shadow-2xs'
+                    : 'text-gray-700 dark:text-emerald-200 hover:bg-gray-100 dark:hover:bg-emerald-900/60 hover:text-emerald-900 dark:hover:text-emerald-100'}`} onClick={() => window.innerWidth < 1024 && onClose()}>
                   <Icon className="mr-3 flex-shrink-0 h-5 w-5"/>
                   {item.name}
                 </NavLink>);
         })}
           </div>
-          <div className="p-4 border-t border-gray-200">
-            <NavLink to="/settings" className={({ isActive }) => `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive ? 'bg-green-50 text-green-700' : 'text-gray-700 hover:bg-gray-50'}`}>
+          <div className="p-4 border-t border-gray-200 dark:border-emerald-800/80">
+            <NavLink to="/settings" className={({ isActive }) => `flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-150 ${isActive ? 'bg-emerald-100 dark:bg-emerald-800/90 text-emerald-950 dark:text-emerald-100 font-extrabold' : 'text-gray-700 dark:text-emerald-200 hover:bg-gray-100 dark:hover:bg-emerald-900/60 hover:text-emerald-900 dark:hover:text-emerald-100'}`}>
               <Settings className="mr-3 flex-shrink-0 h-5 w-5"/>
               Settings
             </NavLink>

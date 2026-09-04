@@ -6,7 +6,7 @@ import { GeminiAiWidget } from '../ui/GeminiAiWidget';
 
 export const PublicLayout = ({ children }) => {
     return (
-        <div className="min-h-screen flex flex-col relative">
+        <div className="min-h-screen bg-white dark:bg-emerald-950/40 text-gray-900 dark:text-emerald-100 flex flex-col relative transition-colors duration-300">
             <PublicNav />
             <main className="flex-grow">
                 {children}
