@@ -24,7 +24,7 @@ export const PublicNav = () => {
 
     return (
         <>
-            <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+            <nav className="bg-emerald-50/95 backdrop-blur-md border-b border-emerald-200/90 sticky top-0 z-50 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-20">
                         
@@ -36,15 +36,15 @@ export const PublicNav = () => {
                         </div>
                         
                         {/* Main Nav Links */}
-                        <div className="hidden lg:flex items-center space-x-7">
+                        <div className="hidden lg:flex items-center space-x-2">
                             {navLinks.map((link) => (
                                 <Link 
                                     key={link.name} 
                                     to={link.path} 
-                                    className={`text-sm font-semibold transition-colors duration-200 ${
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                                         isActive(link.path) 
-                                            ? 'text-emerald-700 font-bold border-b-2 border-emerald-600 pb-1' 
-                                            : 'text-gray-700 hover:text-emerald-700'
+                                            ? 'text-emerald-900 bg-emerald-200/80 font-bold border-b-2 border-emerald-700 shadow-2xs' 
+                                            : 'text-emerald-950 hover:text-emerald-800 hover:bg-emerald-100/70'
                                     }`}
                                 >
                                     {link.name}
@@ -56,26 +56,26 @@ export const PublicNav = () => {
                         <div className="hidden md:flex items-center space-x-3">
                             <button 
                                 onClick={() => setIsFeedbackOpen(true)}
-                                className="flex items-center gap-1 text-xs font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-full transition shadow-xs cursor-pointer"
+                                className="flex items-center gap-1 text-xs font-bold text-amber-950 bg-amber-100/90 hover:bg-amber-200 border border-amber-300 px-3 py-1.5 rounded-full transition shadow-2xs cursor-pointer"
                             >
-                                <MessageSquarePlus className="w-3.5 h-3.5 text-amber-600" />
+                                <MessageSquarePlus className="w-3.5 h-3.5 text-amber-700" />
                                 <span>+ Feedback</span>
                             </button>
 
-                            <div className="flex items-center gap-1.5 text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-full cursor-pointer hover:bg-gray-100 transition">
-                                <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-950 bg-emerald-100/80 border border-emerald-300/80 px-3 py-1.5 rounded-full cursor-pointer hover:bg-emerald-200/70 transition">
+                                <MapPin className="w-3.5 h-3.5 text-emerald-700" />
                                 <span>India</span>
-                                <ChevronDown className="w-3 h-3 text-gray-400" />
+                                <ChevronDown className="w-3 h-3 text-emerald-600" />
                             </div>
 
                             <Link to="/admin/login">
-                                <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 font-bold text-xs flex items-center gap-1 py-1.5">
+                                <Button variant="outline" size="sm" className="text-red-700 border-red-300 hover:bg-red-50 font-bold text-xs flex items-center gap-1 py-1.5">
                                     <ShieldCheck className="w-3.5 h-3.5" /> Admin
                                 </Button>
                             </Link>
 
                             <Link to="/login">
-                                <button className="px-4 py-2 text-xs font-bold text-emerald-800 border border-emerald-600 hover:bg-emerald-50 rounded-full transition duration-200">
+                                <button className="px-4 py-2 text-xs font-bold text-emerald-900 border border-emerald-700 hover:bg-emerald-200/70 bg-white/60 rounded-full transition duration-200 shadow-2xs">
                                     Login
                                 </button>
                             </Link>
@@ -94,7 +94,7 @@ export const PublicNav = () => {
                                     Admin 🛡️
                                 </Button>
                             </Link>
-                            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 hover:text-gray-900 focus:outline-none p-1">
+                            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-emerald-900 hover:text-emerald-950 focus:outline-none p-1">
                                 {isMobileMenuOpen ? <X className="h-6 w-6"/> : <Menu className="h-6 w-6"/>}
                             </button>
                         </div>
@@ -103,29 +103,29 @@ export const PublicNav = () => {
 
                 {/* Mobile Dropdown Menu */}
                 {isMobileMenuOpen && (
-                    <div className="lg:hidden bg-white border-b border-gray-200 animate-in fade-in-50">
+                    <div className="lg:hidden bg-emerald-50/98 border-b border-emerald-200 animate-in fade-in-50">
                         <div className="px-3 pt-2 pb-4 space-y-1">
                             {navLinks.map((link) => (
                                 <Link 
                                     key={link.name} 
                                     to={link.path} 
                                     className={`block px-4 py-2.5 rounded-lg text-sm font-semibold ${
-                                        isActive(link.path) ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-gray-700 hover:bg-gray-50'
+                                        isActive(link.path) ? 'bg-emerald-200 text-emerald-900 font-bold' : 'text-emerald-950 hover:bg-emerald-100'
                                     }`} 
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     {link.name}
                                 </Link>
                             ))}
-                            <div className="pt-4 flex flex-col space-y-2 px-3 border-t">
+                            <div className="pt-4 flex flex-col space-y-2 px-3 border-t border-emerald-200">
                                 <button
                                     onClick={() => { setIsMobileMenuOpen(false); setIsFeedbackOpen(true); }}
-                                    className="w-full py-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5"
+                                    className="w-full py-2 bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-950 font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5"
                                 >
-                                    <MessageSquarePlus className="w-4 h-4 text-amber-600" /> + Share Feedback
+                                    <MessageSquarePlus className="w-4 h-4 text-amber-700" /> + Share Feedback
                                 </button>
                                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                                    <Button variant="outline" fullWidth className="font-bold">User Login</Button>
+                                    <Button variant="outline" fullWidth className="font-bold border-emerald-700 text-emerald-900">User Login</Button>
                                 </Link>
                                 <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>
                                     <Button className="bg-emerald-800 hover:bg-emerald-900 font-bold" fullWidth>Sign Up Account</Button>

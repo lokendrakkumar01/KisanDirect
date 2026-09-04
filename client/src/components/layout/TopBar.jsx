@@ -61,7 +61,7 @@ export const TopBar = ({ onMenuClick }) => {
 
     return (
         <>
-            <header className="bg-white border-b border-gray-200 sticky top-0 z-20 shadow-xs">
+            <header className="bg-emerald-50/95 backdrop-blur-md border-b border-emerald-200/90 sticky top-0 z-20 shadow-xs">
                 <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
                     <div className="flex items-center">
                         <button onClick={onMenuClick} className="text-gray-500 hover:text-gray-900 focus:outline-none lg:hidden mr-4">
@@ -80,7 +80,7 @@ export const TopBar = ({ onMenuClick }) => {
                                         <Search className="h-4 w-4 text-gray-400"/>
                                     </div>
                                     <input 
-                                        className="block w-full pl-9 pr-8 py-2 border border-gray-300 rounded-xl leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-green-500 text-xs sm:text-sm font-medium transition duration-150 ease-in-out" 
+                                        className="block w-full pl-9 pr-8 py-2 border border-emerald-300 rounded-xl leading-5 bg-white/90 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 text-xs sm:text-sm font-medium transition duration-150 ease-in-out shadow-2xs" 
                                         placeholder="Search crops, farmers, orders, mandis..." 
                                         type="search"
                                         value={searchQuery}
