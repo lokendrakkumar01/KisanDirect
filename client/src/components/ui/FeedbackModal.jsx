@@ -21,6 +21,21 @@ export const FeedbackModal = ({ isOpen, onClose }) => {
 
         setIsSubmitting(true);
         setTimeout(() => {
+            const newFeedback = {
+                id: 'FB-' + Date.now().toString().slice(-4),
+                user: (name.trim() || user?.name || 'Anonymous User') + (email ? ` (${email})` : ''),
+                issue: `⭐ ${rating}/5 Stars | ${category}: ${comment.trim()}`,
+                priority: rating <= 2 ? 'High' : rating === 3 ? 'Medium' : 'Low',
+                status: 'Open',
+                date: new Date().toISOString().split('T')[0],
+                category: 'User Feedback',
+                rating,
+                comment: comment.trim()
+            };
+
+            const existing = JSON.parse(localStorage.getItem('agroconnect_feedbacks') || '[]');
+            localStorage.setItem('agroconnect_feedbacks', JSON.stringify([newFeedback, ...existing]));
+
             setIsSubmitting(false);
             setIsSubmitted(true);
             setTimeout(() => {
@@ -28,7 +43,7 @@ export const FeedbackModal = ({ isOpen, onClose }) => {
                 setComment('');
                 onClose();
             }, 2200);
-        }, 800);
+        }, 600);
     };
 
     return (

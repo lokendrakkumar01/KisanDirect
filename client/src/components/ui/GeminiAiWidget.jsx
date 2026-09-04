@@ -76,28 +76,62 @@ export const GeminiAiWidget = () => {
                     </div>
 
                     {/* Messages Body */}
-                    <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50 text-xs">
-                        {messages.map((m) => (
-                            <div
-                                key={m.id}
-                                className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                            >
+                    <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50 dark:bg-emerald-950/90 text-xs">
+                        {messages.map((m) => {
+                            const isAi = m.sender === 'ai';
+                            const lowerText = (m.text || '').toLowerCase();
+                            
+                            let navAction = null;
+                            if (isAi) {
+                                if (lowerText.includes('marketplace') || lowerText.includes('crop prices') || lowerText.includes('tamatar') || lowerText.includes('tomato') || lowerText.includes('onion')) {
+                                    navAction = { label: '🛒 Browse Marketplace', path: '/marketplace' };
+                                } else if (lowerText.includes('logistics') || lowerText.includes('driver') || lowerText.includes('route')) {
+                                    navAction = { label: '🚚 Driver Partner Portal', path: '/logistics/driver-partner' };
+                                } else if (lowerText.includes('trend') || lowerText.includes('forecast')) {
+                                    navAction = { label: '📈 View Price Trends', path: '/farmer/insights' };
+                                } else if (lowerText.includes('list') || lowerText.includes('add produce') || lowerText.includes('sell')) {
+                                    navAction = { label: '➕ Add Produce', path: '/farmer/add-produce' };
+                                } else if (lowerText.includes('setting') || lowerText.includes('language')) {
+                                    navAction = { label: '⚙️ Open Settings', path: '/settings' };
+                                }
+                            }
+
+                            return (
                                 <div
-                                    className={`max-w-[85%] p-3 rounded-2xl leading-relaxed ${
-                                        m.sender === 'user'
-                                            ? 'bg-emerald-800 text-white font-medium rounded-br-none shadow-sm'
-                                            : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none shadow-sm whitespace-pre-wrap'
-                                    }`}
+                                    key={m.id}
+                                    className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
-                                    {m.text}
+                                    <div
+                                        className={`max-w-[88%] p-3 rounded-2xl leading-relaxed ${
+                                            m.sender === 'user'
+                                                ? 'bg-emerald-800 text-white font-medium rounded-br-none shadow-sm'
+                                                : 'bg-white dark:bg-emerald-900 border border-gray-200 dark:border-emerald-700 text-gray-800 dark:text-emerald-100 rounded-bl-none shadow-sm whitespace-pre-wrap'
+                                        }`}
+                                    >
+                                        {m.text}
+
+                                        {navAction && (
+                                            <div className="mt-2.5 pt-2 border-t border-gray-100 dark:border-emerald-800 flex justify-end">
+                                                <button
+                                                    onClick={() => {
+                                                        setIsOpen(false);
+                                                        window.location.href = navAction.path;
+                                                    }}
+                                                    className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-extrabold rounded-xl shadow-xs transition flex items-center gap-1 cursor-pointer"
+                                                >
+                                                    <span>{navAction.label}</span> &rarr;
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                         {isLoading && (
                             <div className="flex justify-start">
-                                <div className="bg-white border border-gray-200 text-gray-500 p-3 rounded-2xl rounded-bl-none flex items-center gap-2 shadow-sm">
+                                <div className="bg-white dark:bg-emerald-900 border border-gray-200 dark:border-emerald-700 text-gray-500 dark:text-emerald-200 p-3 rounded-2xl rounded-bl-none flex items-center gap-2 shadow-sm">
                                     <Loader2 className="w-4 h-4 text-emerald-700 animate-spin" />
-                                    <span>AI Assistant is thinking...</span>
+                                    <span>AI Assistant is finding the best answer...</span>
                                 </div>
                             </div>
                         )}

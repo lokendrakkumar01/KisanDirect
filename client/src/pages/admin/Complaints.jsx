@@ -13,7 +13,10 @@ const initialComplaints = [
 ];
 
 export default function Complaints() {
-    const [tickets, setTickets] = useState(initialComplaints);
+    const [tickets, setTickets] = useState(() => {
+        const savedFeedbacks = JSON.parse(localStorage.getItem('agroconnect_feedbacks') || '[]');
+        return [...savedFeedbacks, ...initialComplaints];
+    });
     const [search, setSearch] = useState('');
     const [activeTab, setActiveTab] = useState('All');
     const [selectedTicket, setSelectedTicket] = useState(null);

@@ -155,6 +155,14 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const updateUserProfile = (updatedFields) => {
+        setUser((prev) => {
+            const updated = { ...prev, ...updatedFields };
+            localStorage.setItem('demo_user_info', JSON.stringify(updated));
+            return updated;
+        });
+    };
+
     const logout = () => {
         setToken(null);
         setUser(null);
@@ -163,7 +171,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, isAuthenticated: !!user, isLoading, login, register, logout }}>
+        <AuthContext.Provider value={{ user, token, isAuthenticated: !!user, isLoading, login, register, logout, updateUserProfile }}>
             {children}
         </AuthContext.Provider>
     );
