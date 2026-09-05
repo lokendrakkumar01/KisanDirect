@@ -4,10 +4,12 @@ import { Search, Filter, MapPin, Star, ShieldCheck, ShoppingCart, CheckCircle, L
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
 
 export const MarketplacePage = () => {
     const { isAuthenticated, user } = useAuth();
+    const { language, c } = useLanguage();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const initialQuery = searchParams.get('q') || searchParams.get('search') || '';
@@ -226,14 +228,14 @@ export const MarketplacePage = () => {
                         <div className="bg-gradient-to-r from-amber-600 via-amber-700 to-emerald-900 text-white p-4 rounded-2xl mb-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-3">
                             <div className="flex items-center gap-2.5 text-xs sm:text-sm font-bold">
                                 <Lock className="w-5 h-5 text-amber-300 flex-shrink-0" />
-                                <span>You are viewing in Guest Mode. Please Login or Register to complete produce purchases and contact verified farmers!</span>
+                                <span>{c('You are viewing in Guest Mode. Please Login or Register to complete produce purchases and contact verified farmers!', 'आप गेस्ट मोड में देख रहे हैं। उपज खरीदने और सत्यापित किसानों से संपर्क करने के लिए कृपया लॉगिन या पंजीकरण करें!', 'आपण अतिथी मोडमध्ये पाहत आहात. खरेदी पूर्ण करण्यासाठी आणि सत्यापित शेतकऱ्यांशी संपर्क साधण्यासाठी कृपया लॉगिन किंवा नोंदणी करा!')}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Link to="/login" className="bg-white text-emerald-950 hover:bg-gray-100 font-extrabold text-xs px-4 py-2 rounded-xl transition shadow-xs">
-                                    Login
+                                    {c('Login', 'लॉगिन', 'लॉगिन')}
                                 </Link>
                                 <Link to="/register" className="bg-amber-400 text-emerald-950 hover:bg-amber-300 font-extrabold text-xs px-4 py-2 rounded-xl transition shadow-xs">
-                                    Register
+                                    {c('Register', 'पंजीकरण', 'नोंदणी')}
                                 </Link>
                             </div>
                         </div>
@@ -242,13 +244,13 @@ export const MarketplacePage = () => {
                     {/* Header & Search Bar */}
                     <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                         <div>
-                            <h1 className="text-3xl font-extrabold text-gray-900">AgroConnect Marketplace</h1>
-                            <p className="text-gray-600 mt-1">Discover fresh farm produce directly from verified farmers &amp; FPOs across India.</p>
+                            <h1 className="text-3xl font-extrabold text-gray-900">{c('AgroConnect Marketplace', 'कृषिकनेक्ट बाज़ार', 'कृषिकनेक्ट बाजारपेठ')}</h1>
+                            <p className="text-gray-600 mt-1">{c('Discover fresh farm produce directly from verified farmers & FPOs across India.', 'भारत भर के सत्यापित किसानों और एफपीओ से सीधे ताज़ी कृषि उपज खोजें।', 'भारतभरातील सत्यापित शेतकरी आणि एफपीओ कडून थेट ताजी शेतमाल शोधा.')}</p>
                         </div>
                         <div className="relative w-full md:w-96">
                             <input 
                                 type="text" 
-                                placeholder="Search crops, vegetables, farmers, cities..." 
+                                placeholder={c('Search crops, vegetables, farmers, cities...', 'फसलें, सब्जियां, किसान, शहर खोजें...', 'पिके, भाज्या, शेतकरी, शहरे शोधा...')} 
                                 className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm shadow-sm font-medium" 
                                 value={searchTerm} 
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -259,7 +261,7 @@ export const MarketplacePage = () => {
                                     onClick={() => setSearchTerm('')} 
                                     className="absolute right-3 top-2.5 text-xs text-gray-400 hover:text-gray-600 font-bold bg-gray-100 hover:bg-gray-200 px-1.5 py-0.5 rounded"
                                 >
-                                    Clear
+                                    {c('Clear', 'साफ़ करें', 'पुसा')}
                                 </button>
                             )}
                         </div>
@@ -277,35 +279,35 @@ export const MarketplacePage = () => {
                             <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm sticky top-24 space-y-6">
                                 <div className="flex items-center gap-2 border-b pb-3">
                                     <Filter className="w-5 h-5 text-emerald-700"/>
-                                    <h2 className="font-bold text-gray-900">Filter Produce</h2>
+                                    <h2 className="font-bold text-gray-900">{c('Filter Produce', 'उपज फ़िल्टर करें', 'उत्पाद फिल्टर करा')}</h2>
                                 </div>
                                 
                                 <div>
-                                    <h3 className="text-sm font-semibold text-gray-900 mb-2">Category</h3>
+                                    <h3 className="text-sm font-semibold text-gray-900 mb-2">{c('Category', 'श्रेणी', 'वर्ग')}</h3>
                                     <select 
                                         value={selectedCategory} 
                                         onChange={(e) => setSelectedCategory(e.target.value)}
                                         className="w-full border rounded-xl p-2.5 text-xs font-semibold bg-white focus:ring-2 focus:ring-emerald-500"
                                     >
-                                        <option value="All">All Categories 🌾</option>
-                                        <option value="vegetables">Vegetables 🍅</option>
-                                        <option value="fruits">Fruits 🍇</option>
-                                        <option value="grains">Grains &amp; Cereals 🌾</option>
-                                        <option value="spices">Spices 🌶️</option>
+                                        <option value="All">{c('All Categories 🌾', 'सभी श्रेणियां 🌾', 'सर्व वर्ग 🌾')}</option>
+                                        <option value="vegetables">{c('Vegetables 🍅', 'सब्जियां 🍅', 'भाज्या 🍅')}</option>
+                                        <option value="fruits">{c('Fruits 🍇', 'फल 🍇', 'फळे 🍇')}</option>
+                                        <option value="grains">{c('Grains & Cereals 🌾', 'अनाज 🌾', 'धान्य 🌾')}</option>
+                                        <option value="spices">{c('Spices 🌶️', 'मसाले 🌶️', 'मसाले 🌶️')}</option>
                                     </select>
                                 </div>
 
                                 {/* Origin State Filter Option */}
                                 <div>
                                     <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1">
-                                        <Globe2 className="w-4 h-4 text-emerald-600" /> Origin State / Mandi Hub
+                                        <Globe2 className="w-4 h-4 text-emerald-600" /> {c('Origin State / Mandi Hub', 'उत्पत्ति राज्य / मंडी हब', 'मूळ राज्य / मंदी केंद्र')}
                                     </h3>
                                     <select 
                                         value={selectedOrigin} 
                                         onChange={(e) => setSelectedOrigin(e.target.value)}
                                         className="w-full border rounded-xl p-2.5 text-xs font-semibold bg-white focus:ring-2 focus:ring-emerald-500"
                                     >
-                                        <option value="All">All States 📍</option>
+                                        <option value="All">{c('All States 📍', 'सभी राज्य 📍', 'सर्व राज्ये 📍')}</option>
                                         <option value="Maharashtra">Maharashtra (Nashik / Lasalgaon)</option>
                                         <option value="Uttar Pradesh">Uttar Pradesh (Agra)</option>
                                         <option value="Punjab">Punjab (Patiala)</option>
@@ -315,7 +317,7 @@ export const MarketplacePage = () => {
                                 </div>
 
                                 <div>
-                                    <h3 className="text-sm font-semibold text-gray-900 mb-2">Quality Grade</h3>
+                                    <h3 className="text-sm font-semibold text-gray-900 mb-2">{c('Quality Grade', 'गुणवत्ता श्रेणी', 'गुणवत्ता श्रेणी')}</h3>
                                     <div className="flex gap-2">
                                         {['All', 'A', 'B', 'C'].map(g => (
                                             <button 
@@ -327,22 +329,22 @@ export const MarketplacePage = () => {
                                                         : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                                                 }`}
                                             >
-                                                {g === 'All' ? 'All' : `Grade ${g}`}
+                                                {g === 'All' ? c('All', 'सभी', 'सर्व') : `${c('Grade', 'ग्रेड', 'ग्रेड')} ${g}`}
                                             </button>
                                         ))}
                                     </div>
                                 </div>
 
                                 <div>
-                                    <h3 className="text-sm font-semibold text-gray-900 mb-2">Seller Type</h3>
+                                    <h3 className="text-sm font-semibold text-gray-900 mb-2">{c('Seller Type', 'विक्रेता प्रकार', 'विक्रेता प्रकार')}</h3>
                                     <select 
                                         value={sellerType} 
                                         onChange={(e) => setSellerType(e.target.value)}
                                         className="w-full border rounded-xl p-2.5 text-xs font-semibold bg-white focus:ring-2 focus:ring-emerald-500"
                                     >
-                                        <option value="All">All Sellers</option>
-                                        <option value="farmer">Individual Farmers 👨‍🌾</option>
-                                        <option value="fpo">FPO (Bulk Produce) 🏢</option>
+                                        <option value="All">{c('All Sellers', 'सभी विक्रेता', 'सर्व विक्रेते')}</option>
+                                        <option value="farmer">{c('Individual Farmers 👨‍🌾', 'व्यक्तिगत किसान 👨‍🌾', 'वैयक्तिक शेतकरी 👨‍🌾')}</option>
+                                        <option value="fpo">{c('FPO (Bulk Produce) 🏢', 'एफपीओ (थोक उपज) 🏢', 'एफपीओ (घाऊक माल) 🏢')}</option>
                                     </select>
                                 </div>
                                 
@@ -354,7 +356,7 @@ export const MarketplacePage = () => {
                                         className="rounded text-emerald-600 focus:ring-emerald-500"
                                     />
                                     <span className="ml-2.5 text-xs font-bold text-emerald-900 flex items-center">
-                                        <ShieldCheck className="w-4 h-4 mr-1 text-emerald-600"/> Certified Organic Only
+                                        <ShieldCheck className="w-4 h-4 mr-1 text-emerald-600"/> {c('Certified Organic Only', 'केवल प्रमाणित जैविक', 'केवळ प्रमाणित सेंद्रिय')}
                                     </span>
                                 </label>
 
@@ -363,7 +365,7 @@ export const MarketplacePage = () => {
                                         onClick={() => { setSearchTerm(''); setSelectedCategory('All'); setSelectedGrade('All'); setSelectedOrigin('All'); setOrganicOnly(false); setSellerType('All'); }}
                                         className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 rounded-xl transition cursor-pointer"
                                     >
-                                        Reset All Filters
+                                        {c('Reset All Filters', 'सभी फ़िल्टर रीसेट करें', 'सर्व फिल्टर रीसेट करा')}
                                     </button>
                                 )}
                             </div>
@@ -373,22 +375,22 @@ export const MarketplacePage = () => {
                         <div className="flex-1">
                             <div className="flex justify-between items-center mb-4">
                                 <span className="text-gray-600 text-sm font-medium">
-                                    Showing <strong className="text-gray-900">{filteredListings.length}</strong> fresh produce listings
-                                    {searchTerm && <span> for "<span className="text-emerald-600 font-bold">{searchTerm}</span>"</span>}
+                                    {c('Showing', 'दिखा रहे हैं', 'दाखवत आहे')} <strong className="text-gray-900">{filteredListings.length}</strong> {c('fresh produce listings', 'ताज़ी उपज की लिस्टिंग', 'ताजी उत्पादने यादी')}
+                                    {searchTerm && <span> {c('for', 'के लिए', 'साठी')} "<span className="text-emerald-600 font-bold">{searchTerm}</span>"</span>}
                                 </span>
                             </div>
 
                             {isLoading ? (
-                                <div className="py-20 text-center text-gray-500 font-medium">Loading produce listings...</div>
+                                <div className="py-20 text-center text-gray-500 font-medium">{c('Loading produce listings...', 'उपज लिस्टिंग लोड हो रही है...', 'यादी लोड होत आहे...')}</div>
                             ) : filteredListings.length === 0 ? (
                                 <div className="bg-white p-12 rounded-2xl border border-gray-200 text-center shadow-sm">
-                                    <p className="text-gray-600 text-base font-bold mb-1">No produce listings found.</p>
-                                    <p className="text-gray-400 text-xs mb-4">Try searching for "Tomato", "Onion", "Grapes", "Wheat", or "Potato"</p>
+                                    <p className="text-gray-600 text-base font-bold mb-1">{c('No produce listings found.', 'कोई उपज लिस्टिंग नहीं मिली।', 'कोणतीही उत्पादने सापडली नाहीत.')}</p>
+                                    <p className="text-gray-400 text-xs mb-4">{c('Try searching for "Tomato", "Onion", "Grapes", "Wheat", or "Potato"', '"टमाटर", "प्याज", "अंगूर", "गेहूं", या "आलू" खोजें', '"टोमॅटो", "कांदा", "द्राक्षे", "गहू", किंवा "बटाटा" शोधण्याचा प्रयत्न करा')}</p>
                                     <button 
                                         onClick={() => { setSearchTerm(''); setSelectedCategory('All'); setSelectedGrade('All'); setSelectedOrigin('All'); setOrganicOnly(false); setSellerType('All'); }}
                                         className="bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-emerald-800 transition"
                                     >
-                                        Clear Search &amp; Reset Filters
+                                        {c('Clear Search & Reset Filters', 'खोज साफ़ करें और फ़िल्टर रीसेट करें', 'शोध पुसा आणि फिल्टर रीसेट करा')}
                                     </button>
                                 </div>
                             ) : (
@@ -409,14 +411,14 @@ export const MarketplacePage = () => {
                                                         />
                                                         {listing.organic && (
                                                             <div className="absolute top-3 left-3 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow flex items-center">
-                                                                <ShieldCheck className="w-3.5 h-3.5 mr-1"/> Organic
+                                                                <ShieldCheck className="w-3.5 h-3.5 mr-1"/> {c('Organic', 'जैविक', 'सेंद्रिय')}
                                                             </div>
                                                         )}
                                                         <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-900 text-[10px] font-extrabold px-2.5 py-1 rounded-md shadow border">
-                                                            Grade {listing.qualityGrade || 'A'}
+                                                            {c('Grade', 'ग्रेड', 'ग्रेड')} {listing.qualityGrade || 'A'}
                                                         </div>
                                                         <div className="absolute bottom-2 left-3 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
-                                                            <MapPin className="w-3 h-3 text-amber-400" /> Origin: {city}, {state}
+                                                            <MapPin className="w-3 h-3 text-amber-400" /> {c('Origin:', 'स्थान:', 'स्थान:')} {city}, {state}
                                                         </div>
                                                     </div>
                                                 </Link>
@@ -438,9 +440,9 @@ export const MarketplacePage = () => {
                                                         <div className="flex items-center justify-between text-xs">
                                                             <div className="flex items-center gap-1.5">
                                                                 {listing.sellerType === 'fpo' ? (
-                                                                    <span className="bg-blue-100 text-blue-800 font-extrabold px-2 py-0.5 rounded text-[10px]">FPO 🏢</span>
+                                                                    <span className="bg-blue-100 text-blue-800 font-extrabold px-2 py-0.5 rounded text-[10px]">{c('FPO 🏢', 'एफपीओ 🏢', 'एफपीओ 🏢')}</span>
                                                                 ) : (
-                                                                    <span className="bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded text-[10px]">FARMER 👨‍🌾</span>
+                                                                    <span className="bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded text-[10px]">{c('FARMER 👨‍🌾', 'किसान 👨‍🌾', 'शेतकरी 👨‍🌾')}</span>
                                                                 )}
                                                                 <span className="font-bold text-gray-800 truncate max-w-[120px]" title={listing.farmerName}>
                                                                     {listing.farmerName}
@@ -455,14 +457,14 @@ export const MarketplacePage = () => {
                                                         <div className="flex gap-2">
                                                             <Link to={`/marketplace/${listing.id}`} className="flex-1">
                                                                 <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-2.5 rounded-xl text-xs transition cursor-pointer">
-                                                                    View Details
+                                                                    {c('View Details', 'विवरण देखें', 'तपशील पहा')}
                                                                 </button>
                                                             </Link>
                                                             <button 
                                                                 onClick={(e) => handleAddToCart(e, listing)}
                                                                 className="flex-1 bg-emerald-800 hover:bg-emerald-900 text-white font-bold py-2 px-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
                                                             >
-                                                                <ShoppingCart className="w-3.5 h-3.5" /> Buy Direct
+                                                                <ShoppingCart className="w-3.5 h-3.5" /> {c('Buy Direct', 'सीधे खरीदें', 'थेट खरेदी करा')}
                                                             </button>
                                                         </div>
                                                     </div>

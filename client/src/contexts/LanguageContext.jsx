@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const LanguageContext = createContext({ language: 'en', setLanguage: () => {}, t: (key) => key });
+const LanguageContext = createContext({ language: 'en', setLanguage: () => {}, t: (key) => key, c: (en, hi, mr) => en });
 
 export const LanguageProvider = ({ children }) => {
     const { i18n, t } = useTranslation();
@@ -17,7 +17,13 @@ export const LanguageProvider = ({ children }) => {
         document.documentElement.lang = language;
     }, [language]);
 
-    return <LanguageContext.Provider value={{ language, setLanguage, t }}>{children}</LanguageContext.Provider>;
+    const c = (enText, hiText, mrText) => {
+        if (language === 'hi') return hiText || enText;
+        if (language === 'mr') return mrText || hiText || enText;
+        return enText;
+    };
+
+    return <LanguageContext.Provider value={{ language, setLanguage, t, c }}>{children}</LanguageContext.Provider>;
 };
 
 export const useLanguage = () => useContext(LanguageContext);

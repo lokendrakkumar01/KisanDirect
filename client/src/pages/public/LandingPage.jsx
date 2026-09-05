@@ -12,9 +12,8 @@ import { useLanguage } from '../../contexts/LanguageContext';
 export const LandingPage = () => {
     const { isAuthenticated, user } = useAuth();
     const { addToCart } = useCart();
-    const { language } = useLanguage();
+    const { language, c } = useLanguage();
     const navigate = useNavigate();
-    const c = (english, hindi) => language === 'hi' ? hindi : english;
     
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');

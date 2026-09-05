@@ -5,6 +5,7 @@ import { PublicLayout } from '../../components/layout/PublicLayout';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { useAuth, getRoleDashboardPath } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export const LoginPage = () => {
     const [searchParams] = useSearchParams();
@@ -16,7 +17,14 @@ export const LoginPage = () => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { user, isAuthenticated, login } = useAuth();
+    const { language } = useLanguage();
     const navigate = useNavigate();
+
+    const c = (enText, hiText, mrText) => {
+        if (language === 'hi') return hiText;
+        if (language === 'mr') return mrText || hiText;
+        return enText;
+    };
 
     React.useEffect(() => {
         if (isAuthenticated && user?.role) {
@@ -25,12 +33,12 @@ export const LoginPage = () => {
     }, [isAuthenticated, user, navigate]);
 
     const roleInfoMap = {
-        farmer: { name: 'Farmer', icon: Sprout, color: 'text-green-600', bg: 'bg-green-50 border-green-200 text-green-800' },
-        fpo: { name: 'FPO Admin', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50 border-blue-200 text-blue-800' },
-        buyer: { name: 'Bulk Buyer', icon: Store, color: 'text-purple-600', bg: 'bg-purple-50 border-purple-200 text-purple-800' },
-        consumer: { name: 'Consumer', icon: UserCheck, color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200 text-amber-800' },
-        logistics: { name: 'Driver Partner Portal', icon: Truck, color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200 text-emerald-900' },
-        admin: { name: 'Platform Admin', icon: ShieldCheck, color: 'text-red-600', bg: 'bg-red-50 border-red-200 text-red-800' }
+        farmer: { name: c('Farmer', 'किसान', 'शेतकरी'), icon: Sprout, color: 'text-green-600', bg: 'bg-green-50 border-green-200 text-green-800' },
+        fpo: { name: c('FPO Admin', 'एफपीओ व्यवस्थापक', 'एफपीओ प्रशासक'), icon: Users, color: 'text-blue-600', bg: 'bg-blue-50 border-blue-200 text-blue-800' },
+        buyer: { name: c('Bulk Buyer', 'थोक खरीदार', 'घाऊक खरेदीदार'), icon: Store, color: 'text-purple-600', bg: 'bg-purple-50 border-purple-200 text-purple-800' },
+        consumer: { name: c('Consumer', 'उपभोक्ता', 'ग्राहक'), icon: UserCheck, color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200 text-amber-800' },
+        logistics: { name: c('Driver Partner Portal', 'चालक पार्टनर पोर्टल', 'ड्रायव्हर पार्टनर पोर्टल'), icon: Truck, color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200 text-emerald-900' },
+        admin: { name: c('Platform Admin', 'प्लेटफ़ॉर्म व्यवस्थापक', 'प्रशासक'), icon: ShieldCheck, color: 'text-red-600', bg: 'bg-red-50 border-red-200 text-red-800' }
     };
 
     const handleLogin = async (e) => {
@@ -42,7 +50,7 @@ export const LoginPage = () => {
             navigate(getRoleDashboardPath(loggedUser.role));
         }
         catch (err) {
-            setError(err.message || 'Failed to login. Please check your credentials.');
+            setError(err.message || c('Failed to login. Please check your credentials.', 'लॉगिन विफल रहा। कृपया अपने क्रेडेंशियल जांचें।', 'लॉगिन अयशस्वी. कृपया आपली माहिती तपासा.'));
         }
         finally {
             setIsLoading(false);
@@ -65,11 +73,16 @@ export const LoginPage = () => {
                     {/* Main Login Form */}
                     <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
                         <div className="text-center mb-6">
-                            <h2 className="text-3xl font-extrabold text-gray-900">Welcome Back</h2>
-                            <p className="text-gray-500 mt-1">Sign in to your AgroConnect Account</p>
+                            <h2 className="text-3xl font-extrabold text-gray-900">
+                                {c('Welcome Back', 'वापसी पर स्वागत है', 'पुन्हा स्वागत आहे')}
+                            </h2>
+                            <p className="text-gray-500 mt-1">
+                                {c('Sign in to your AgroConnect Account', 'अपने कृषिकनेक्ट खाते में साइन इन करें', 'आपल्या कृषिकनेक्ट खात्यात साइन इन करा')}
+                            </p>
                             <div className="mt-3">
                                 <Link to="/admin/login" className="inline-flex items-center text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-3 py-1.5 rounded-full hover:bg-red-100 transition">
-                                    <ShieldCheck className="w-4 h-4 mr-1" /> Dedicated Platform Admin Login Portal &rarr;
+                                    <ShieldCheck className="w-4 h-4 mr-1" /> 
+                                    {c('Dedicated Platform Admin Login Portal →', 'विशेष एडमिन लॉगिन पोर्टल →', 'विशेष अ‍ॅडमिन लॉगिन पोर्टल →')}
                                 </Link>
                             </div>
                         </div>
@@ -79,7 +92,7 @@ export const LoginPage = () => {
                             <div className="flex items-center gap-2">
                                 <CurrentIcon className="w-5 h-5" />
                                 <span className="text-sm font-bold">
-                                    Logging in as: {roleInfoMap[selectedRole]?.name || 'User'}
+                                    {c('Logging in as:', 'इस रूप में लॉगिन कर रहे हैं:', 'या नात्याने लॉगिन करत आहात:')} {roleInfoMap[selectedRole]?.name || c('User', 'उपयोगकर्ता', 'वापरकर्ता')}
                                 </span>
                             </div>
                             <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-white border opacity-80">
@@ -89,7 +102,9 @@ export const LoginPage = () => {
 
                         {/* Quick Role Selector Buttons */}
                         <div className="mb-6">
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Select Your Role:</label>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                                {c('Select Your Role:', 'अपनी भूमिका चुनें:', 'आपली भूमिका निवडा:')}
+                            </label>
                             <div className="grid grid-cols-3 gap-2">
                                 <button
                                     type="button"
@@ -99,7 +114,7 @@ export const LoginPage = () => {
                                     }`}
                                 >
                                     <Sprout className="w-4 h-4 text-green-600" />
-                                    Farmer
+                                    {c('Farmer', 'किसान', 'शेतकरी')}
                                 </button>
                                 <button
                                     type="button"
@@ -109,7 +124,7 @@ export const LoginPage = () => {
                                     }`}
                                 >
                                     <Users className="w-4 h-4 text-blue-600" />
-                                    FPO Admin
+                                    {c('FPO Admin', 'एफपीओ एडमिन', 'एफपीओ अ‍ॅडमिन')}
                                 </button>
                                 <button
                                     type="button"
@@ -119,7 +134,7 @@ export const LoginPage = () => {
                                     }`}
                                 >
                                     <Store className="w-4 h-4 text-purple-600" />
-                                    Bulk Buyer
+                                    {c('Bulk Buyer', 'थोक खरीदार', 'घाऊक खरेदीदार')}
                                 </button>
                                 <button
                                     type="button"
@@ -129,7 +144,7 @@ export const LoginPage = () => {
                                     }`}
                                 >
                                     <UserCheck className="w-4 h-4 text-amber-500" />
-                                    Consumer
+                                    {c('Consumer', 'उपभोक्ता', 'ग्राहक')}
                                 </button>
                                 <button
                                      type="button"
@@ -137,10 +152,10 @@ export const LoginPage = () => {
                                      className={`p-2 text-xs font-bold rounded-lg border text-center flex flex-col items-center gap-1 transition ${
                                          selectedRole === 'logistics' ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-2 ring-emerald-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'
                                      }`}
-                                 >
-                                     <Truck className="w-4 h-4 text-emerald-600" />
-                                     Driver Partner Portal
-                                 </button>
+                                  >
+                                      <Truck className="w-4 h-4 text-emerald-600" />
+                                      {c('Driver Partner', 'चालक पार्टनर', 'ड्रायव्हर पार्टनर')}
+                                  </button>
                                 <button
                                     type="button"
                                     onClick={() => setDemoCreds('admin@demo.com', 'admin')}
@@ -149,7 +164,7 @@ export const LoginPage = () => {
                                     }`}
                                 >
                                     <ShieldCheck className="w-4 h-4 text-red-600" />
-                                    Admin
+                                    {c('Admin', 'व्यवस्थापक', 'प्रशासक')}
                                 </button>
                             </div>
                         </div>
@@ -162,7 +177,9 @@ export const LoginPage = () => {
 
                         <form onSubmit={handleLogin} className="space-y-5">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {c('Email address', 'ईमेल पता', 'ईमेल पत्ता')}
+                                </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <Mail className="h-5 w-5 text-gray-400"/>
@@ -179,7 +196,9 @@ export const LoginPage = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {c('Password', 'पासवर्ड', 'पासवर्ड')}
+                                </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <Lock className="h-5 w-5 text-gray-400"/>
@@ -196,14 +215,14 @@ export const LoginPage = () => {
                             </div>
 
                             <Button type="submit" fullWidth size="lg" isLoading={isLoading}>
-                                Sign in to {roleInfoMap[selectedRole]?.name || 'Account'}
+                                {c('Sign in to Account', 'खाते में साइन इन करें', 'खात्यात साइन इन करा')} ({roleInfoMap[selectedRole]?.name || 'User'})
                             </Button>
                         </form>
 
                         <div className="mt-6 text-center text-sm text-gray-600">
-                            Don't have an account?{' '}
+                            {c("Don't have an account?", 'क्या आपका खाता नहीं है?', 'आपले खाते नाही?')} {' '}
                             <Link to="/register" className="font-medium text-green-600 hover:text-green-500">
-                                Register now
+                                {c('Register now', 'अभी पंजीकरण करें', 'आता नोंदणी करा')}
                             </Link>
                         </div>
                     </div>
@@ -211,65 +230,81 @@ export const LoginPage = () => {
                     {/* Demo Mode Panel */}
                     <div className="bg-gradient-to-br from-green-50 to-emerald-100 p-8 rounded-2xl border border-green-200">
                         <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-xl font-bold text-gray-900">SIH 2026 Quick Demo Login</h3>
-                            <span className="bg-green-600 text-white text-xs px-2 py-1 rounded font-bold uppercase">Prototype</span>
+                            <h3 className="text-xl font-bold text-gray-900">
+                                {c('SIH 2026 Quick Demo Login', 'त्वरित डेमो लॉगिन', 'त्वरित प्रात्यक्षिक लॉगिन')}
+                            </h3>
+                            <span className="bg-green-600 text-white text-xs px-2 py-1 rounded font-bold uppercase">
+                                {c('Prototype', 'प्रारूप', 'प्रारूप')}
+                            </span>
                         </div>
                         <p className="text-gray-700 mb-6 text-sm">
-                            Click any persona to auto-fill credentials for testing:
+                            {c('Click any persona to auto-fill credentials for testing:', 'परीक्षण के लिए क्रेडेंशियल स्वतः भरने हेतु किसी भी भूमिका पर क्लिक करें:', 'चाचणीसाठी माहिती आपोआप भरण्यासाठी कोणत्याही भूमिकेवर क्लिक करा:')}
                         </p>
 
                         <div className="space-y-3">
-                            <button onClick={() => setDemoCreds('farmer@demo.com', 'farmer')} className="w-full flex items-center p-3 bg-white border border-gray-200 rounded-lg hover:border-green-500 hover:shadow-sm transition group text-left">
+                            <button onClick={() => setDemoCreds('farmer@demo.com', 'farmer')} className="w-full flex items-center p-3 bg-white border border-gray-200 rounded-lg hover:border-green-500 hover:shadow-sm transition group text-left cursor-pointer">
                                 <Sprout className="w-5 h-5 text-green-600 mr-3 flex-shrink-0"/>
                                 <div>
-                                    <div className="font-bold text-gray-900 text-sm">🌾 Farmer Portal (Ramesh Patil)</div>
+                                    <div className="font-bold text-gray-900 text-sm">
+                                        {c('🌾 Farmer Portal (Ramesh Patil)', '🌾 किसान पोर्टल (रमेश पाटिल)', '🌾 शेतकरी पोर्टल (रमेश पाटील)')}
+                                    </div>
                                     <div className="text-xs text-gray-500">farmer@demo.com</div>
                                 </div>
                             </button>
                             
-                            <button onClick={() => setDemoCreds('fpo@demo.com', 'fpo')} className="w-full flex items-center p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-sm transition group text-left">
+                            <button onClick={() => setDemoCreds('fpo@demo.com', 'fpo')} className="w-full flex items-center p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-sm transition group text-left cursor-pointer">
                                 <Users className="w-5 h-5 text-blue-600 mr-3 flex-shrink-0"/>
                                 <div>
-                                    <div className="font-bold text-gray-900 text-sm">🏭 FPO Admin Portal (Nashik FPO)</div>
+                                    <div className="font-bold text-gray-900 text-sm">
+                                        {c('🏭 FPO Admin Portal (Nashik FPO)', '🏭 एफपीओ व्यवस्थापक पोर्टल (नासिक एफपीओ)', '🏭 एफपीओ प्रशासक पोर्टल (नाशिक एफपीओ)')}
+                                    </div>
                                     <div className="text-xs text-gray-500">fpo@demo.com</div>
                                 </div>
                             </button>
 
-                            <button onClick={() => setDemoCreds('buyer@demo.com', 'buyer')} className="w-full flex items-center p-3 bg-white border border-gray-200 rounded-lg hover:border-purple-500 hover:shadow-sm transition group text-left">
+                            <button onClick={() => setDemoCreds('buyer@demo.com', 'buyer')} className="w-full flex items-center p-3 bg-white border border-gray-200 rounded-lg hover:border-purple-500 hover:shadow-sm transition group text-left cursor-pointer">
                                 <Store className="w-5 h-5 text-purple-600 mr-3 flex-shrink-0"/>
                                 <div>
-                                    <div className="font-bold text-gray-900 text-sm">🏢 Bulk Buyer Portal (Pune Fresh)</div>
+                                    <div className="font-bold text-gray-900 text-sm">
+                                        {c('🏢 Bulk Buyer Portal (Pune Fresh)', '🏢 थोक खरीदार पोर्टल (पुणे फ्रेश)', '🏢 घाऊक खरेदीदार पोर्टल (पुणे फ्रेश)')}
+                                    </div>
                                     <div className="text-xs text-gray-500">buyer@demo.com</div>
                                 </div>
                             </button>
 
-                            <button onClick={() => setDemoCreds('consumer@demo.com', 'consumer')} className="w-full flex items-center p-3 bg-white border border-gray-200 rounded-lg hover:border-amber-500 hover:shadow-sm transition group text-left">
+                            <button onClick={() => setDemoCreds('consumer@demo.com', 'consumer')} className="w-full flex items-center p-3 bg-white border border-gray-200 rounded-lg hover:border-amber-500 hover:shadow-sm transition group text-left cursor-pointer">
                                 <UserCheck className="w-5 h-5 text-amber-500 mr-3 flex-shrink-0"/>
                                 <div>
-                                    <div className="font-bold text-gray-900 text-sm">🛒 Consumer Portal</div>
+                                    <div className="font-bold text-gray-900 text-sm">
+                                        {c('🛒 Consumer Portal', '🛒 उपभोक्ता पोर्टल', '🛒 ग्राहक पोर्टल')}
+                                    </div>
                                     <div className="text-xs text-gray-500">consumer@demo.com</div>
                                 </div>
                             </button>
 
-                            <button onClick={() => setDemoCreds('logistics@demo.com', 'logistics')} className="w-full flex items-center p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-500 hover:shadow-sm transition group text-left">
+                            <button onClick={() => setDemoCreds('logistics@demo.com', 'logistics')} className="w-full flex items-center p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-500 hover:shadow-sm transition group text-left cursor-pointer">
                                 <Truck className="w-5 h-5 text-gray-600 mr-3 flex-shrink-0"/>
                                 <div>
-                                    <div className="font-bold text-gray-900 text-sm">🚛 Logistics Operator Portal</div>
+                                    <div className="font-bold text-gray-900 text-sm">
+                                        {c('🚛 Driver Partner Portal', '🚛 चालक पार्टनर पोर्टल', '🚛 ड्रायव्हर पार्टनर पोर्टल')}
+                                    </div>
                                     <div className="text-xs text-gray-500">logistics@demo.com</div>
                                 </div>
                             </button>
 
-                            <button onClick={() => setDemoCreds('admin@demo.com', 'admin')} className="w-full flex items-center p-3 bg-white border border-red-300 rounded-lg hover:border-red-600 hover:shadow-sm transition group text-left">
+                            <button onClick={() => setDemoCreds('admin@demo.com', 'admin')} className="w-full flex items-center p-3 bg-white border border-red-300 rounded-lg hover:border-red-600 hover:shadow-sm transition group text-left cursor-pointer">
                                 <ShieldCheck className="w-5 h-5 text-red-600 mr-3 flex-shrink-0"/>
                                 <div>
-                                    <div className="font-bold text-gray-900 text-sm">🛡️ Platform Admin Portal (DoCA)</div>
+                                    <div className="font-bold text-gray-900 text-sm">
+                                        {c('🛡️ Platform Admin Portal (DoCA)', '🛡️ प्लेटफ़ॉर्म व्यवस्थापक पोर्टल', '🛡️ प्लॅटफॉर्म प्रशासक पोर्टल')}
+                                    </div>
                                     <div className="text-xs text-gray-500">admin@demo.com</div>
                                 </div>
                             </button>
                         </div>
                         
                         <div className="mt-6 pt-4 border-t border-green-200 text-xs text-center text-gray-600">
-                            All demo passwords: <strong className="text-gray-900 font-bold">demo123</strong>
+                            {c('All demo passwords:', 'सभी डेमो पासवर्ड:', 'सर्व प्रात्यक्षिक पासवर्ड:')} <strong className="text-gray-900 font-bold">demo123</strong>
                         </div>
                     </div>
                 </div>
