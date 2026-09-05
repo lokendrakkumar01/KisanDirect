@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Card, CardBody } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Search, MapPin, ShoppingBag, Clock, Star, CheckCircle, ShoppingCart } from 'lucide-react';
@@ -10,6 +11,7 @@ import { formatCurrency } from '../../utils/format';
 export const ConsumerDashboard = () => {
     const { user } = useAuth();
     const { addToCart } = useCart();
+    const { c } = useLanguage();
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [toastMsg, setToastMsg] = useState('');
@@ -58,14 +60,14 @@ export const ConsumerDashboard = () => {
             {/* Header Banner */}
             <div className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-700 rounded-2xl p-8 text-white flex flex-col md:flex-row justify-between items-center shadow-lg relative overflow-hidden">
                 <div className="mb-6 md:mb-0 max-w-xl z-10">
-                    <h1 className="text-3xl font-extrabold mb-2">Welcome back, {user?.name || 'Consumer'}! 👋</h1>
-                    <p className="text-green-100 text-base mb-6">Discover farm-fresh produce directly from local verified farmers &amp; FPOs.</p>
+                    <h1 className="text-3xl font-extrabold mb-2">{c('Welcome back', 'वापसी पर स्वागत है', 'पुन्हा स्वागत आहे')}, {user?.name || 'Consumer'}! 👋</h1>
+                    <p className="text-green-100 text-base mb-6">{c('Discover farm-fresh produce directly from local verified farmers & FPOs.', 'स्थानीय सत्यापित किसानों और एफपीओ से सीधे ताज़ी उपज खोजें।', 'स्थानिक शेतकरी आणि एफपीओ कडून थेट ताजी पिके शोधा.')}</p>
                     <form onSubmit={handleSearchSubmit} className="relative max-w-md">
                         <input 
                             type="text" 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search for tomatoes, onions, grapes, wheat..." 
+                            placeholder={c('Search for tomatoes, onions, grapes, wheat...', 'टमाटर, प्याज, अंगूर, गेहूं खोजें...', 'टोमॅटो, कांदा, द्राक्षे, गहू शोधा...')} 
                             className="w-full pl-11 pr-4 py-3 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-300 shadow-md text-sm font-medium"
                         />
                         <Search className="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5"/>
@@ -97,8 +99,8 @@ export const ConsumerDashboard = () => {
                             <ShoppingBag className="w-6 h-6"/>
                         </div>
                         <div>
-                            <h3 className="font-bold text-gray-900 text-lg group-hover:text-green-600 transition">Browse Marketplace</h3>
-                            <p className="text-sm text-gray-500">Explore 100+ fresh produce listings</p>
+                            <h3 className="font-bold text-gray-900 text-lg group-hover:text-green-600 transition">{c('Browse Marketplace', 'बाज़ार ब्राउज़ करें', 'बाजारपेठ पहा')}</h3>
+                            <p className="text-sm text-gray-500">{c('Explore 100+ fresh produce listings', '100+ ताज़ी उपज की सूचियां देखें', '100+ ताजी उत्पादने पहा')}</p>
                         </div>
                     </CardBody>
                 </Card>
@@ -112,8 +114,8 @@ export const ConsumerDashboard = () => {
                             <Clock className="w-6 h-6"/>
                         </div>
                         <div>
-                            <h3 className="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition">Track Orders</h3>
-                            <p className="text-sm text-gray-500">View active deliveries &amp; status</p>
+                            <h3 className="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition">{c('Track Orders', 'ऑर्डर ट्रैक करें', 'ऑर्डर्स ट्रॅक करा')}</h3>
+                            <p className="text-sm text-gray-500">{c('View active deliveries & status', 'सक्रिय डिलीवरी और स्थिति देखें', 'सक्रिय डिलिव्हरी पहा')}</p>
                         </div>
                     </CardBody>
                 </Card>
@@ -127,8 +129,8 @@ export const ConsumerDashboard = () => {
                             <MapPin className="w-6 h-6"/>
                         </div>
                         <div>
-                            <h3 className="font-bold text-gray-900 text-lg group-hover:text-amber-600 transition">Nearby Farmers</h3>
-                            <p className="text-sm text-gray-500">Direct farmgate produce in 20km</p>
+                            <h3 className="font-bold text-gray-900 text-lg group-hover:text-amber-600 transition">{c('Nearby Farmers', 'आस-पास के किसान', 'जवळचे शेतकरी')}</h3>
+                            <p className="text-sm text-gray-500">{c('Direct farmgate produce in 20km', '20 किमी के दायरे में सीधे खेत की उपज', '20 किमी मधील थेट शेतमाल')}</p>
                         </div>
                     </CardBody>
                 </Card>
@@ -138,15 +140,15 @@ export const ConsumerDashboard = () => {
             <div>
                 <div className="flex justify-between items-end mb-6">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900">Recommended For You</h2>
-                        <p className="text-gray-500 mt-1">Top-rated produce from nearby verified farmers</p>
+                        <h2 className="text-2xl font-bold text-gray-900">{c('Recommended For You', 'आपके लिए अनुशंसित', 'आपल्यासाठी शिफारस केलेले')}</h2>
+                        <p className="text-gray-500 mt-1">{c('Top-rated produce from nearby verified farmers', 'निकटतम सत्यापित किसानों की शीर्ष उपज', 'जवळच्या शेतकर्‍यांची ताजी उत्पादने')}</p>
                     </div>
                     <Button 
                         variant="ghost" 
                         onClick={() => navigate('/marketplace')}
                         className="font-bold text-green-600 hover:text-green-700"
                     >
-                        View All Marketplace &rarr;
+                        {c('View All Marketplace →', 'पूरा बाज़ार देखें →', 'सर्व बाजारपेठ पहा →')}
                     </Button>
                 </div>
                 
@@ -178,7 +180,7 @@ export const ConsumerDashboard = () => {
                                         onClick={() => handleAddToCart(product)}
                                         className="bg-green-600 hover:bg-green-700 font-bold px-4 py-2 flex items-center gap-1 text-xs shadow-sm"
                                     >
-                                        <ShoppingCart className="w-3.5 h-3.5" /> Add
+                                        <ShoppingCart className="w-3.5 h-3.5" /> {c('Add', 'जोड़ें', 'जोडा')}
                                     </Button>
                                 </div>
                             </CardBody>
