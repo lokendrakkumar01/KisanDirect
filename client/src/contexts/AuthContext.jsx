@@ -27,17 +27,24 @@ export const AuthProvider = ({ children }) => {
                 return;
             }
 
+            // Restore stored user info immediately to prevent page flash or logouts
+            const storedUserStr = localStorage.getItem('demo_user_info');
+            let cachedUser = null;
+            if (storedUserStr) {
+                try {
+                    cachedUser = JSON.parse(storedUserStr);
+                    setUser(cachedUser);
+                } catch (e) {
+                    console.warn('Failed to parse cached user info:', e);
+                }
+            }
+
             // Handle client-side demo tokens
             if (token.startsWith('demo-jwt-token-')) {
-                const storedUser = localStorage.getItem('demo_user_info');
-                if (storedUser) {
-                    try {
-                        setUser(JSON.parse(storedUser));
-                    } catch (e) {
-                        setUser({ id: 'demo-admin-id', name: 'Platform Admin (DoCA)', email: 'admin@demo.com', role: 'admin', isVerified: true });
-                    }
-                } else {
-                    setUser({ id: 'demo-admin-id', name: 'Platform Admin (DoCA)', email: 'admin@demo.com', role: 'admin', isVerified: true });
+                if (!cachedUser) {
+                    const fallbackUser = { id: 'demo-admin-id', name: 'Platform Admin (DoCA)', email: 'admin@demo.com', role: 'admin', isVerified: true };
+                    setUser(fallbackUser);
+                    localStorage.setItem('demo_user_info', JSON.stringify(fallbackUser));
                 }
                 setIsLoading(false);
                 return;
@@ -47,17 +54,11 @@ export const AuthProvider = ({ children }) => {
                 const response = await getMe();
                 if (response.success && response.data) {
                     setUser(response.data);
-                } else {
-                    logout();
+                    localStorage.setItem('demo_user_info', JSON.stringify(response.data));
                 }
             } catch (error) {
-                // If offline or backend error on getMe, check if token is valid or demo
-                const storedUser = localStorage.getItem('demo_user_info');
-                if (storedUser) {
-                    try { setUser(JSON.parse(storedUser)); } catch (e) { logout(); }
-                } else {
-                    logout();
-                }
+                // Keep cached user logged in on network/CORS error instead of logging out
+                console.warn('getMe request warning, using active session user:', error);
             } finally {
                 setIsLoading(false);
             }
