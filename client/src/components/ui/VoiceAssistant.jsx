@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Mic, MicOff, Volume2, X, Sparkles, Loader2, Bot, Globe, Send } from 'lucide-react';
 import { askGeminiAI } from '../../services/geminiAiService';
 import { useAuth, getRoleDashboardPath } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export const VoiceAssistant = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +19,7 @@ export const VoiceAssistant = () => {
     const transcriptRef = useRef('');
     const navigate = useNavigate();
     const { user } = useAuth();
+    const { language } = useLanguage();
 
     const SUPPORTED_LANGUAGES = [
         { code: 'hi-IN', name: 'हिन्दी (Hindi) 🇮🇳', promptLang: 'Hindi', navConfirmation: 'मार्केटप्लेस पर जा रहे हैं।' },
@@ -258,7 +260,7 @@ export const VoiceAssistant = () => {
             const activeLangName = langObj?.promptLang || 'Hindi';
             const promptWithLang = `Please answer this agricultural request strictly in ${activeLangName} language: "${commandText}"`;
             
-            const aiResult = await askGeminiAI(promptWithLang, user?.role || 'farmer');
+            const aiResult = await askGeminiAI(promptWithLang, user?.role || 'farmer', language);
             setResponseMessage(aiResult);
             speakText(aiResult);
         } catch (err) {

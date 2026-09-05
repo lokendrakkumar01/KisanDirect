@@ -1,25 +1,32 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShieldCheck, MapPin, ChevronDown, MessageSquarePlus, Sun, Moon } from 'lucide-react';
+import { Menu, X, ShieldCheck, Globe, MessageSquarePlus, Sun, Moon } from 'lucide-react';
 import { Logo } from './Logo';
 import { Button } from '../ui/Button';
 import { FeedbackModal } from '../ui/FeedbackModal';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export const PublicNav = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const location = useLocation();
     const { isDark, toggleTheme } = useTheme();
+    const { language, setLanguage, t } = useLanguage();
+
+    const languageOptions = [
+        { code: 'hi', label: 'हिंदी' },
+        { code: 'en', label: 'अंग्रेज़ी' },
+    ];
     
     const navLinks = [
-        { name: 'Home', path: '/' },
-        { name: 'Marketplace', path: '/marketplace' },
-        { name: 'For Farmers', path: '/how-it-works' },
-        { name: 'For Buyers', path: '/buyer/find' },
-        { name: 'Price Trends', path: '/farmer/insights' },
-        { name: 'Logistics', path: '/logistics/map' },
-        { name: 'About', path: '/about' },
+        { key: 'home', path: '/' },
+        { key: 'marketplace', path: '/marketplace' },
+        { key: 'forFarmers', path: '/how-it-works' },
+        { key: 'forBuyers', path: '/buyer/find' },
+        { key: 'priceTrends', path: '/farmer/insights' },
+        { key: 'logistics', path: '/logistics/map' },
+        { key: 'about', path: '/about' },
     ];
     
     const isActive = (path) => location.pathname === path;
@@ -39,7 +46,7 @@ export const PublicNav = () => {
                         <div className="hidden lg:flex items-center space-x-1.5 xl:space-x-3">
                             {navLinks.map((link) => (
                                 <Link 
-                                    key={link.name} 
+                                    key={link.key} 
                                     to={link.path} 
                                     className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                                         isActive(link.path) 
@@ -47,12 +54,12 @@ export const PublicNav = () => {
                                             : 'text-emerald-950 dark:text-emerald-200 hover:text-emerald-800 dark:hover:text-emerald-100 hover:bg-emerald-100/70 dark:hover:bg-emerald-900/60'
                                     }`}
                                 >
-                                    {link.name}
+                                    {t(link.key)}
                                 </Link>
                             ))}
                         </div>
 
-                        {/* Right Side Buttons (Country + Feedback + Dark Mode + Auth) */}
+                        {/* Right Side Buttons (Language + Feedback + Dark Mode + Auth) */}
                         <div className="hidden md:flex items-center space-x-2.5">
                             {/* Dark/Light Mode Switcher */}
                             <button 
@@ -68,13 +75,22 @@ export const PublicNav = () => {
                                 className="flex items-center gap-1 text-xs font-bold text-amber-950 dark:text-amber-200 bg-amber-100/90 dark:bg-amber-950/80 hover:bg-amber-200 dark:hover:bg-amber-900 border border-amber-300 dark:border-amber-700 px-3 py-1.5 rounded-full transition shadow-2xs cursor-pointer"
                             >
                                 <MessageSquarePlus className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
-                                <span>+ Feedback</span>
+                                <span>{t('feedback')}</span>
                             </button>
 
-                            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-950 dark:text-emerald-200 bg-emerald-100/80 dark:bg-emerald-900/60 border border-emerald-300/80 dark:border-emerald-800 px-3 py-1.5 rounded-full cursor-pointer hover:bg-emerald-200/70 dark:hover:bg-emerald-800 transition">
-                                <MapPin className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
-                                <span>India</span>
-                                <ChevronDown className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-950 dark:text-emerald-200 bg-emerald-100/80 dark:bg-emerald-900/60 border border-emerald-300/80 dark:border-emerald-800 px-3 py-1.5 rounded-full hover:bg-emerald-200/70 dark:hover:bg-emerald-800 transition">
+                                <Globe className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" aria-hidden="true" />
+                                <label htmlFor="public-language" className="sr-only">{t('language')}</label>
+                                <select
+                                    id="public-language"
+                                    value={language}
+                                    onChange={(event) => setLanguage(event.target.value)}
+                                    className="cursor-pointer appearance-none bg-transparent pr-1 text-xs font-bold text-emerald-950 outline-none dark:text-emerald-200"
+                                >
+                                    {languageOptions.map((option) => (
+                                        <option key={option.code} value={option.code}>{option.label}</option>
+                                    ))}
+                                </select>
                             </div>
 
                             <Link to="/admin/login">
@@ -85,13 +101,13 @@ export const PublicNav = () => {
 
                             <Link to="/login">
                                 <button className="px-4 py-2 text-xs font-bold text-emerald-950 dark:text-emerald-100 border border-emerald-700 dark:border-emerald-500 hover:bg-emerald-200/70 dark:hover:bg-emerald-900 bg-white/60 dark:bg-emerald-950 rounded-full transition duration-200 shadow-2xs">
-                                    Login
+                                    {t('login')}
                                 </button>
                             </Link>
 
                             <Link to="/register">
                                 <button className="px-5 py-2 text-xs font-bold text-white bg-emerald-800 hover:bg-emerald-900 dark:bg-emerald-600 dark:hover:bg-emerald-500 rounded-full shadow-md transition duration-200">
-                                    Sign Up
+                                    {t('signUp')}
                                 </button>
                             </Link>
                         </div>
@@ -122,28 +138,41 @@ export const PublicNav = () => {
                         <div className="px-3 pt-2 pb-4 space-y-1">
                             {navLinks.map((link) => (
                                 <Link 
-                                    key={link.name} 
+                                    key={link.key} 
                                     to={link.path} 
                                     className={`block px-4 py-2.5 rounded-lg text-sm font-semibold ${
                                         isActive(link.path) ? 'bg-emerald-200 dark:bg-emerald-900 text-emerald-950 dark:text-emerald-100 font-bold' : 'text-emerald-950 dark:text-emerald-200 hover:bg-emerald-100 dark:hover:bg-emerald-900'
                                     }`} 
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
-                                    {link.name}
+                                    {t(link.key)}
                                 </Link>
                             ))}
                             <div className="pt-4 flex flex-col space-y-2 px-3 border-t border-emerald-200 dark:border-emerald-800">
+                                <label className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-emerald-900 dark:text-emerald-100">
+                                    <Globe className="w-4 h-4" aria-hidden="true" />
+                                    {t('language')}
+                                    <select
+                                        value={language}
+                                        onChange={(event) => setLanguage(event.target.value)}
+                                        className="ml-auto rounded-lg border border-emerald-300 bg-white px-2 py-1 text-xs font-bold text-emerald-900 outline-none dark:border-emerald-700 dark:bg-emerald-900 dark:text-emerald-100"
+                                    >
+                                    {languageOptions.map((option) => (
+                                            <option key={option.code} value={option.code}>{option.label}</option>
+                                        ))}
+                                    </select>
+                                </label>
                                 <button
                                     onClick={() => { setIsMobileMenuOpen(false); setIsFeedbackOpen(true); }}
                                     className="w-full py-2 bg-amber-100 dark:bg-amber-950 border border-amber-300 dark:border-amber-800 text-amber-950 dark:text-amber-200 font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5"
                                 >
-                                    <MessageSquarePlus className="w-4 h-4 text-amber-700 dark:text-amber-400" /> + Share Feedback
+                                    <MessageSquarePlus className="w-4 h-4 text-amber-700 dark:text-amber-400" /> {t('feedback')}
                                 </button>
                                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                                    <Button variant="outline" fullWidth className="font-bold border-emerald-700 dark:border-emerald-500 text-emerald-900 dark:text-emerald-100">User Login</Button>
+                                    <Button variant="outline" fullWidth className="font-bold border-emerald-700 dark:border-emerald-500 text-emerald-900 dark:text-emerald-100">{t('login')}</Button>
                                 </Link>
                                 <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>
-                                    <Button className="bg-emerald-800 hover:bg-emerald-900 dark:bg-emerald-600 font-bold" fullWidth>Sign Up Account</Button>
+                                    <Button className="bg-emerald-800 hover:bg-emerald-900 dark:bg-emerald-600 font-bold" fullWidth>{t('signUp')}</Button>
                                 </Link>
                             </div>
                         </div>

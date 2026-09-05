@@ -4,8 +4,10 @@ import { Button } from '../../components/ui/Button';
 import { BrainCircuit, BellRing, TrendingUp, AlertTriangle, Sparkles, Send, Loader2 } from 'lucide-react';
 import { DemandChart } from '../../components/charts/DemandChart';
 import { askGeminiAI } from '../../services/geminiAiService';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export const AIInsights = () => {
+    const { language } = useLanguage();
     const [selectedCrop, setSelectedCrop] = useState('Tomato');
     const [loading, setLoading] = useState(true);
     const [aiAnalysis, setAiAnalysis] = useState('');
@@ -17,7 +19,7 @@ export const AIInsights = () => {
         const fetchAI = async () => {
             setLoading(true);
             try {
-                const res = await askGeminiAI(`Provide a comprehensive market insight for ${selectedCrop} in Maharashtra (Nashik/Pune/Ahmednagar mandis). Include 7-day demand trend, price forecast per KG, and advisory for farmers.`, 'farmer');
+                const res = await askGeminiAI(`Provide a comprehensive market insight for ${selectedCrop} in Maharashtra (Nashik/Pune/Ahmednagar mandis). Include 7-day demand trend, price forecast per KG, and advisory for farmers.`, 'farmer', language);
                 setAiAnalysis(res);
             } catch (err) {
                 console.error(err);
@@ -26,7 +28,7 @@ export const AIInsights = () => {
             }
         };
         fetchAI();
-    }, [selectedCrop]);
+    }, [selectedCrop, language]);
 
     const handleCustomAsk = async (e) => {
         e.preventDefault();
@@ -34,7 +36,7 @@ export const AIInsights = () => {
 
         setIsQuerying(true);
         try {
-            const res = await askGeminiAI(customQuery, 'farmer');
+            const res = await askGeminiAI(customQuery, 'farmer', language);
             setQueryResult(res);
         } catch (err) {
             setQueryResult('Failed to query AI Assistant. Please try again.');

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Leaf } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export const Logo = ({ size = 'md', className = '' }) => {
+    const { language } = useLanguage();
     const sizes = {
         sm: { icon: 'w-5 h-5', text: 'text-lg' },
         md: { icon: 'w-7 h-7', text: 'text-2xl' },
@@ -14,7 +16,7 @@ export const Logo = ({ size = 'md', className = '' }) => {
                 <Leaf className={`${sizes[size].icon} text-white`}/>
             </div>
             <span className={`font-bold text-gray-900 tracking-tight ${sizes[size].text}`}>
-                Agro<span className="text-green-600">Connect</span>
+                {language === 'hi' ? <>कृषि<span className="text-green-600">कनेक्ट</span></> : <>Agro<span className="text-green-600">Connect</span></>}
             </span>
         </Link>
     );

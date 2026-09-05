@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, Menu, Search, LogOut, X, MessageSquarePlus, Sun, Moon } from 'lucide-react';
+import { Bell, Menu, Search, LogOut, X, Globe, MessageSquarePlus, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -7,11 +7,13 @@ import { Logo } from './Logo';
 import { Badge } from '../ui/Badge';
 import { Link, useNavigate } from 'react-router-dom';
 import { FeedbackModal } from '../ui/FeedbackModal';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export const TopBar = ({ onMenuClick }) => {
     const { user, logout } = useAuth();
     const { unreadCount } = useNotification();
     const { isDark, toggleTheme } = useTheme();
+    const { language, setLanguage, t } = useLanguage();
     const [searchQuery, setSearchQuery] = useState('');
     const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -83,7 +85,7 @@ export const TopBar = ({ onMenuClick }) => {
                                     </div>
                                     <input 
                                         className="block w-full pl-9 pr-8 py-2 border border-emerald-300 dark:border-emerald-700 rounded-xl leading-5 bg-white/90 dark:bg-emerald-900/60 placeholder-gray-500 dark:placeholder-emerald-400 text-gray-900 dark:text-white focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 text-xs sm:text-sm font-medium transition duration-150 ease-in-out shadow-2xs" 
-                                        placeholder="Search crops, farmers, orders, mandis..." 
+                                        placeholder={t('searchPlaceholder')}
                                         type="search"
                                         value={searchQuery}
                                         onChange={(e) => {
@@ -137,6 +139,19 @@ export const TopBar = ({ onMenuClick }) => {
                     </div>
 
                     <div className="flex items-center ml-4 space-x-2.5 sm:space-x-3">
+                        <div className="hidden xl:flex items-center gap-1.5 rounded-full border border-emerald-300/80 bg-emerald-100/80 px-3 py-1.5 text-emerald-950 dark:border-emerald-700 dark:bg-emerald-900/80 dark:text-emerald-100">
+                            <Globe className="h-3.5 w-3.5" aria-hidden="true" />
+                            <label htmlFor="dashboard-language" className="sr-only">{t('language')}</label>
+                            <select
+                                id="dashboard-language"
+                                value={language}
+                                onChange={(event) => setLanguage(event.target.value)}
+                                className="cursor-pointer appearance-none bg-transparent text-xs font-bold outline-none"
+                            >
+                                <option value="hi">हिंदी</option>
+                                <option value="en">अंग्रेज़ी</option>
+                            </select>
+                        </div>
                         {/* Theme Switcher Toggle */}
                         <button 
                             onClick={toggleTheme}
@@ -151,11 +166,11 @@ export const TopBar = ({ onMenuClick }) => {
                             className="hidden sm:flex items-center gap-1 text-xs font-bold text-amber-950 dark:text-amber-200 bg-amber-100/90 dark:bg-amber-950/80 hover:bg-amber-200 dark:hover:bg-amber-900 border border-amber-300 dark:border-amber-700 px-3 py-1.5 rounded-full transition shadow-2xs cursor-pointer"
                         >
                             <MessageSquarePlus className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
-                            <span>+ Feedback</span>
+                            <span>{t('feedback')}</span>
                         </button>
 
                         <Link to="/notifications" className="relative p-1.5 text-emerald-900 dark:text-emerald-200 hover:text-emerald-700 hover:bg-emerald-100 dark:hover:bg-emerald-900 rounded-full transition focus:outline-none">
-                            <span className="sr-only">View notifications</span>
+                            <span className="sr-only">{t('notifications')}</span>
                             <Bell className="h-5 w-5"/>
                             {unreadCount > 0 && (
                                 <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-extrabold text-white shadow-sm ring-2 ring-white animate-pulse">
@@ -174,7 +189,7 @@ export const TopBar = ({ onMenuClick }) => {
                             <div className="h-9 w-9 rounded-full bg-emerald-100 dark:bg-emerald-800 flex items-center justify-center text-emerald-800 dark:text-emerald-100 font-bold border border-emerald-300 dark:border-emerald-600 shadow-xs">
                                 {user?.name?.charAt(0).toUpperCase() || 'U'}
                             </div>
-                            <button onClick={logout} className="p-1.5 text-gray-400 dark:text-emerald-300 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded hover:bg-red-50 dark:hover:bg-red-950/50 cursor-pointer" title="Logout">
+                            <button onClick={logout} className="p-1.5 text-gray-400 dark:text-emerald-300 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded hover:bg-red-50 dark:hover:bg-red-950/50 cursor-pointer" title={t('logout')}>
                                 <LogOut className="h-5 w-5"/>
                             </button>
                         </div>

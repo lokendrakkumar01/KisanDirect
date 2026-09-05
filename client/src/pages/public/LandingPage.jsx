@@ -7,11 +7,14 @@ import {
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { useAuth, getRoleDashboardPath } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export const LandingPage = () => {
     const { isAuthenticated, user } = useAuth();
     const { addToCart } = useCart();
+    const { language } = useLanguage();
     const navigate = useNavigate();
+    const c = (english, hindi) => language === 'hi' ? hindi : english;
     
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
@@ -137,10 +140,10 @@ export const LandingPage = () => {
                     <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center w-full gap-2">
                         <span className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                            Welcome back, <strong className="text-amber-300 font-extrabold">{user?.name}</strong> ({user?.role?.toUpperCase().replace('_', ' ')})! You are logged in.
+                            {c('Welcome back, ', 'वापसी पर स्वागत है, ')}<strong className="text-amber-300 font-extrabold">{user?.name}</strong> {c('! You are logged in.', '! आप लॉगिन हैं।')}
                         </span>
                         <Link to={getRoleDashboardPath(user?.role)} className="bg-amber-400 hover:bg-amber-300 text-emerald-950 px-4 py-1 rounded-full flex items-center gap-1 font-extrabold shadow-sm transition">
-                            Go to My Dashboard &rarr;
+                            {c('Go to My Dashboard', 'मेरे डैशबोर्ड पर जाएं')} &rarr;
                         </Link>
                     </div>
                 </div>
@@ -148,7 +151,7 @@ export const LandingPage = () => {
                 <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-emerald-800 text-white py-2.5 px-4 text-xs font-bold text-center shadow-md">
                     <div className="max-w-7xl mx-auto flex justify-center items-center gap-2">
                         <Lock className="w-4 h-4 text-amber-200 flex-shrink-0" />
-                        <span>All marketplace produce browsing, seller details, and ordering options are unlocked after <Link to="/login" className="underline font-black text-amber-100 hover:text-white">Login</Link> or <Link to="/register" className="underline font-black text-amber-100 hover:text-white">Registration</Link>!</span>
+                        <span>{c('All marketplace produce browsing, seller details, and ordering options are unlocked after ', 'मार्केटप्लेस में उपज देखना, विक्रेता विवरण और ऑर्डर के विकल्प ')}<Link to="/login" className="underline font-black text-amber-100 hover:text-white">{c('Login', 'लॉगिन')}</Link>{c(' or ', ' या ')}<Link to="/register" className="underline font-black text-amber-100 hover:text-white">{c('Registration', 'रजिस्ट्रेशन')}</Link>{c('!', ' के बाद उपलब्ध होंगे!')}</span>
                     </div>
                 </div>
             )}
@@ -162,20 +165,20 @@ export const LandingPage = () => {
                         <div className="lg:col-span-6 space-y-6 text-left">
                             <div className="inline-flex items-center gap-2 bg-emerald-100/80 border border-emerald-300 px-3.5 py-1.5 rounded-full text-emerald-800 text-xs font-extrabold shadow-xs">
                                 <Sparkles className="w-4 h-4 text-emerald-600" />
-                                <span>Direct Farm-to-Buyer AI Platform</span>
+                                <span>{c('Direct Farm-to-Buyer AI Platform', 'किसान से खरीदार तक कृत्रिम बुद्धिमत्ता मंच')}</span>
                             </div>
 
                             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-gray-900 leading-tight tracking-tight">
-                                Directly from <br />
-                                <span className="text-emerald-800">Farmers to You</span>
+                                {c('Directly from', 'सीधे')} <br />
+                                <span className="text-emerald-800">{c('Farmers to You', 'किसानों से आपके पास')}</span>
                             </h1>
 
                             <div className="space-y-1">
                                 <h2 className="text-base sm:text-xl font-extrabold text-emerald-700">
-                                    Fair Prices. Fresh Produce. A Stronger India.
+                                    {c('Fair Prices. Fresh Produce. A Stronger India.', 'उचित दाम। ताज़ी उपज। एक मजबूत भारत।')}
                                 </h2>
                                 <p className="text-xs sm:text-base text-gray-600 leading-relaxed font-medium max-w-xl">
-                                    A direct digital marketplace connecting farmers, FPOs, consumers and bulk buyers with AI demand insights and smart logistics support.
+                                    {c('A direct digital marketplace connecting farmers, FPOs, consumers and bulk buyers with AI demand insights and smart logistics support.', 'किसानों, किसान उत्पादक संगठनों, उपभोक्ताओं और थोक खरीदारों को मांग की जानकारी तथा स्मार्ट परिवहन सहायता से जोड़ने वाला सीधा डिजिटल बाजार।')}
                                 </p>
                             </div>
 
@@ -185,19 +188,19 @@ export const LandingPage = () => {
                                     onClick={() => requireAuthNavigation('/marketplace', 'explore fresh produce')}
                                     className="w-full sm:w-auto bg-emerald-900 hover:bg-emerald-950 text-white font-bold px-7 py-3.5 rounded-full shadow-lg hover:shadow-emerald-900/30 transition duration-200 text-sm flex items-center justify-center gap-2 cursor-pointer"
                                 >
-                                    Shop Fresh Produce <ArrowRight className="w-4 h-4" />
+                                    {c('Shop Fresh Produce', 'ताज़ी उपज खरीदें')} <ArrowRight className="w-4 h-4" />
                                 </button>
 
                                 {!isAuthenticated ? (
                                     <Link to="/register" className="w-full sm:w-auto">
                                         <button className="w-full bg-white hover:bg-gray-50 text-gray-800 font-bold px-6 py-3.5 rounded-full border border-gray-300 shadow-sm transition duration-200 text-sm">
-                                            Register Account
+                                            {c('Register Account', 'खाता बनाएं')}
                                         </button>
                                     </Link>
                                 ) : (
                                     <Link to={getRoleDashboardPath(user?.role)} className="w-full sm:w-auto">
                                         <button className="w-full bg-white hover:bg-gray-50 text-emerald-800 font-extrabold px-6 py-3.5 rounded-full border border-emerald-600 shadow-sm transition duration-200 text-sm flex items-center justify-center gap-1.5">
-                                            Go to Dashboard <ArrowRight className="w-4 h-4" />
+                                            {c('Go to Dashboard', 'डैशबोर्ड पर जाएं')} <ArrowRight className="w-4 h-4" />
                                         </button>
                                     </Link>
                                 )}
@@ -207,19 +210,19 @@ export const LandingPage = () => {
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-4 border-t border-gray-200/80">
                                 <div className="flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-gray-200/60 shadow-xs">
                                     <ShieldCheck className="w-5 h-5 text-emerald-700 flex-shrink-0" />
-                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">Better Prices for Farmers</span>
+                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">{c('Better Prices for Farmers', 'किसानों के लिए बेहतर दाम')}</span>
                                 </div>
                                 <div className="flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-gray-200/60 shadow-xs">
                                     <Users className="w-5 h-5 text-emerald-700 flex-shrink-0" />
-                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">Lower Prices for Buyers</span>
+                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">{c('Lower Prices for Buyers', 'खरीदारों के लिए कम दाम')}</span>
                                 </div>
                                 <div className="flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-gray-200/60 shadow-xs">
                                     <PackageCheck className="w-5 h-5 text-emerald-700 flex-shrink-0" />
-                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">Transparent Supply Chain</span>
+                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">{c('Transparent Supply Chain', 'पारदर्शी आपूर्ति श्रृंखला')}</span>
                                 </div>
                                 <div className="flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-gray-200/60 shadow-xs">
                                     <TrendingUp className="w-5 h-5 text-emerald-700 flex-shrink-0" />
-                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">Smarter Agriculture</span>
+                                    <span className="text-[11px] font-bold text-gray-800 leading-tight">{c('Smarter Agriculture', 'स्मार्ट कृषि')}</span>
                                 </div>
                             </div>
                         </div>
@@ -231,13 +234,13 @@ export const LandingPage = () => {
                             <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white w-full max-w-lg">
                                 <img 
                                     src="https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?w=1000&auto=format&fit=crop&q=80" 
-                                    alt="Smiling Indian Farmer" 
+                                    alt={c('Smiling Indian Farmer', 'मुस्कुराता भारतीय किसान')}
                                     className="w-full h-[340px] sm:h-[420px] object-cover object-top hover:scale-105 transition duration-500"
                                 />
                                 {/* Handwritten Quote Overlay */}
                                 <div className="absolute top-4 left-4 sm:top-6 sm:left-6 max-w-[180px] sm:max-w-[200px] bg-black/35 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-white/30">
                                     <p className="font-serif italic text-white text-sm sm:text-base leading-snug drop-shadow-md">
-                                        "Empowering Farmers Building a Better Tomorrow"
+                                        {c('"Empowering Farmers Building a Better Tomorrow"', '"किसानों को सशक्त बनाकर बेहतर कल का निर्माण"')}
                                     </p>
                                 </div>
                             </div>
@@ -250,7 +253,7 @@ export const LandingPage = () => {
                                     </div>
                                     <div>
                                         <div className="text-sm sm:text-lg font-black text-gray-900">10K+</div>
-                                        <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase">Farmers Registered</div>
+                                        <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase">{c('Farmers Registered', 'पंजीकृत किसान')}</div>
                                     </div>
                                 </div>
 
@@ -260,7 +263,7 @@ export const LandingPage = () => {
                                     </div>
                                     <div>
                                         <div className="text-sm sm:text-lg font-black text-gray-900">5K+</div>
-                                        <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase">Bulk Buyers</div>
+                                        <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase">{c('Bulk Buyers', 'थोक खरीदार')}</div>
                                     </div>
                                 </div>
 
@@ -270,7 +273,7 @@ export const LandingPage = () => {
                                     </div>
                                     <div>
                                         <div className="text-sm sm:text-lg font-black text-gray-900">1L+</div>
-                                        <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase">Orders Completed</div>
+                                        <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase">{c('Orders Completed', 'पूर्ण ऑर्डर')}</div>
                                     </div>
                                 </div>
 
@@ -280,7 +283,7 @@ export const LandingPage = () => {
                                     </div>
                                     <div>
                                         <div className="text-sm sm:text-lg font-black text-gray-900">25+</div>
-                                        <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase">States Covered</div>
+                                        <div className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase">{c('States Covered', 'कवर किए गए राज्य')}</div>
                                     </div>
                                 </div>
                             </div>
@@ -300,7 +303,7 @@ export const LandingPage = () => {
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search fresh produce (e.g. Nashik Tomatoes, Agra Potato, Punjab Wheat)..." 
+                            placeholder={c('Search fresh produce (e.g. Nashik Tomatoes, Agra Potato, Punjab Wheat)...', 'ताज़ी उपज खोजें (जैसे नासिक टमाटर, आगरा आलू, पंजाब गेहूं)...')}
                             className="w-full text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 focus:outline-none py-1.5"
                         />
                     </div>
@@ -312,13 +315,13 @@ export const LandingPage = () => {
                             onChange={(e) => setSelectedCategory(e.target.value)}
                             className="w-full text-xs font-bold text-gray-700 bg-transparent focus:outline-none cursor-pointer py-1.5"
                         >
-                            <option value="All">All Categories 🌾</option>
-                            <option value="Vegetables">Vegetables 🍅</option>
-                            <option value="Fruits">Fruits 🍋</option>
-                            <option value="Grains">Grains &amp; Cereals 🌾</option>
-                            <option value="Pulses">Pulses 🫘</option>
-                            <option value="Spices">Spices 🌶️</option>
-                            <option value="Organic">Certified Organic 🍃</option>
+                            <option value="All">{c('All Categories 🌾', 'सभी श्रेणियां 🌾')}</option>
+                            <option value="Vegetables">{c('Vegetables 🍅', 'सब्जियां 🍅')}</option>
+                            <option value="Fruits">{c('Fruits 🍋', 'फल 🍋')}</option>
+                            <option value="Grains">{c('Grains & Cereals 🌾', 'अनाज और खाद्यान्न 🌾')}</option>
+                            <option value="Pulses">{c('Pulses 🫘', 'दालें 🫘')}</option>
+                            <option value="Spices">{c('Spices 🌶️', 'मसाले 🌶️')}</option>
+                            <option value="Organic">{c('Certified Organic 🍃', 'प्रमाणित जैविक 🍃')}</option>
                         </select>
                     </div>
 
@@ -329,13 +332,13 @@ export const LandingPage = () => {
                             onChange={(e) => setSelectedState(e.target.value)}
                             className="w-full text-xs font-bold text-gray-700 bg-transparent focus:outline-none cursor-pointer py-1.5"
                         >
-                            <option value="All">Select State 📍</option>
-                            <option value="Maharashtra">Maharashtra</option>
-                            <option value="Uttar Pradesh">Uttar Pradesh</option>
-                            <option value="Madhya Pradesh">Madhya Pradesh</option>
-                            <option value="Punjab">Punjab</option>
-                            <option value="Andhra Pradesh">Andhra Pradesh</option>
-                            <option value="Odisha">Odisha</option>
+                            <option value="All">{c('Select State 📍', 'राज्य चुनें 📍')}</option>
+                            <option value="Maharashtra">{c('Maharashtra', 'महाराष्ट्र')}</option>
+                            <option value="Uttar Pradesh">{c('Uttar Pradesh', 'उत्तर प्रदेश')}</option>
+                            <option value="Madhya Pradesh">{c('Madhya Pradesh', 'मध्य प्रदेश')}</option>
+                            <option value="Punjab">{c('Punjab', 'पंजाब')}</option>
+                            <option value="Andhra Pradesh">{c('Andhra Pradesh', 'आंध्र प्रदेश')}</option>
+                            <option value="Odisha">{c('Odisha', 'ओडिशा')}</option>
                         </select>
                     </div>
 
@@ -344,7 +347,7 @@ export const LandingPage = () => {
                         type="submit"
                         className="w-full md:w-auto bg-emerald-800 hover:bg-emerald-900 text-white font-bold px-8 py-3 rounded-2xl shadow-md text-xs sm:text-sm transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer"
                     >
-                        <Search className="w-4 h-4" /> Search Produce
+                        <Search className="w-4 h-4" /> {c('Search Produce', 'उपज खोजें')}
                     </button>
                 </form>
             </div>
@@ -354,14 +357,14 @@ export const LandingPage = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center mb-8">
                         <div>
-                            <h2 className="text-xl sm:text-2xl font-black text-gray-900">Shop by Category</h2>
-                            <p className="text-xs text-gray-500 font-semibold mt-0.5">Explore 100% genuine Indian mandi produce categories</p>
+                            <h2 className="text-xl sm:text-2xl font-black text-gray-900">{c('Shop by Category', 'श्रेणी के अनुसार खरीदें')}</h2>
+                            <p className="text-xs text-gray-500 font-semibold mt-0.5">{c('Explore 100% genuine Indian mandi produce categories', 'भारत की असली मंडी उपज की श्रेणियां देखें')}</p>
                         </div>
                         <button 
                             onClick={() => requireAuthNavigation('/marketplace', 'browse all categories')}
                             className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1 cursor-pointer"
                         >
-                            View All <ChevronRight className="w-4 h-4" />
+                            {c('View All', 'सभी देखें')} <ChevronRight className="w-4 h-4" />
                         </button>
                     </div>
 
@@ -373,7 +376,7 @@ export const LandingPage = () => {
                                 className="group bg-gray-50/90 hover:bg-emerald-50/80 p-3.5 sm:p-4 rounded-2xl border border-gray-200/80 hover:border-emerald-300 text-center transition-all duration-200 flex flex-col items-center justify-center hover:shadow-md cursor-pointer"
                             >
                                 <span className="text-3xl sm:text-4xl mb-2 transform group-hover:scale-110 transition duration-200">{cat.icon}</span>
-                                <h3 className="font-bold text-xs text-gray-900 group-hover:text-emerald-800">{cat.name}</h3>
+                                <h3 className="font-bold text-xs text-gray-900 group-hover:text-emerald-800">{c(cat.name, { Vegetables: 'सब्जियां', Fruits: 'फल', 'Grains & Cereals': 'अनाज और खाद्यान्न', Pulses: 'दालें', Oilseeds: 'तिलहन', Dairy: 'डेयरी', Spices: 'मसाले', Organic: 'जैविक' }[cat.name])}</h3>
                                 <span className="text-[10px] text-gray-400 mt-0.5">{cat.count}</span>
                             </button>
                         ))}
@@ -390,14 +393,14 @@ export const LandingPage = () => {
                         <div className="lg:col-span-8 space-y-6">
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <h2 className="text-xl sm:text-2xl font-black text-gray-900">Featured Produce</h2>
-                                    <p className="text-xs text-gray-500 font-semibold mt-0.5">High quality farm produce directly from verified farmers</p>
+                                    <h2 className="text-xl sm:text-2xl font-black text-gray-900">{c('Featured Produce', 'चुनिंदा उपज')}</h2>
+                                    <p className="text-xs text-gray-500 font-semibold mt-0.5">{c('High quality farm produce directly from verified farmers', 'सत्यापित किसानों से सीधे उच्च गुणवत्ता वाली उपज')}</p>
                                 </div>
                                 <button 
                                     onClick={() => requireAuthNavigation('/marketplace', 'view all products')}
                                     className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1 cursor-pointer"
                                 >
-                                    View All Products <ChevronRight className="w-4 h-4" />
+                                    {c('View All Products', 'सभी उत्पाद देखें')} <ChevronRight className="w-4 h-4" />
                                 </button>
                             </div>
 
@@ -418,12 +421,12 @@ export const LandingPage = () => {
                                             <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 items-start">
                                                 {product.isFresh && (
                                                     <span className="bg-emerald-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-sm">
-                                                        🌱 Fresh Harvest
+                                                        🌱 {c('Fresh Harvest', 'ताज़ी कटाई')}
                                                     </span>
                                                 )}
                                                 {product.organic && (
                                                     <span className="bg-amber-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-sm">
-                                                        🍃 Organic
+                                                        🍃 {c('Organic', 'जैविक')}
                                                     </span>
                                                 )}
                                             </div>
@@ -459,7 +462,7 @@ export const LandingPage = () => {
                                                 <div className="flex items-baseline gap-1 mt-1.5">
                                                     <span className="font-black text-lg text-emerald-900">₹{product.price}</span>
                                                     <span className="text-xs text-gray-500 font-semibold">/ {product.unit}</span>
-                                                    <span className="text-[10px] text-gray-400 ml-auto">Min: {product.minOrderQuantity} {product.unit}</span>
+                                                    <span className="text-[10px] text-gray-400 ml-auto">{c('Min:', 'न्यूनतम:')} {product.minOrderQuantity} {product.unit}</span>
                                                 </div>
 
                                                 <div className="flex items-center text-gray-600 text-[11px] font-medium mt-2">
@@ -476,7 +479,7 @@ export const LandingPage = () => {
                                                 onClick={(e) => handleAddToCart(e, product)}
                                                 className="w-full bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold py-2.5 px-3 rounded-xl transition duration-200 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
                                             >
-                                                <ShoppingCart className="w-3.5 h-3.5" /> Add to Cart
+                                                <ShoppingCart className="w-3.5 h-3.5" /> {c('Add to Cart', 'कार्ट में जोड़ें')}
                                             </button>
                                         </div>
                                     </div>
@@ -490,19 +493,19 @@ export const LandingPage = () => {
                             {/* Widget 1: Fresh Food Banner Card */}
                             <div className="bg-gradient-to-br from-emerald-800 to-emerald-950 text-white p-6 rounded-3xl shadow-lg relative overflow-hidden flex flex-col justify-between min-h-[220px]">
                                 <div className="space-y-2 z-10">
-                                    <h3 className="text-2xl font-black leading-tight">Fresh Food <br />Stronger India</h3>
-                                    <p className="text-xs text-emerald-100 font-medium">Direct mandi connections. Zero middlemen exploitation.</p>
+                                    <h3 className="text-2xl font-black leading-tight">{c('Fresh Food', 'ताज़ा भोजन')} <br />{c('Stronger India', 'मजबूत भारत')}</h3>
+                                    <p className="text-xs text-emerald-100 font-medium">{c('Direct mandi connections. Zero middlemen exploitation.', 'सीधे मंडी संपर्क। बिचौलियों का शोषण नहीं।')}</p>
                                 </div>
                                 <div className="pt-4 z-10">
                                     <Link to="/about">
                                         <button className="bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-4 py-2 rounded-full backdrop-blur-sm border border-white/20 transition flex items-center gap-1 cursor-pointer">
-                                            Know More <ArrowRight className="w-3.5 h-3.5" />
+                                            {c('Know More', 'और जानें')} <ArrowRight className="w-3.5 h-3.5" />
                                         </button>
                                     </Link>
                                 </div>
                                 <img 
                                     src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80" 
-                                    alt="Fresh Food" 
+                                    alt={c('Fresh Food', 'ताज़ा भोजन')}
                                     className="absolute right-0 bottom-0 w-40 h-40 object-cover opacity-25 rounded-tl-full pointer-events-none"
                                 />
                             </div>
@@ -511,14 +514,14 @@ export const LandingPage = () => {
                             <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm space-y-4">
                                 <div className="flex justify-between items-center border-b pb-3">
                                     <div>
-                                        <h3 className="font-extrabold text-sm text-gray-900">Live Mandi Rates</h3>
-                                        <span className="text-[10px] text-gray-400 font-semibold">Genuine Benchmark Prices</span>
+                                        <h3 className="font-extrabold text-sm text-gray-900">{c('Live Mandi Rates', 'लाइव मंडी भाव')}</h3>
+                                        <span className="text-[10px] text-gray-400 font-semibold">{c('Genuine Benchmark Prices', 'विश्वसनीय मानक भाव')}</span>
                                     </div>
                                     <button 
                                         onClick={() => requireAuthNavigation('/farmer/insights', 'view live market price intelligence')}
                                         className="text-[11px] font-bold text-emerald-700 hover:underline flex items-center gap-0.5 cursor-pointer"
                                     >
-                                        View More <ChevronRight className="w-3 h-3" />
+                                        {c('View More', 'और देखें')} <ChevronRight className="w-3 h-3" />
                                     </button>
                                 </div>
 
@@ -526,9 +529,9 @@ export const LandingPage = () => {
                                     <table className="w-full text-left text-xs">
                                         <thead>
                                             <tr className="text-gray-400 uppercase text-[10px] font-bold border-b border-gray-100">
-                                                <th className="pb-2">Product</th>
-                                                <th className="pb-2">Price (₹/kg)</th>
-                                                <th className="pb-2 text-right">Trend</th>
+                                                <th className="pb-2">{c('Product', 'उत्पाद')}</th>
+                                                <th className="pb-2">{c('Price (₹/kg)', 'मूल्य (₹/किलो)')}</th>
+                                                <th className="pb-2 text-right">{c('Trend', 'रुझान')}</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-100">
@@ -559,22 +562,22 @@ export const LandingPage = () => {
             <section className="bg-emerald-950 text-white py-6">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold">
                     <div className="flex flex-wrap items-center gap-6 text-emerald-100">
-                        <span className="flex items-center gap-1.5">🌱 Support Farmers</span>
-                        <span className="flex items-center gap-1.5">👥 Choose Fresh</span>
-                        <span className="flex items-center gap-1.5">🤝 Build a Sustainable Future</span>
+                        <span className="flex items-center gap-1.5">🌱 {c('Support Farmers', 'किसानों का समर्थन करें')}</span>
+                        <span className="flex items-center gap-1.5">👥 {c('Choose Fresh', 'ताज़ा चुनें')}</span>
+                        <span className="flex items-center gap-1.5">🤝 {c('Build a Sustainable Future', 'टिकाऊ भविष्य बनाएं')}</span>
                         <span className="flex items-center gap-1.5"><Globe2 className="w-4 h-4 text-emerald-400"/> Atmanirbhar Bharat</span>
                     </div>
 
                     {!isAuthenticated ? (
                         <Link to="/register">
                             <button className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-5 py-2.5 rounded-full text-xs shadow-md transition flex items-center gap-1 cursor-pointer">
-                                Register Account <ArrowRight className="w-3.5 h-3.5" />
+                                {c('Register Account', 'खाता बनाएं')} <ArrowRight className="w-3.5 h-3.5" />
                             </button>
                         </Link>
                     ) : (
                         <Link to={getRoleDashboardPath(user?.role)}>
                             <button className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-5 py-2.5 rounded-full text-xs shadow-md transition flex items-center gap-1 cursor-pointer">
-                                Open Dashboard <ArrowRight className="w-3.5 h-3.5" />
+                                {c('Open Dashboard', 'डैशबोर्ड खोलें')} <ArrowRight className="w-3.5 h-3.5" />
                             </button>
                         </Link>
                     )}

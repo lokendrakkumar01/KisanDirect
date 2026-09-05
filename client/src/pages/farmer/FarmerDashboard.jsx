@@ -7,9 +7,11 @@ import { Package, TrendingUp, CheckCircle, CreditCard, ArrowRight, Sun, BrainCir
 import { getProfile, getListings, getEarnings, getHarvests } from '../../services/farmerService';
 import { askGeminiAI } from '../../services/geminiAiService';
 import { formatCurrency, formatDate } from '../../utils/format';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export const FarmerDashboard = () => {
     const { user } = useAuth();
+    const { language } = useLanguage();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState(null);
@@ -33,7 +35,7 @@ export const FarmerDashboard = () => {
                 });
 
                 // Fetch Gemini AI insight for Tomato crop
-                const aiResult = await askGeminiAI('Give me a quick 3-line market demand insight for Tomatoes in Nashik and Pune.', 'farmer');
+                const aiResult = await askGeminiAI('Give me a quick 3-line market demand insight for Tomatoes in Nashik and Pune.', 'farmer', language);
                 setAiAdvice(aiResult);
             } catch (error) {
                 console.error('Failed to fetch dashboard data', error);
@@ -42,7 +44,7 @@ export const FarmerDashboard = () => {
             }
         };
         fetchData();
-    }, []);
+    }, [language]);
 
     const getGreeting = () => {
         const hour = new Date().getHours();

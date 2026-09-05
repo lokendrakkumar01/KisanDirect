@@ -5,8 +5,10 @@ import { Button } from '../../components/ui/Button';
 import { BrainCircuit, Sparkles, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { createListing } from '../../services/farmerService';
 import { askGeminiAI } from '../../services/geminiAiService';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export const AddProduce = () => {
+    const { language } = useLanguage();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         productName: 'Fresh Red Tomato',
@@ -43,7 +45,7 @@ export const AddProduce = () => {
         const fetchGeminiPrice = async () => {
             setAiLoading(true);
             try {
-                const advice = await askGeminiAI(`What is the recommended selling price per ${formData.unit} for fresh Grade ${formData.qualityGrade} ${formData.productName} in Maharashtra mandis? Give a short 2-line pricing tip.`, 'farmer');
+                const advice = await askGeminiAI(`What is the recommended selling price per ${formData.unit} for fresh Grade ${formData.qualityGrade} ${formData.productName} in Maharashtra mandis? Give a short 2-line pricing tip.`, 'farmer', language);
                 setGeminiPriceAdvice(advice);
             } catch (err) {
                 console.error(err);
@@ -53,7 +55,7 @@ export const AddProduce = () => {
         };
 
         fetchGeminiPrice();
-    }, [formData.productName, formData.qualityGrade, formData.unit]);
+    }, [formData.productName, formData.qualityGrade, formData.unit, language]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

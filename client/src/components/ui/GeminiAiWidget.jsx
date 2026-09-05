@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Bot, Send, X, Sparkles, Loader2 } from 'lucide-react';
 import { askGeminiAI } from '../../services/geminiAiService';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export const GeminiAiWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -11,6 +12,7 @@ export const GeminiAiWidget = () => {
     const [inputText, setInputText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { user } = useAuth();
+    const { language } = useLanguage();
 
     const handleSend = async (e) => {
         e?.preventDefault();
@@ -23,7 +25,7 @@ export const GeminiAiWidget = () => {
         setIsLoading(true);
 
         try {
-            const aiReply = await askGeminiAI(query, user?.role || 'farmer');
+            const aiReply = await askGeminiAI(query, user?.role || 'farmer', language);
             setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), sender: 'ai', text: aiReply }]);
         } catch (err) {
             setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), sender: 'ai', text: 'Sorry, I encountered an issue fetching AI data. Please try again.' }]);

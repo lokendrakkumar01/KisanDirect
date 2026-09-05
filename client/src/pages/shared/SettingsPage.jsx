@@ -12,6 +12,7 @@ export default function SettingsPage() {
     const { language, setLanguage, t } = useLanguage();
     const { isDark, toggleTheme } = useTheme();
     const [saved, setSaved] = useState(false);
+    const [saveMessage, setSaveMessage] = useState('');
     const [formData, setFormData] = useState({
         name: user?.name || '',
         email: user?.email || '',
@@ -21,20 +22,28 @@ export default function SettingsPage() {
 
     const handleSave = (e) => {
         e.preventDefault();
+        setSaveMessage(t('saveSettings'));
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
+    };
+
+    const selectLanguage = (code) => {
+        setLanguage(code);
+        setSaveMessage(t('languageUpdated'));
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
     };
 
     return (
         <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-200">
             <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-emerald-100">{t('settings')}</h1>
-                <p className="text-sm text-gray-500 dark:text-emerald-300 mt-1">Manage your AgroConnect profile, language, and theme preferences</p>
+                <p className="text-sm text-gray-500 dark:text-emerald-300 mt-1">{t('managePreferences')}</p>
             </div>
 
             {saved && (
                 <div className="bg-emerald-50 dark:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-700 text-emerald-800 dark:text-emerald-100 px-4 py-3 rounded-xl flex items-center font-bold text-sm">
-                    <CheckCircle className="w-5 h-5 mr-2 text-emerald-600 dark:text-emerald-300" /> {t('saveSettings')}!
+                    <CheckCircle className="w-5 h-5 mr-2 text-emerald-600 dark:text-emerald-300" /> {saveMessage}
                 </div>
             )}
 
@@ -48,13 +57,13 @@ export default function SettingsPage() {
                 </CardHeader>
                 <CardContent className="space-y-4 py-6">
                     <p className="text-xs font-semibold text-gray-600 dark:text-emerald-300">
-                        Choose the language you prefer for the AgroConnect platform interface. You can change this language anytime.
+                        {t('languageDescription')}
                     </p>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <button
                             type="button"
-                            onClick={() => { setLanguage('hi'); setSaved(true); setTimeout(() => setSaved(false), 2000); }}
+                            onClick={() => selectLanguage('hi')}
                             className={`p-4 rounded-xl border text-left transition flex items-center justify-between cursor-pointer ${
                                 language === 'hi'
                                     ? 'bg-emerald-100 dark:bg-emerald-800/90 border-emerald-600 text-emerald-950 dark:text-white font-extrabold shadow-md ring-2 ring-emerald-500'
@@ -70,7 +79,7 @@ export default function SettingsPage() {
 
                         <button
                             type="button"
-                            onClick={() => { setLanguage('en'); setSaved(true); setTimeout(() => setSaved(false), 2000); }}
+                            onClick={() => selectLanguage('en')}
                             className={`p-4 rounded-xl border text-left transition flex items-center justify-between cursor-pointer ${
                                 language === 'en'
                                     ? 'bg-emerald-100 dark:bg-emerald-800/90 border-emerald-600 text-emerald-950 dark:text-white font-extrabold shadow-md ring-2 ring-emerald-500'
@@ -79,26 +88,11 @@ export default function SettingsPage() {
                         >
                             <div>
                                 <div className="text-sm font-bold">{t('english')}</div>
-                                <div className="text-xs opacity-75">English Language</div>
+                                <div className="text-xs opacity-75">अंग्रेज़ी भाषा</div>
                             </div>
                             {language === 'en' && <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-300" />}
                         </button>
 
-                        <button
-                            type="button"
-                            onClick={() => { setLanguage('mr'); setSaved(true); setTimeout(() => setSaved(false), 2000); }}
-                            className={`p-4 rounded-xl border text-left transition flex items-center justify-between cursor-pointer ${
-                                language === 'mr'
-                                    ? 'bg-emerald-100 dark:bg-emerald-800/90 border-emerald-600 text-emerald-950 dark:text-white font-extrabold shadow-md ring-2 ring-emerald-500'
-                                    : 'bg-white dark:bg-emerald-900/40 border-gray-200 dark:border-emerald-800 text-gray-700 dark:text-emerald-200 hover:border-emerald-400'
-                            }`}
-                        >
-                            <div>
-                                <div className="text-sm font-bold">{t('marathi')}</div>
-                                <div className="text-xs opacity-75">मराठी भाषा</div>
-                            </div>
-                            {language === 'mr' && <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-300" />}
-                        </button>
                     </div>
                 </CardContent>
             </Card>

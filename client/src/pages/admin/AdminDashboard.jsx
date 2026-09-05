@@ -6,8 +6,10 @@ import { Badge } from '../../components/ui/Badge';
 import { getDashboard, getUsers } from '../../services/adminService';
 import { getOrders } from '../../services/orderService';
 import { formatCurrency } from '../../utils/format';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function AdminDashboard() {
+    const { t } = useLanguage();
     const [stats, setStats] = useState({
         farmersCount: 12450,
         fposCount: 342,
@@ -52,10 +54,10 @@ export default function AdminDashboard() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Platform Admin Dashboard</h1>
-                    <p className="text-sm text-gray-500 mt-1">SIH 2026 Problem Statement 26033 - DoCA Governance Portal</p>
+                    <h1 className="text-2xl font-bold text-gray-800">{t('admin.title')}</h1>
+                    <p className="text-sm text-gray-500 mt-1">{t('admin.subtitle')}</p>
                 </div>
-                <Badge variant="success" className="text-sm px-3 py-1">System Healthy</Badge>
+                <Badge variant="success" className="text-sm px-3 py-1">{t('admin.healthy')}</Badge>
             </div>
 
             {/* KPI Grid */}
@@ -66,7 +68,7 @@ export default function AdminDashboard() {
                             <Sprout className="w-6 h-6"/>
                         </div>
                         <div>
-                            <p className="text-sm text-green-800 font-medium">Total Farmers</p>
+                            <p className="text-sm text-green-800 font-medium">{t('admin.totalFarmers')}</p>
                             <p className="text-2xl font-bold text-green-900">{stats.farmersCount.toLocaleString()}</p>
                         </div>
                     </CardContent>
@@ -78,7 +80,7 @@ export default function AdminDashboard() {
                             <Users className="w-6 h-6"/>
                         </div>
                         <div>
-                            <p className="text-sm text-blue-800 font-medium">Active FPOs</p>
+                            <p className="text-sm text-blue-800 font-medium">{t('admin.activeFpos')}</p>
                             <p className="text-2xl font-bold text-blue-900">{stats.fposCount.toLocaleString()}</p>
                         </div>
                     </CardContent>
@@ -90,7 +92,7 @@ export default function AdminDashboard() {
                             <ShoppingBag className="w-6 h-6"/>
                         </div>
                         <div>
-                            <p className="text-sm text-orange-800 font-medium">Active Orders</p>
+                            <p className="text-sm text-orange-800 font-medium">{t('admin.activeOrders')}</p>
                             <p className="text-2xl font-bold text-orange-900">{stats.ordersCount.toLocaleString()}</p>
                         </div>
                     </CardContent>
@@ -102,7 +104,7 @@ export default function AdminDashboard() {
                             <Activity className="w-6 h-6"/>
                         </div>
                         <div>
-                            <p className="text-sm text-purple-800 font-medium">Transactions</p>
+                            <p className="text-sm text-purple-800 font-medium">{t('admin.transactions')}</p>
                             <p className="text-2xl font-bold text-purple-900">₹4.2 Cr</p>
                         </div>
                     </CardContent>
@@ -113,32 +115,22 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Daily Orders Trend</CardTitle>
+                        <CardTitle>{t('admin.dailyOrders')}</CardTitle>
                     </CardHeader>
                     <CardContent className="h-72">
                         <AnalyticsChart type="line" data={[
-                            { name: 'Mon', value: 120 },
-                            { name: 'Tue', value: 150 },
-                            { name: 'Wed', value: 180 },
-                            { name: 'Thu', value: 140 },
-                            { name: 'Fri', value: 210 },
-                            { name: 'Sat', value: 250 },
-                            { name: 'Sun', value: 290 }
+                            { name: t('admin.monday'), value: 120 }, { name: t('admin.tuesday'), value: 150 }, { name: t('admin.wednesday'), value: 180 }, { name: t('admin.thursday'), value: 140 }, { name: t('admin.friday'), value: 210 }, { name: t('admin.saturday'), value: 250 }, { name: t('admin.sunday'), value: 290 }
                         ]}/>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Top Traded Produce Volume</CardTitle>
+                        <CardTitle>{t('admin.topProduce')}</CardTitle>
                     </CardHeader>
                     <CardContent className="h-72">
                         <AnalyticsChart type="pie" data={[
-                            { name: 'Onions', value: 35 },
-                            { name: 'Tomatoes', value: 25 },
-                            { name: 'Potatoes', value: 20 },
-                            { name: 'Wheat', value: 15 },
-                            { name: 'Others', value: 5 }
+                            { name: t('admin.onions'), value: 35 }, { name: t('admin.tomatoes'), value: 25 }, { name: t('admin.potatoes'), value: 20 }, { name: t('admin.wheat'), value: 15 }, { name: t('admin.others'), value: 5 }
                         ]}/>
                     </CardContent>
                 </Card>
@@ -147,7 +139,7 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <Card className="lg:col-span-2">
                     <CardHeader>
-                        <CardTitle>Platform Growth (Produce Traded in Tons)</CardTitle>
+                        <CardTitle>{t('admin.growth')}</CardTitle>
                     </CardHeader>
                     <CardContent className="h-72">
                         <AnalyticsChart type="bar" data={[
@@ -162,7 +154,7 @@ export default function AdminDashboard() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Recent Activity Log</CardTitle>
+                        <CardTitle>{t('admin.recentActivity')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">

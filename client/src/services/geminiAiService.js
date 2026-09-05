@@ -1,9 +1,13 @@
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-export const askGeminiAI = async (userPrompt, contextRole = 'farmer') => {
+export const askGeminiAI = async (userPrompt, contextRole = 'farmer', language = 'en') => {
     try {
+        const languageInstruction = language === 'hi'
+            ? 'Respond strictly in Hindi written in Devanagari. Do not use English words, headings, or bullet labels.'
+            : 'Respond in clear English.';
         const systemPrompt = `You are AgroConnect AI, an expert agricultural AI assistant in India specializing in crop demand forecasting, market price intelligence, crop advisory, FPO aggregation, and smart logistics.
 Role context: ${contextRole}.
+${languageInstruction}
 Provide clear, actionable, concise advice with bullet points where helpful. Mention Indian Rupee (₹) and Maharashtra agricultural mandis (Nashik, Pune, Pimpalgaon) when relevant.`;
 
         if (GEMINI_API_KEY && GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY') {
@@ -18,18 +22,27 @@ Provide clear, actionable, concise advice with bullet points where helpful. Ment
             if (response.ok) {
                 const data = await response.json();
                 const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (aiText) return aiText.replace(/gemini/gi, 'Smart AI');
+                if (aiText) return aiText.replace(/gemini/gi, language === 'hi' ? 'कृषि सहायक' : 'Smart AI');
             }
         }
         
-        return getFallbackAiResponse(userPrompt, contextRole);
+        return getFallbackAiResponse(userPrompt, contextRole, language);
     } catch (err) {
         console.warn('Gemini API error, using smart fallback response:', err);
-        return getFallbackAiResponse(userPrompt, contextRole);
+        return getFallbackAiResponse(userPrompt, contextRole, language);
     }
 };
 
-const getFallbackAiResponse = (prompt, role) => {
+const getFallbackAiResponse = (prompt, role, language) => {
+    if (language === 'hi') {
+        const crop = /tomato|tamatar|टमाटर/i.test(prompt) ? 'टमाटर' : /onion|pyaz|प्याज/i.test(prompt) ? 'प्याज' : /potato|aloo|आलू/i.test(prompt) ? 'आलू' : /wheat|gehun|गेहूं/i.test(prompt) ? 'गेहूं' : 'आपकी फसल';
+        return `🤖 **कृषि बाजार सलाह**
+
+• **फसल:** ${crop}
+• **बाजार स्थिति:** स्थानीय मंडियों में मांग स्थिर से मजबूत है।
+• **सुझाव:** उपज की गुणवत्ता, मात्रा और उचित मूल्य दर्ज करके सीधे खरीदारों तक पहुंचें।
+• **सावधानी:** भेजने से पहले मात्रा, गुणवत्ता और भुगतान की शर्तों की पुष्टि करें।`;
+    }
     const lower = prompt.toLowerCase().trim();
 
     // 1. Greetings

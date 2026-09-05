@@ -2,53 +2,55 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Home, ShoppingBag, List, ClipboardList, PieChart, User, Settings, Users, Truck, MessageSquare, Map } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 export const Sidebar = ({ isOpen, onClose }) => {
     const { user } = useAuth();
+    const { t } = useLanguage();
     if (!user)
         return null;
     const roleMenus = {
         farmer: [
-            { name: 'Dashboard', path: '/farmer/dashboard', icon: Home },
-            { name: 'My Listings', path: '/farmer/listings', icon: List },
-            { name: 'Orders', path: '/farmer/orders', icon: ClipboardList },
-            { name: 'Earnings', path: '/farmer/earnings', icon: PieChart },
-            { name: 'AI Insights', path: '/farmer/insights', icon: TrendingUpIcon },
-            { name: 'Profile', path: '/farmer/profile', icon: User },
+            { label: 'dashboard', path: '/farmer/dashboard', icon: Home },
+            { label: 'myListings', path: '/farmer/listings', icon: List },
+            { label: 'orders', path: '/farmer/orders', icon: ClipboardList },
+            { label: 'earnings', path: '/farmer/earnings', icon: PieChart },
+            { label: 'aiInsights', path: '/farmer/insights', icon: TrendingUpIcon },
+            { label: 'profile', path: '/farmer/profile', icon: User },
         ],
         consumer: [
-            { name: 'Dashboard', path: '/consumer/dashboard', icon: Home },
-            { name: 'My Orders', path: '/consumer/orders', icon: ShoppingBag },
+            { label: 'dashboard', path: '/consumer/dashboard', icon: Home },
+            { label: 'orders', path: '/consumer/orders', icon: ShoppingBag },
         ],
         bulk_buyer: [
-            { name: 'Dashboard', path: '/buyer/dashboard', icon: Home },
-            { name: 'Find Produce', path: '/buyer/find', icon: SearchIcon },
-            { name: 'My Offers', path: '/buyer/offers', icon: MessageSquare },
-            { name: 'Orders', path: '/buyer/orders', icon: ClipboardList },
-            { name: 'Analytics', path: '/buyer/analytics', icon: PieChart },
+            { label: 'dashboard', path: '/buyer/dashboard', icon: Home },
+            { label: 'findProduce', path: '/buyer/find', icon: SearchIcon },
+            { label: 'offers', path: '/buyer/offers', icon: MessageSquare },
+            { label: 'orders', path: '/buyer/orders', icon: ClipboardList },
+            { label: 'analytics', path: '/buyer/analytics', icon: PieChart },
         ],
         fpo: [
-            { name: 'Dashboard', path: '/fpo/dashboard', icon: Home },
-            { name: 'Members', path: '/fpo/members', icon: Users },
-            { name: 'Aggregation', path: '/fpo/aggregation', icon: List },
-            { name: 'Inventory', path: '/fpo/inventory', icon: ClipboardList },
-            { name: 'Orders', path: '/fpo/orders', icon: ShoppingBag },
-            { name: 'Analytics', path: '/fpo/analytics', icon: PieChart },
+            { label: 'dashboard', path: '/fpo/dashboard', icon: Home },
+            { label: 'members', path: '/fpo/members', icon: Users },
+            { label: 'aggregation', path: '/fpo/aggregation', icon: List },
+            { label: 'inventory', path: '/fpo/inventory', icon: ClipboardList },
+            { label: 'orders', path: '/fpo/orders', icon: ShoppingBag },
+            { label: 'analytics', path: '/fpo/analytics', icon: PieChart },
         ],
         logistics: [
-            { name: 'Dashboard', path: '/logistics/dashboard', icon: Home },
-            { name: 'Driver Partner Portal 🚚', path: '/logistics/driver-partner', icon: Truck },
-            { name: 'Deliveries', path: '/logistics/deliveries', icon: ClipboardList },
-            { name: 'Routes Map', path: '/logistics/map', icon: Map },
-            { name: 'Vehicles', path: '/logistics/vehicles', icon: Settings },
-            { name: 'Drivers Roster', path: '/logistics/drivers', icon: Users },
+            { label: 'dashboard', path: '/logistics/dashboard', icon: Home },
+            { label: 'driverPortal', path: '/logistics/driver-partner', icon: Truck },
+            { label: 'deliveries', path: '/logistics/deliveries', icon: ClipboardList },
+            { label: 'routesMap', path: '/logistics/map', icon: Map },
+            { label: 'vehicles', path: '/logistics/vehicles', icon: Settings },
+            { label: 'driversRoster', path: '/logistics/drivers', icon: Users },
         ],
         admin: [
-            { name: 'Dashboard', path: '/admin/dashboard', icon: Home },
-            { name: 'Users', path: '/admin/users', icon: Users },
-            { name: 'Orders', path: '/admin/orders', icon: ClipboardList },
-            { name: 'Analytics', path: '/admin/analytics', icon: PieChart },
-            { name: 'Complaints', path: '/admin/complaints', icon: MessageSquare },
-            { name: 'Impact', path: '/admin/impact', icon: TrendingUpIcon },
+            { label: 'dashboard', path: '/admin/dashboard', icon: Home },
+            { label: 'users', path: '/admin/users', icon: Users },
+            { label: 'orders', path: '/admin/orders', icon: ClipboardList },
+            { label: 'analytics', path: '/admin/analytics', icon: PieChart },
+            { label: 'complaints', path: '/admin/complaints', icon: MessageSquare },
+            { label: 'impact', path: '/admin/impact', icon: TrendingUpIcon },
         ],
     };
     const menuItems = roleMenus[user.role] || [];
@@ -63,14 +65,14 @@ export const Sidebar = ({ isOpen, onClose }) => {
                     ? 'bg-emerald-100 dark:bg-emerald-800/90 text-emerald-950 dark:text-emerald-100 font-extrabold shadow-2xs'
                     : 'text-gray-700 dark:text-emerald-200 hover:bg-gray-100 dark:hover:bg-emerald-900/60 hover:text-emerald-900 dark:hover:text-emerald-100'}`} onClick={() => window.innerWidth < 1024 && onClose()}>
                   <Icon className="mr-3 flex-shrink-0 h-5 w-5"/>
-                  {item.name}
+                  {t(item.label)}
                 </NavLink>);
         })}
           </div>
           <div className="p-4 border-t border-gray-200 dark:border-emerald-800/80">
             <NavLink to="/settings" className={({ isActive }) => `flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-150 ${isActive ? 'bg-emerald-100 dark:bg-emerald-800/90 text-emerald-950 dark:text-emerald-100 font-extrabold' : 'text-gray-700 dark:text-emerald-200 hover:bg-gray-100 dark:hover:bg-emerald-900/60 hover:text-emerald-900 dark:hover:text-emerald-100'}`}>
               <Settings className="mr-3 flex-shrink-0 h-5 w-5"/>
-              Settings
+              {t('settings')}
             </NavLink>
           </div>
         </div>
