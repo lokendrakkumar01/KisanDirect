@@ -110,7 +110,7 @@ export const TopBar = ({ onMenuClick }) => {
                             {isSuggestionsOpen && (searchQuery.trim().length > 0) && (
                                 <div className="absolute left-0 right-0 top-11 bg-white dark:bg-emerald-900 rounded-xl shadow-xl border border-gray-200 dark:border-emerald-700 py-2 z-50 animate-in fade-in-50 duration-150">
                                     <div className="px-3 py-1 text-[10px] font-extrabold text-gray-400 dark:text-emerald-300 uppercase tracking-wider">
-                                        Search Suggestions
+                                        {t('searchSuggestions')}
                                     </div>
                                     {filteredSuggestions.length > 0 ? (
                                         filteredSuggestions.map((item, idx) => (
@@ -130,7 +130,7 @@ export const TopBar = ({ onMenuClick }) => {
                                             onClick={() => handleSelectSuggestion(searchQuery)}
                                             className="w-full text-left px-4 py-2 hover:bg-green-50 dark:hover:bg-emerald-800 text-xs font-bold text-green-700 dark:text-emerald-300"
                                         >
-                                            Search marketplace for "{searchQuery}" &rarr;
+                                            {t('searchMarketplace')} "{searchQuery}" &rarr;
                                         </button>
                                     )}
                                 </div>
@@ -156,7 +156,7 @@ export const TopBar = ({ onMenuClick }) => {
                         <button 
                             onClick={toggleTheme}
                             className="p-2 rounded-full bg-emerald-100/80 dark:bg-emerald-900/80 text-emerald-900 dark:text-emerald-100 hover:bg-emerald-200 dark:hover:bg-emerald-800 border border-emerald-300/80 dark:border-emerald-700 transition cursor-pointer flex items-center justify-center shadow-2xs"
-                            title={isDark ? "Switch to Light Mode ☀️" : "Switch to Dark Mode 🌙"}
+                            title={isDark ? `${t('lightModeTitle')} ☀️` : `${t('darkModeTitle')} 🌙`}
                         >
                             {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-emerald-800" />}
                         </button>
@@ -181,7 +181,7 @@ export const TopBar = ({ onMenuClick }) => {
 
                         <div className="relative flex items-center space-x-3">
                             <div className="flex flex-col items-end hidden sm:flex">
-                                <span className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{user?.name || 'User'}</span>
+                                <span className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{user?.name || t('user')}</span>
                                 <Badge variant={badgeVariant} className="text-[10px] px-2 py-0.5 mt-0.5">
                                     {roleLabel}
                                 </Badge>

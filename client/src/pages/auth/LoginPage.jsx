@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, UserCheck, Sprout, Store, Truck, ShieldAlert, Users, ShieldCheck } from 'lucide-react';
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { Button } from '../../components/ui/Button';
@@ -7,9 +7,12 @@ import { Badge } from '../../components/ui/Badge';
 import { useAuth, getRoleDashboardPath } from '../../contexts/AuthContext';
 
 export const LoginPage = () => {
-    const [email, setEmail] = useState('farmer@demo.com');
+    const [searchParams] = useSearchParams();
+    const requestedRole = searchParams.get('role');
+    const initialRole = requestedRole === 'bulk_buyer' ? 'buyer' : (requestedRole || 'farmer');
+    const [email, setEmail] = useState(`${initialRole}@demo.com`);
     const [password, setPassword] = useState('demo123');
-    const [selectedRole, setSelectedRole] = useState('farmer');
+    const [selectedRole, setSelectedRole] = useState(initialRole);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { login } = useAuth();

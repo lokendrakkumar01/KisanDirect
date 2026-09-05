@@ -11,13 +11,17 @@ ${languageInstruction}
 Provide clear, actionable, concise advice with bullet points where helpful. Mention Indian Rupee (₹) and Maharashtra agricultural mandis (Nashik, Pune, Pimpalgaon) when relevant.`;
 
         if (GEMINI_API_KEY && GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY') {
+            const controller = new AbortController();
+            const timeoutId = window.setTimeout(() => controller.abort(), 3500);
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                signal: controller.signal,
                 body: JSON.stringify({
                     contents: [{ role: 'user', parts: [{ text: `${systemPrompt}\n\nUser Question: ${userPrompt}` }] }]
                 })
             });
+            window.clearTimeout(timeoutId);
 
             if (response.ok) {
                 const data = await response.json();

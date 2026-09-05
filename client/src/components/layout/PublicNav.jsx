@@ -65,7 +65,7 @@ export const PublicNav = () => {
                             <button 
                                 onClick={toggleTheme}
                                 className="p-2 rounded-full bg-emerald-100/80 dark:bg-emerald-900/80 text-emerald-900 dark:text-emerald-100 hover:bg-emerald-200 dark:hover:bg-emerald-800 border border-emerald-300/80 dark:border-emerald-700 transition cursor-pointer flex items-center justify-center shadow-2xs"
-                                title={isDark ? "Switch to Light Mode ☀️" : "Switch to Dark Mode 🌙"}
+                                title={isDark ? `${t('lightModeTitle')} ☀️` : `${t('darkModeTitle')} 🌙`}
                             >
                                 {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-emerald-800" />}
                             </button>
@@ -95,7 +95,7 @@ export const PublicNav = () => {
 
                             <Link to="/admin/login">
                                 <Button variant="outline" size="sm" className="text-red-700 dark:text-red-400 border-red-300 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-950/50 font-bold text-xs flex items-center gap-1 py-1.5">
-                                    <ShieldCheck className="w-3.5 h-3.5" /> Admin
+                                    <ShieldCheck className="w-3.5 h-3.5" /> {t('admin')}
                                 </Button>
                             </Link>
 
