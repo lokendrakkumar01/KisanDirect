@@ -1,10 +1,129 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Mic, MicOff, Volume2, X, Sparkles, Loader2, Bot, Globe, Send } from 'lucide-react';
 import { askGeminiAI } from '../../services/geminiAiService';
 import { getPriceIntelligence } from '../../services/aiService';
 import { useAuth, getRoleDashboardPath } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+
+const PAGE_GUIDANCE = {
+    '/': {
+        hi: 'AgroConnect होम में आपका स्वागत है! यहाँ आप सीधी किसान-से-खरीदार बिक्री, स्मार्ट लॉजिस्टिक्स और AI बाज़ार सलाह देख सकते हैं।',
+        en: 'Welcome to AgroConnect Home! Explore direct farmer-to-buyer sales, smart logistics, and AI market guidance.'
+    },
+    '/marketplace': {
+        hi: 'उपज बाज़ार: यहाँ आप सीधे किसानों और FPO से ताज़ा फसलें देख और खरीद सकते हैं।',
+        en: 'Produce Marketplace: Browse and purchase fresh crops directly from verified farmers and FPOs.'
+    },
+    '/farmer/dashboard': {
+        hi: 'किसान डैशबोर्ड: अपनी लिस्टेड फसलें, कुल कमाई, एक्टिव ऑर्डर और मार्केट डिमांड देखें।',
+        en: 'Farmer Dashboard: View active crop listings, total earnings, recent orders, and demand trends.'
+    },
+    '/farmer/add-produce': {
+        hi: 'उपज जोड़ें: अपनी फसल की जानकारी, मात्रा, कीमत और कटाई की तारीख भरकर सीधे लिस्ट करें।',
+        en: 'Add Produce: Fill in crop details, quantity, price, and harvest date to list your produce.'
+    },
+    '/farmer/listings': {
+        hi: 'मेरी लिस्टिंग: अपनी लिस्टेड फसलों की स्थिति देखें, एडिट करें या स्टॉक अपडेट करें।',
+        en: 'My Listings: Manage your posted produce, update inventory, or edit crop prices.'
+    },
+    '/farmer/insights': {
+        hi: 'AI बाज़ार सलाह: 7-दिन की मांग का पूर्वानुमान, मूल्य सलाह और स्मार्ट अलर्ट देखें।',
+        en: 'AI Market Insights: View 7-day demand forecasts, price intelligence, and AI advisory.'
+    },
+    '/farmer/earnings': {
+        hi: 'किसान कमाई: अपनी कुल बिक्री, लॉजिस्टिक्स शुल्क और नेट भुगतान ट्रैक करें।',
+        en: 'Farmer Earnings: Track gross sales, transport deductions, and completed payouts.'
+    },
+    '/farmer/profile': {
+        hi: 'किसान प्रोफाइल: अपनी प्रोफाइल, कृषि स्थान और सत्यापन स्थिति देखें या एडिट करें।',
+        en: 'Farmer Profile: View and edit your profile details, farm location, and verification status.'
+    },
+    '/consumer/dashboard': {
+        hi: 'ग्राहक डैशबोर्ड: अनुशंसित ताज़ा फसलें देखें, ऑर्डर ट्रैक करें और निकटतम खेत खोजें।',
+        en: 'Consumer Dashboard: View recommended produce, track active orders, and discover nearby farms.'
+    },
+    '/consumer/cart': {
+        hi: 'कार्ट पृष्ठ: चुनी हुई फसलों की सूची, लॉजिस्टिक्स लागत देखें और चेकआउट की ओर बढ़ें।',
+        en: 'Cart Page: Review selected produce items, logistics cost breakdown, and proceed to checkout.'
+    },
+    '/consumer/checkout': {
+        hi: 'चेकआउट: अपना डिलीवरी का पता दर्ज करें और सीधे ऑर्डर की पुष्टि करें।',
+        en: 'Checkout Page: Enter delivery address and confirm your direct produce order.'
+    },
+    '/consumer/orders': {
+        hi: 'ग्राहक ऑर्डर: अपने सभी वर्तमान और पिछले ऑर्डर की स्थिति देखें और ट्रैक करें।',
+        en: 'My Orders: Track active deliveries, order history, and leave seller reviews.'
+    },
+    '/buyer/dashboard': {
+        hi: 'थोक खरीदार डैशबोर्ड: थोक आवश्यकताएं, प्राप्त ऑफर और कुल खरीद ट्रैक करें।',
+        en: 'Bulk Buyer Dashboard: Manage bulk requirements, received seller offers, and total spend.'
+    },
+    '/buyer/requirements/new': {
+        hi: 'आवश्यकता पोस्ट करें: थोक फसल मांग, बजट और आवश्यक डिलीवरी तिथि दर्ज करें।',
+        en: 'Post Requirement: Submit bulk crop needs, budget, and required delivery date.'
+    },
+    '/buyer/offers': {
+        hi: 'प्राप्त ऑफर: किसानों और FPO द्वारा भेजे गए कोटेशन देखें और स्वीकार करें।',
+        en: 'Received Offers: Review seller quotations submitted for your requirements.'
+    },
+    '/fpo/dashboard': {
+        hi: 'FPO डैशबोर्ड: अपने किसान सदस्यों की सूची, एग्रीगेटेड उपज और राजस्व देखें।',
+        en: 'FPO Dashboard: Manage farmer members, aggregated inventory, and collective revenue.'
+    },
+    '/fpo/members': {
+        hi: 'FPO सदस्य: अपने पंजीकृत किसान सदस्यों की सूची और योगदान देखें।',
+        en: 'FPO Members: Manage registered farmers and track their crop contributions.'
+    },
+    '/fpo/aggregation': {
+        hi: 'उपज एग्रीगेशन: कई किसानों की फसल मिलाकर थोक लिस्टिंग बनाएं।',
+        en: 'Crop Aggregation: Combine produce from multiple members to create bulk listings.'
+    },
+    '/logistics/dashboard': {
+        hi: 'लॉजिस्टिक्स डैशबोर्ड: वाहन स्थिति, एक्टिव डिलीवरी और पिकअप प्रबंधित करें।',
+        en: 'Logistics Dashboard: Monitor vehicles, active deliveries, and pickup dispatch status.'
+    },
+    '/logistics/driver-partner': {
+        hi: 'ड्राइवर पार्टनर पोर्टल: एक्टिव ट्रिप्स, पिकअप स्थान, OTP सत्यापन और लाइव मैप देखें।',
+        en: 'Driver Partner Portal: Access active trips, pickup locations, OTP verification, and live route.'
+    },
+    '/logistics/routes': {
+        hi: 'मार्ग अनुकूलन: वाहनों के लिए सबसे छोटा और किफ़ायती रास्ता खोजें।',
+        en: 'Route Optimization: Calculate optimal pickup and delivery sequences to save distance.'
+    },
+    '/logistics/deliveries': {
+        hi: 'डिलीवरी सूची: सभी शिपमेंट्स की स्थिति (Pickup / In Transit / Delivered) अपडेट करें।',
+        en: 'Deliveries: Track shipment statuses and assign vehicles/drivers to orders.'
+    },
+    '/logistics/map': {
+        hi: 'लाइव मैप: किसानों, FPO, खरीदारों और वाहनों का वास्तविक स्थान देखें।',
+        en: 'Live Map: Visualize real-time locations of farms, FPOs, buyers, and delivery vehicles.'
+    },
+    '/admin/dashboard': {
+        hi: 'एडमिन डैशबोर्ड: कुल उपयोगकर्ता, एक्टिव लिस्टिंग, दैनिक ऑर्डर और राजस्व आंकड़े देखें।',
+        en: 'Admin Dashboard: Overview of total users, active listings, order volume, and platform stats.'
+    },
+    '/admin/users': {
+        hi: 'उपयोगकर्ता प्रबंधन: उपयोगकर्ताओं की प्रोफ़ाइल देखें, किसान सत्यापन स्वीकृत करें।',
+        en: 'User Management: Verify farmer accounts and manage platform user roles.'
+    },
+    '/admin/complaints': {
+        hi: 'शिकायत एवं फीडबैक पोर्टल: यूज़र फीडबैक और रिपोर्ट की गई समस्याओं का निवारण करें।',
+        en: 'Grievance & Feedback Portal: Address complaints, review feedback, and manage resolutions.'
+    },
+    '/settings': {
+        hi: 'सेटिंग्स: भाषा (हिंदी/English/मराठी) और थीम (डार्क/लाइट मोड) बदलें।',
+        en: 'Settings: Update platform language preference and toggle dark/light mode appearance.'
+    },
+    '/notifications': {
+        hi: 'सूचनाएं: ऑर्डर अपडेट, मूल्य अलर्ट और बाज़ार संदेश देखें।',
+        en: 'Notifications: Check order status updates, price alerts, and platform messages.'
+    },
+    '/reviews': {
+        hi: 'रेटिंग एवं समीक्षाएं: खरीदारों द्वारा दी गई रेटिंग और प्रतिक्रिया देखें।',
+        en: 'Reviews & Ratings: Inspect customer ratings and feedback received on produce sales.'
+    }
+};
 
 const CROP_ALIASES = [
     { value: 'tomato', terms: ['tomato', 'tamatar', 'टमाटर'] },
@@ -79,9 +198,18 @@ export const VoiceAssistant = () => {
     const transcriptRef = useRef('');
     const submittedTranscriptRef = useRef('');
     const navigate = useNavigate();
+    const location = useLocation();
     const { user, logout } = useAuth();
     const { language } = useLanguage();
     const isHindi = selectedLang === 'hi-IN';
+
+    useEffect(() => {
+        const guidanceObj = PAGE_GUIDANCE[location.pathname];
+        if (guidanceObj) {
+            const text = isHindi ? guidanceObj.hi : guidanceObj.en;
+            setResponseMessage(text);
+        }
+    }, [location.pathname, selectedLang]);
     const uiText = isHindi ? {
         welcome: 'अपनी पसंदीदा भाषा चुनें, माइक्रोफ़ोन पर क्लिक करें और बोलें।',
         openTitle: 'बहुभाषी कृषि आवाज़ सहायक खोलें',

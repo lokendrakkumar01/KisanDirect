@@ -60,7 +60,7 @@ export default function SettingsPage() {
                         {t('languageDescription')}
                     </p>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <button
                             type="button"
                             onClick={() => selectLanguage('hi')}
@@ -88,11 +88,26 @@ export default function SettingsPage() {
                         >
                             <div>
                                 <div className="text-sm font-bold">{t('english')}</div>
-                                <div className="text-xs opacity-75">अंग्रेज़ी भाषा</div>
+                                <div className="text-xs opacity-75">English Language</div>
                             </div>
                             {language === 'en' && <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-300" />}
                         </button>
 
+                        <button
+                            type="button"
+                            onClick={() => selectLanguage('mr')}
+                            className={`p-4 rounded-xl border text-left transition flex items-center justify-between cursor-pointer ${
+                                language === 'mr'
+                                    ? 'bg-emerald-100 dark:bg-emerald-800/90 border-emerald-600 text-emerald-950 dark:text-white font-extrabold shadow-md ring-2 ring-emerald-500'
+                                    : 'bg-white dark:bg-emerald-900/40 border-gray-200 dark:border-emerald-800 text-gray-700 dark:text-emerald-200 hover:border-emerald-400'
+                            }`}
+                        >
+                            <div>
+                                <div className="text-sm font-bold">मराठी</div>
+                                <div className="text-xs opacity-75">मराठी भाषा 🚩</div>
+                            </div>
+                            {language === 'mr' && <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-300" />}
+                        </button>
                     </div>
                 </CardContent>
             </Card>

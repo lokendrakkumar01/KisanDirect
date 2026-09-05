@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bot, Send, X, Sparkles, Loader2 } from 'lucide-react';
 import { askGeminiAI } from '../../services/geminiAiService';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 export const GeminiAiWidget = () => {
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
         { id: 'm1', sender: 'ai', text: 'Hello! I am **AI Agricultural Assistant** 🤖. Ask me anything about crop prices, demand trends, harvest advisory, or smart logistics!' }
@@ -117,7 +119,7 @@ export const GeminiAiWidget = () => {
                                                 <button
                                                     onClick={() => {
                                                         setIsOpen(false);
-                                                        window.location.href = navAction.path;
+                                                        navigate(navAction.path);
                                                     }}
                                                     className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-extrabold rounded-xl shadow-xs transition flex items-center gap-1 cursor-pointer"
                                                 >

@@ -8,7 +8,7 @@ export const LanguageProvider = ({ children }) => {
     const language = i18n.resolvedLanguage || i18n.language || 'en';
 
     const setLanguage = (code) => {
-        if (!['en', 'hi'].includes(code)) return;
+        if (!['en', 'hi', 'mr'].includes(code)) return;
         i18n.changeLanguage(code);
         localStorage.setItem('agroconnect_language', code);
     };
