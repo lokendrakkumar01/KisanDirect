@@ -4,6 +4,7 @@ import { Mail, Lock, UserCheck, Sprout, Store, Truck, ShieldAlert, Users, Shield
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
+import { LanguageSelectionModal } from '../../components/ui/LanguageSelectionModal';
 import { useAuth, getRoleDashboardPath } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -16,8 +17,10 @@ export const LoginPage = () => {
     const [selectedRole, setSelectedRole] = useState(initialRole);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [pendingUser, setPendingUser] = useState(null);
+    const [isLangModalOpen, setIsLangModalOpen] = useState(false);
     const { user, isAuthenticated, login } = useAuth();
-    const { language } = useLanguage();
+    const { language, setLanguage } = useLanguage();
     const navigate = useNavigate();
 
     const c = (enText, hiText, mrText) => {
@@ -27,10 +30,10 @@ export const LoginPage = () => {
     };
 
     React.useEffect(() => {
-        if (isAuthenticated && user?.role) {
+        if (isAuthenticated && user?.role && !isLangModalOpen && !pendingUser) {
             navigate(getRoleDashboardPath(user.role), { replace: true });
         }
-    }, [isAuthenticated, user, navigate]);
+    }, [isAuthenticated, user, navigate, isLangModalOpen, pendingUser]);
 
     const roleInfoMap = {
         farmer: { name: c('Farmer', 'किसान', 'शेतकरी'), icon: Sprout, color: 'text-green-600', bg: 'bg-green-50 border-green-200 text-green-800' },
@@ -47,13 +50,23 @@ export const LoginPage = () => {
         setIsLoading(true);
         try {
             const loggedUser = await login({ email, password });
-            navigate(getRoleDashboardPath(loggedUser.role));
+            setPendingUser(loggedUser);
+            setIsLangModalOpen(true);
         }
         catch (err) {
             setError(err.message || c('Failed to login. Please check your credentials.', 'लॉगिन विफल रहा। कृपया अपने क्रेडेंशियल जांचें।', 'लॉगिन अयशस्वी. कृपया आपली माहिती तपासा.'));
         }
         finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleLanguageSelected = (selectedCode) => {
+        setLanguage(selectedCode);
+        setIsLangModalOpen(false);
+        const target = pendingUser || user;
+        if (target?.role) {
+            navigate(getRoleDashboardPath(target.role));
         }
     };
 
@@ -309,6 +322,13 @@ export const LoginPage = () => {
                     </div>
                 </div>
             </div>
+
+            <LanguageSelectionModal 
+                isOpen={isLangModalOpen} 
+                onClose={() => setIsLangModalOpen(false)} 
+                onSelectLanguage={handleLanguageSelected} 
+                targetRole={pendingUser?.role || selectedRole} 
+            />
         </PublicLayout>
     );
 };

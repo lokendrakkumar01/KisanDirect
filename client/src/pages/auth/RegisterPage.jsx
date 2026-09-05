@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, Lock, Sprout, Store, UserCheck, ShieldAlert, Users, Truck } from 'lucide-react';
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { Button } from '../../components/ui/Button';
+import { LanguageSelectionModal } from '../../components/ui/LanguageSelectionModal';
 import { useAuth, getRoleDashboardPath } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -17,8 +18,10 @@ export const RegisterPage = () => {
     const [role, setRole] = useState('farmer');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [pendingUser, setPendingUser] = useState(null);
+    const [isLangModalOpen, setIsLangModalOpen] = useState(false);
     const { user, isAuthenticated, register } = useAuth();
-    const { language } = useLanguage();
+    const { language, setLanguage } = useLanguage();
     const navigate = useNavigate();
 
     const c = (enText, hiText, mrText) => {
@@ -28,10 +31,10 @@ export const RegisterPage = () => {
     };
 
     React.useEffect(() => {
-        if (isAuthenticated && user?.role) {
+        if (isAuthenticated && user?.role && !isLangModalOpen && !pendingUser) {
             navigate(getRoleDashboardPath(user.role), { replace: true });
         }
-    }, [isAuthenticated, user, navigate]);
+    }, [isAuthenticated, user, navigate, isLangModalOpen, pendingUser]);
 
     const roleMap = {
         farmer: { 
@@ -84,13 +87,23 @@ export const RegisterPage = () => {
                 password: formData.password,
                 role: role
             });
-            navigate(getRoleDashboardPath(newUser.role));
+            setPendingUser(newUser);
+            setIsLangModalOpen(true);
         }
         catch (err) {
             setError(err.message || c('Failed to register. Please try again.', 'पंजीकरण करने में विफल। कृपया पुनः प्रयास करें।', 'नोंदणी अयशस्वी. कृपया पुन्हा प्रयत्न करा.'));
         }
         finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleLanguageSelected = (selectedCode) => {
+        setLanguage(selectedCode);
+        setIsLangModalOpen(false);
+        const target = pendingUser || user;
+        if (target?.role) {
+            navigate(getRoleDashboardPath(target.role));
         }
     };
 
@@ -314,6 +327,13 @@ export const RegisterPage = () => {
                     </div>
                 </div>
             </div>
+
+            <LanguageSelectionModal 
+                isOpen={isLangModalOpen} 
+                onClose={() => setIsLangModalOpen(false)} 
+                onSelectLanguage={handleLanguageSelected} 
+                targetRole={pendingUser?.role || role} 
+            />
         </PublicLayout>
     );
 };

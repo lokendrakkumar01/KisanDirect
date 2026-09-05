@@ -4,14 +4,18 @@ import { ShieldCheck, Lock, Mail, ShieldAlert, CheckCircle } from 'lucide-react'
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
+import { LanguageSelectionModal } from '../../components/ui/LanguageSelectionModal';
 import { useAuth, getRoleDashboardPath } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export const AdminLoginPage = () => {
     const [email, setEmail] = useState('admin@demo.com');
     const [password, setPassword] = useState('demo123');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isLangModalOpen, setIsLangModalOpen] = useState(false);
     const { login } = useAuth();
+    const { setLanguage } = useLanguage();
     const navigate = useNavigate();
 
     const handleAdminLogin = async (e) => {
@@ -25,7 +29,7 @@ export const AdminLoginPage = () => {
                 setIsLoading(false);
                 return;
             }
-            navigate(getRoleDashboardPath('admin'));
+            setIsLangModalOpen(true);
         }
         catch (err) {
             setError(err.message || 'Failed to login as Admin. Please verify credentials.');
@@ -33,6 +37,12 @@ export const AdminLoginPage = () => {
         finally {
             setIsLoading(false);
         }
+    };
+
+    const handleLanguageSelected = (selectedCode) => {
+        setLanguage(selectedCode);
+        setIsLangModalOpen(false);
+        navigate(getRoleDashboardPath('admin'));
     };
 
     return (
@@ -117,6 +127,13 @@ export const AdminLoginPage = () => {
                     </div>
                 </div>
             </div>
+
+            <LanguageSelectionModal 
+                isOpen={isLangModalOpen} 
+                onClose={() => setIsLangModalOpen(false)} 
+                onSelectLanguage={handleLanguageSelected} 
+                targetRole="admin" 
+            />
         </PublicLayout>
     );
 };
