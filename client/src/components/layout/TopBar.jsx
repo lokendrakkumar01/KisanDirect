@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, Menu, Search, LogOut, X, Globe, MessageSquarePlus, Sun, Moon } from 'lucide-react';
+import { Bell, Menu, Search, LogOut, X, Globe, MessageSquarePlus, Sun, Moon, Settings } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -169,7 +169,7 @@ export const TopBar = ({ onMenuClick }) => {
                             <span>{t('feedback')}</span>
                         </button>
 
-                        <Link to="/notifications" className="relative p-1.5 text-emerald-900 dark:text-emerald-200 hover:text-emerald-700 hover:bg-emerald-100 dark:hover:bg-emerald-900 rounded-full transition focus:outline-none">
+                        <Link to="/notifications" className="relative p-1.5 text-emerald-900 dark:text-emerald-200 hover:text-emerald-700 hover:bg-emerald-100 dark:hover:bg-emerald-900 rounded-full transition focus:outline-none" title={t('notifications')}>
                             <span className="sr-only">{t('notifications')}</span>
                             <Bell className="h-5 w-5"/>
                             {unreadCount > 0 && (
@@ -177,6 +177,10 @@ export const TopBar = ({ onMenuClick }) => {
                                     {unreadCount > 9 ? '9+' : unreadCount}
                                 </span>
                             )}
+                        </Link>
+
+                        <Link to="/settings" className="p-1.5 text-emerald-900 dark:text-emerald-200 hover:text-emerald-700 hover:bg-emerald-100 dark:hover:bg-emerald-900 rounded-full transition focus:outline-none" title={t('settings')}>
+                            <Settings className="h-5 w-5"/>
                         </Link>
 
                         <div className="relative flex items-center space-x-3">

@@ -27,6 +27,7 @@ export const PublicNav = () => {
         { key: 'priceTrends', path: '/farmer/insights' },
         { key: 'logistics', path: '/logistics/map' },
         { key: 'about', path: '/about' },
+        { key: 'settings', path: '/settings' },
     ];
     
     const isActive = (path) => location.pathname === path;
