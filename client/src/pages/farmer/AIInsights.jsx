@@ -136,7 +136,7 @@ export const AIInsights = () => {
                                     <TrendingUp className="w-5 h-5 text-purple-600 mr-3 mt-0.5 flex-shrink-0"/>
                                     <div className="flex-1">
                                         <h4 className="font-bold text-purple-900 text-sm">Gemini AI Market Advisory ({selectedCrop})</h4>
-                                        <p className="text-sm text-purple-800 mt-1.5 leading-relaxed whitespace-pre-wrap">{geminiAnalysis}</p>
+                                        <p className="text-sm text-purple-800 mt-1.5 leading-relaxed whitespace-pre-wrap">{aiAnalysis}</p>
                                     </div>
                                 </div>
                             </CardBody>
