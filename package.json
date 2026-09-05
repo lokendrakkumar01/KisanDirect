@@ -4,7 +4,8 @@
   "private": true,
   "description": "AgroConnect Monorepo Root Package",
   "scripts": {
-    "install:all": "cd server && npm install && cd ../client && npm install",
+    "postinstall": "cd server && npm install",
+    "build": "cd server && npm install",
     "build:client": "cd client && npm install && npm run build",
     "build:server": "cd server && npm install",
     "start": "cd server && npm start"
