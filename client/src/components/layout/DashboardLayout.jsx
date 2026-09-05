@@ -12,7 +12,7 @@ export const DashboardLayout = ({ children }) => {
             <div className="flex-1 flex flex-col w-0 overflow-hidden">
                 <TopBar onMenuClick={() => setIsSidebarOpen(true)}/>
                 <main className="flex-1 relative overflow-y-auto focus:outline-none">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-24">
                         {children}
                     </div>
                 </main>
