@@ -1,0 +1,12 @@
+{
+  "name": "agroconnect-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AgroConnect Monorepo Root Package",
+  "scripts": {
+    "install:all": "cd server && npm install && cd ../client && npm install",
+    "build:client": "cd client && npm install && npm run build",
+    "build:server": "cd server && npm install",
+    "start": "cd server && npm start"
+  }
+}
