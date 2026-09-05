@@ -79,6 +79,7 @@ export const LoginPage = () => {
     const CurrentIcon = roleInfoMap[selectedRole]?.icon || Sprout;
 
     return (
+        <PublicLayout>
             <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
                 <div className="w-full max-w-2xl bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
                     
@@ -265,34 +266,8 @@ export const LoginPage = () => {
                             {c('Register new account', 'नया खाता पंजीकृत करें', 'नवीन खात्याची नोंदणी करा')}
                         </Link>
                     </div>
-                </div>
-            </div>={() => setDemoCreds('logistics@demo.com', 'logistics')} className="w-full flex items-center p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-500 hover:shadow-sm transition group text-left cursor-pointer">
-                                <Truck className="w-5 h-5 text-gray-600 mr-3 flex-shrink-0"/>
-                                <div>
-                                    <div className="font-bold text-gray-900 text-sm">
-                                        {c('🚛 Driver Partner Portal', '🚛 चालक पार्टनर पोर्टल', '🚛 ड्रायव्हर पार्टनर पोर्टल')}
-                                    </div>
-                                    <div className="text-xs text-gray-500">logistics@demo.com</div>
-                                </div>
-                            </button>
-
-                            <button onClick={() => setDemoCreds('admin@demo.com', 'admin')} className="w-full flex items-center p-3 bg-white border border-red-300 rounded-lg hover:border-red-600 hover:shadow-sm transition group text-left cursor-pointer">
-                                <ShieldCheck className="w-5 h-5 text-red-600 mr-3 flex-shrink-0"/>
-                                <div>
-                                    <div className="font-bold text-gray-900 text-sm">
-                                        {c('🛡️ Platform Admin Portal (DoCA)', '🛡️ प्लेटफ़ॉर्म व्यवस्थापक पोर्टल', '🛡️ प्लॅटफॉर्म प्रशासक पोर्टल')}
-                                    </div>
-                                    <div className="text-xs text-gray-500">admin@demo.com</div>
-                                </div>
-                            </button>
-                        </div>
-                        
-                        <div className="mt-6 pt-4 border-t border-green-200 text-xs text-center text-gray-600">
-                            {c('All demo passwords:', 'सभी डेमो पासवर्ड:', 'सर्व प्रात्यक्षिक पासवर्ड:')} <strong className="text-gray-900 font-bold">demo123</strong>
-                        </div>
                     </div>
                 </div>
-            </div>
 
             <LanguageSelectionModal 
                 isOpen={isLangModalOpen} 
