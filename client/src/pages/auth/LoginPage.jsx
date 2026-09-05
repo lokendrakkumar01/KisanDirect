@@ -15,8 +15,14 @@ export const LoginPage = () => {
     const [selectedRole, setSelectedRole] = useState(initialRole);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { login } = useAuth();
+    const { user, isAuthenticated, login } = useAuth();
     const navigate = useNavigate();
+
+    React.useEffect(() => {
+        if (isAuthenticated && user?.role) {
+            navigate(getRoleDashboardPath(user.role), { replace: true });
+        }
+    }, [isAuthenticated, user, navigate]);
 
     const roleInfoMap = {
         farmer: { name: 'Farmer', icon: Sprout, color: 'text-green-600', bg: 'bg-green-50 border-green-200 text-green-800' },

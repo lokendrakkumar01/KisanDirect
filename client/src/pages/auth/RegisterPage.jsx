@@ -16,15 +16,21 @@ export const RegisterPage = () => {
     const [role, setRole] = useState('farmer');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { register } = useAuth();
+    const { user, isAuthenticated, register } = useAuth();
     const navigate = useNavigate();
+
+    React.useEffect(() => {
+        if (isAuthenticated && user?.role) {
+            navigate(getRoleDashboardPath(user.role), { replace: true });
+        }
+    }, [isAuthenticated, user, navigate]);
 
     const roleMap = {
         farmer: { label: 'Farmer 🌾', desc: 'Direct sell produce to buyers and FPOs' },
         fpo: { label: 'FPO Admin 🏭', desc: 'Aggregate produce from farmer members' },
         consumer: { label: 'Consumer 🛒', desc: 'Buy farm-fresh produce directly from local farmers' },
         bulk_buyer: { label: 'Bulk Buyer 🏢', desc: 'Post bulk requirements for restaurants, hotels & supermarkets' },
-        logistics: { label: 'Logistics Partner 🚛', desc: 'Provide vehicle transport, route optimization & delivery services' }
+        logistics: { label: 'Driver Partner Portal 🚛', desc: 'Access active trips, OTP delivery verification & route maps' }
     };
 
     const handleChange = (e) => {
@@ -152,7 +158,7 @@ export const RegisterPage = () => {
                                             }`}
                                         >
                                             <Truck className={`w-7 h-7 mb-1.5 ${role === 'logistics' ? 'text-indigo-600' : 'text-gray-400'}`}/>
-                                            <span className="font-semibold text-xs text-center">Logistics</span>
+                                            <span className="font-semibold text-xs text-center">Driver Partner</span>
                                         </button>
                                     </div>
                                 </div>

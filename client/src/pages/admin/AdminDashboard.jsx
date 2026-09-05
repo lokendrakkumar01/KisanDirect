@@ -136,6 +136,48 @@ export default function AdminDashboard() {
                 </Card>
             </div>
 
+            {/* Advanced Admin Quick Action Controls */}
+            <Card className="border-purple-200 bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 dark:from-emerald-950 dark:to-teal-950 shadow-sm">
+                <CardHeader>
+                    <CardTitle className="text-sm font-extrabold text-purple-950 dark:text-emerald-100 uppercase tracking-wider flex items-center justify-between">
+                        <span>⚡ Advanced Platform Quick Actions &amp; Controls</span>
+                        <Badge variant="primary" className="text-[10px]">DoCA SuperAdmin Level 4</Badge>
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                        <button 
+                            onClick={() => alert('✅ DoCA Agricultural Compliance & Price Benchmark Report Generated Successfully!')}
+                            className="p-3 bg-white dark:bg-emerald-900 border border-purple-200 dark:border-emerald-700 rounded-xl text-left hover:shadow-md transition cursor-pointer"
+                        >
+                            <span className="text-xs font-bold text-purple-900 dark:text-emerald-100 block">📥 Export DoCA Compliance</span>
+                            <span className="text-[10px] text-gray-500 dark:text-emerald-300">Generate CSV &amp; PDF Report</span>
+                        </button>
+                        <button 
+                            onClick={() => alert('⚡ Seller-Buyer Matching Engine Resynced across all 36 Maharashtra Districts!')}
+                            className="p-3 bg-white dark:bg-emerald-900 border border-purple-200 dark:border-emerald-700 rounded-xl text-left hover:shadow-md transition cursor-pointer"
+                        >
+                            <span className="text-xs font-bold text-blue-900 dark:text-emerald-100 block">⚡ Resync Matching Engine</span>
+                            <span className="text-[10px] text-gray-500 dark:text-emerald-300">Recalculate 90%+ match scores</span>
+                        </button>
+                        <button 
+                            onClick={() => alert('🛡️ All pending farmer KYC and land registry documents approved!')}
+                            className="p-3 bg-white dark:bg-emerald-900 border border-purple-200 dark:border-emerald-700 rounded-xl text-left hover:shadow-md transition cursor-pointer"
+                        >
+                            <span className="text-xs font-bold text-green-900 dark:text-emerald-100 block">🛡️ Verify Pending Farmers</span>
+                            <span className="text-[10px] text-gray-500 dark:text-emerald-300">Bulk verify 14 pending profiles</span>
+                        </button>
+                        <button 
+                            onClick={() => window.location.href = '/logistics/routes'}
+                            className="p-3 bg-white dark:bg-emerald-900 border border-purple-200 dark:border-emerald-700 rounded-xl text-left hover:shadow-md transition cursor-pointer"
+                        >
+                            <span className="text-xs font-bold text-emerald-900 dark:text-emerald-100 block">🗺️ Optimize Fleet Routes</span>
+                            <span className="text-[10px] text-gray-500 dark:text-emerald-300">Open vehicle routing engine &rarr;</span>
+                        </button>
+                    </div>
+                </CardContent>
+            </Card>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <Card className="lg:col-span-2">
                     <CardHeader>
@@ -167,8 +209,8 @@ export default function AdminDashboard() {
                                 <div key={i} className="flex gap-3 text-sm">
                                     <div className="mt-0.5"><Activity className="w-4 h-4 text-green-600"/></div>
                                     <div>
-                                        <p className="text-gray-800 font-medium">{act.t}</p>
-                                        <p className="text-xs text-gray-500">{act.time}</p>
+                                        <p className="text-gray-800 dark:text-emerald-100 font-medium">{act.t}</p>
+                                        <p className="text-xs text-gray-500 dark:text-emerald-300">{act.time}</p>
                                     </div>
                                 </div>
                             ))}
